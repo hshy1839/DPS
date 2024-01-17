@@ -1,17 +1,21 @@
-package com.example.dps
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dps.LoginActivity
+import com.example.dps.R
 
 class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        val loginBackArrowImageView = findViewById<ImageView>(R.id.signup_back_arrow)
+        val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
             val intent = Intent(this@SignupActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -96,6 +100,34 @@ class SignupActivity : AppCompatActivity() {
         // 체크박스의 상태에 따라 아이콘 변경
         val iconResource = if (checkBox.isChecked) R.drawable.baseline_check_circle_24 else R.drawable.baseline_radio_button_unchecked_24
         checkBox.setButtonDrawable(iconResource)
+    }
+    fun onNextButtonClicked(view: android.view.View) {
+        // 각 CheckBox의 상태 확인
+        val checkBoxAll = findViewById<CheckBox>(R.id.SignUpcheckBoxAll)
+        val checkBox1 = findViewById<CheckBox>(R.id.SignUpcheckBox1)
+        val checkBox2 = findViewById<CheckBox>(R.id.SignUpcheckBox2)
+        val checkBox3 = findViewById<CheckBox>(R.id.SignUpcheckBox3)
+
+        // 전체 동의 여부 확인
+        val isAllChecked = checkBoxAll.isChecked && checkBox1.isChecked && checkBox2.isChecked && checkBox3.isChecked
+
+        if (!isAllChecked) {
+            // 전체 동의하지 않은 경우 AlertDialog 표시
+            showAlertDialog()
+        } else {
+            val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
+            signUpNextBtn.setOnClickListener {
+                val intent = Intent(this@SignupActivity, SignupActivity1::class.java)
+                startActivity(intent)
+            }
+        }
+    }
+    private fun showAlertDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("약관 동의")
+        alertDialogBuilder.setMessage("약관에 모두 동의해주세요.")
+        alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
+        alertDialogBuilder.show()
     }
 }
 
