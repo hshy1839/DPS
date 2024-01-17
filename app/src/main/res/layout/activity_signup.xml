@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:coners="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/signup_back_arrow"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="center"
+            android:src="@drawable/baseline_arrow_back_24" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingVertical="20dp"
+        android:paddingHorizontal="20dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="약관 동의"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="정확한 DPS 사용을 위해 약관에 동의가 필요합니다."
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"/>
+        <RadioGroup
+            android:id="@+id/SignUpcheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <CheckBox
+            android:id="@+id/SignUpcheckBoxAll"
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   전체 약관에 동의합니다"
+            android:textSize="15sp"
+            android:drawablePadding="9dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
+        <View
+            android:layout_marginTop="10dp"
+            android:layout_width="400dp"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+        <CheckBox
+            android:id="@+id/SignUpcheckBox1"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   DPS 이용약관 동의 (필수)"
+            android:textSize="12sp"
+            android:drawablePadding="9dp"
+            android:textColor="@color/black"
+            />
+        <CheckBox
+            android:id="@+id/SignUpcheckBox2"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   개인정보 수집 및 이용동의 (필수)"
+            android:textSize="12sp"
+            android:drawablePadding="9dp"
+            android:textColor="@color/black" />
+        <CheckBox
+            android:id="@+id/SignUpcheckBox3"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="   위치정보 서비스 이용약관 (필수)"
+            android:textSize="12sp"
+            android:drawablePadding="9dp"
+            android:textColor="@color/black" />
+        </RadioGroup>
+        <Button
+            android:layout_marginTop="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="다음"
+            android:background="@drawable/login_btn_background"/>
+    </LinearLayout>
+</LinearLayout>
