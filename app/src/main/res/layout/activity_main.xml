@@ -66,4 +66,12 @@
         android:paddingVertical="20dp"
         android:paddingHorizontal="16dp"
         android:text="이제부터 만들기 시작"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="로그인"
+        android:color="@color/black"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 </LinearLayout>
