@@ -73,7 +73,7 @@
             android:text="로그인"
             android:layout_gravity="center"
             android:textColor="@android:color/white"
-            android:background="@drawable/login_btn_background">
+            android:background="@drawable/login_btn_background"/>
         <Button
             android:layout_marginTop="50dp"
             android:layout_width="380dp"
