@@ -1,6 +1,6 @@
 package com.example.dps
 
-import SignupActivity1
+import com.example.dps.SignupActivity1
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
