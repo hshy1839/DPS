@@ -52,6 +52,7 @@
             android:textSize="50sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
+            android:fontFamily="@font/linebd"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"/>
 
@@ -60,10 +61,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="새로운 경험을 해보세요"
+            android:fontFamily="@font/linerg"
             android:textColor="@android:color/black"
             android:textSize="30sp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="250dp"/>
+            android:layout_marginTop="230dp"/>
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -94,6 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="HeartRate"
+                android:fontFamily="@font/linebd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"/>
         </androidx.cardview.widget.CardView>
@@ -119,6 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sleep"
+                android:fontFamily="@font/linebd"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"/>
         </androidx.cardview.widget.CardView>
@@ -151,6 +155,7 @@
                 android:layout_gravity="top|center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/linebd"
                 android:text="Running"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"/>
@@ -176,11 +181,19 @@
                 android:layout_gravity="top|center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/linebd"
                 android:text="HeartRate"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"/>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+    <View
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -190,6 +203,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/linebd"
             android:text="오늘의 운동 목록"
             android:textSize="30sp"
             android:textColor="@android:color/black"
@@ -197,16 +211,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/linerg"
             android:text="시작날짜 24년 1월 17일"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
 </LinearLayout>
 </ScrollView>
