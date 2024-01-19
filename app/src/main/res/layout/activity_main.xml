@@ -156,7 +156,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/linebd"
-                android:text="Running"
+                android:text="Workout"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"/>
         </androidx.cardview.widget.CardView>

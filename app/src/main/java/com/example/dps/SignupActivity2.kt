@@ -13,9 +13,7 @@ class SignupActivity2 : AppCompatActivity() {
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
-            // 뒤로 가기 버튼 클릭 시 MainActivity로 이동
-            val intent = Intent(this@SignupActivity2, SignupActivity1::class.java)
-            startActivity(intent)
+            onBackPressed()
         }
     }
 }

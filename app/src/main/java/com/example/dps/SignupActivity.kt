@@ -18,8 +18,7 @@ class SignupActivity : AppCompatActivity() {
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
-            val intent = Intent(this@SignupActivity, LoginActivity::class.java)
-            startActivity(intent)
+            onBackPressed()
         }
 
         var SignUpcheckBoxAll: CheckBox
