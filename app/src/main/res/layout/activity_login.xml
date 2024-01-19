@@ -75,30 +75,31 @@
             android:layout_gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/login_btn_background"/>
+
         <Button
             android:id="@+id/signup_btn"
-            android:layout_marginTop="50dp"
+            style="@style/SignUpButtonStyle"
             android:layout_width="380dp"
             android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="10dp"
             android:layout_gravity="center"
             android:text="간편가입하기"
-            android:background="@drawable/signup_btn"
-            android:textColor="@color/black"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textStyle="bold"/>
+            android:textColor="#000000"
+            android:textStyle="bold" />
 
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="100dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
         <Button
             android:layout_marginStart="0dp"
             android:layout_width="215dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:background="@drawable/login_edittext_background"
             android:text="아이디 찾기"
             android:textColor="@color/black"/>
@@ -107,7 +108,6 @@
             android:layout_width="210dp"
             android:layout_height="match_parent"
             android:background="@drawable/login_edittext_background"
-            android:layout_gravity="center"
             android:text="비밀번호 찾기"
             android:textColor="@color/black"/>
     </LinearLayout>

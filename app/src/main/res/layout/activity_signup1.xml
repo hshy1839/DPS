@@ -31,8 +31,7 @@
             android:text="아이디 입력"
             android:textColor="@color/black"
             android:textSize="30sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+            android:textStyle="bold"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,11 +52,12 @@
             android:layout_margin="70dp"/>
         <Button
             android:id="@+id/signup_nextbtn"
-            android:layout_marginTop="100dp"
-            android:layout_width="match_parent"
+            android:layout_width="380dp"
             android:layout_height="wrap_content"
-            android:text="다음"
+            android:layout_marginTop="200dp"
+            android:layout_gravity="center"
             android:background="@drawable/login_btn_background"
+            android:text="다음"
             android:onClick="onNextButtonClicked"/>
     </LinearLayout>
 </LinearLayout>
