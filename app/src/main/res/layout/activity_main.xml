@@ -1,45 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".MainActivity">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#ffffff">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="#ffffff">
-
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:scaleType="center"/>
         <TextView
-            android:layout_marginLeft="-50dp"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="DPS"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            android:textSize="20sp"
-            android:gravity="center" />
+            android:textSize="30sp"
+            android:gravity="left|center" />
+        <ImageView
+            android:id="@+id/loginButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/baseline_account_circle_24"
+            android:layout_marginEnd="10dp"
+            android:gravity="right|center"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_oldman"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp">
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/heartrate_icon"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="50dp"/>
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -49,12 +60,15 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp">
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/running_icon"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="50dp"/>
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -70,7 +84,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DPS 알아보기"
+            android:text="오늘의 운동 목록"
             android:textSize="30sp"
             android:textColor="@android:color/black"
             android:textStyle="bold"/>
@@ -81,25 +95,12 @@
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="20dp"
-        android:paddingHorizontal="16dp"
-        android:text="이제부터 만들기 시작"/>
-
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="로그인"
-        android:color="@color/black"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"/>
 </LinearLayout>
+</ScrollView>
