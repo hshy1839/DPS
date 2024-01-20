@@ -33,5 +33,6 @@
         <activity android:name=".SignupActivity"/>
         <activity android:name=".SignupActivity1"/>
         <activity android:name=".SignupActivity2"/>
+        <activity android:name=".SignupActivity3"/>
     </application>
 </manifest>
