@@ -5,22 +5,22 @@ package com.example.dps
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import com.google.android.material.navigation.NavigationBarView
-
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var firstTextView: TextView
     private lateinit var secondTextView: TextView
-    private lateinit var rightDrawer: RelativeLayout
-    private lateinit var menuButton: ImageView
-    private var isDrawerOpen = false
+    private lateinit var drawerLayout: DrawerLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,20 +33,19 @@ class MainActivity : AppCompatActivity() {
 
         val heartrateBtn = findViewById<CardView>(R.id.heartrate_btn)
         heartrateBtn.setOnClickListener {
-            val intent = Intent (this@MainActivity, HeartbeatActivity::class.java)
+            val intent = Intent(this@MainActivity, HeartbeatActivity::class.java)
             startActivity(intent)
         }
 
         val workoutBtn = findViewById<CardView>(R.id.workout_btn)
-        workoutBtn.setOnClickListener{
-            val intent = Intent ( this@MainActivity, WorkoutActivity::class.java)
+        workoutBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, WorkoutActivity::class.java)
             startActivity(intent)
         }
 
-
         val sleepBtn = findViewById<CardView>(R.id.sleep_btn)
-        sleepBtn.setOnClickListener{
-            val intent = Intent ( this@MainActivity, SleepActivity::class.java)
+        sleepBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, SleepActivity::class.java)
             startActivity(intent)
         }
 
@@ -67,15 +66,59 @@ class MainActivity : AppCompatActivity() {
                     .start()
             }
             .start()
-        rightDrawer = findViewById(R.id.right_drawer)
-        menuButton = findViewById(R.id.menuButton)
 
-        menuButton.setOnClickListener {
-            toggleDrawer()
+        drawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+
+        // 토글 버튼을 추가하여 메뉴가 열리고 닫히도록 함
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        // 네비게이션 메뉴 아이템 클릭 리스너 설정
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_item1 -> {
+                    // Menu 1 선택 시의 동작
+                    showToast("Select Menu 1")
+                }
+                R.id.nav_item2 -> {
+                    // Menu 2 선택 시의 동작
+                    showToast("Select Menu 2")
+                }
+                R.id.nav_item3 -> {
+                    // Menu 3 선택 시의 동작
+                    showToast("Select Menu 3")
+                }
+            }
+            // 메뉴를 선택한 후에는 Drawer를 닫아줌
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
         }
 
+        val menuButton = findViewById<ImageView>(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 
+    override fun onBackPressed() {
+        // 뒤로가기 버튼을 누를 때
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            // 만약 Navigation Drawer가 열려 있다면, 닫기
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            // 그렇지 않으면 기본 동작 수행
+            super.onBackPressed()
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -98,23 +141,5 @@ class MainActivity : AppCompatActivity() {
             }
             .start()
 
-    }
-
-    private fun toggleDrawer() {
-        if (isDrawerOpen) {
-            hideDrawer()
-        } else {
-            showDrawer()
-        }
-    }
-
-    private fun showDrawer() {
-        rightDrawer.visibility = View.VISIBLE
-        isDrawerOpen = true
-    }
-
-    private fun hideDrawer() {
-        rightDrawer.visibility = View.GONE
-        isDrawerOpen = false
     }
 }
