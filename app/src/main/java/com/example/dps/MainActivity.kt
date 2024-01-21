@@ -1,19 +1,26 @@
 package com.example.dps
 
 
+
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.google.android.material.navigation.NavigationBarView
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var firstTextView: TextView
     private lateinit var secondTextView: TextView
-
+    private lateinit var rightDrawer: RelativeLayout
+    private lateinit var menuButton: ImageView
+    private var isDrawerOpen = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,7 +67,15 @@ class MainActivity : AppCompatActivity() {
                     .start()
             }
             .start()
+        rightDrawer = findViewById(R.id.right_drawer)
+        menuButton = findViewById(R.id.menuButton)
+
+        menuButton.setOnClickListener {
+            toggleDrawer()
+        }
+
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -83,5 +98,23 @@ class MainActivity : AppCompatActivity() {
             }
             .start()
 
+    }
+
+    private fun toggleDrawer() {
+        if (isDrawerOpen) {
+            hideDrawer()
+        } else {
+            showDrawer()
+        }
+    }
+
+    private fun showDrawer() {
+        rightDrawer.visibility = View.VISIBLE
+        isDrawerOpen = true
+    }
+
+    private fun hideDrawer() {
+        rightDrawer.visibility = View.GONE
+        isDrawerOpen = false
     }
 }

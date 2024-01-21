@@ -15,16 +15,12 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:background="#ffffff">
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="DPS"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:textSize="30sp"
-                android:gravity="left|center" />
+            <ImageView
+                android:id="@+id/back_arrow"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="center"
+                android:src="@drawable/baseline_arrow_back_24" />
 
             <ImageView
                 android:id="@+id/loginButton"
