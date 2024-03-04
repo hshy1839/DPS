@@ -41,7 +41,9 @@
         <!-- 로그인 텍스트 -->
 
         <EditText
-            android:layout_width="380dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_width="330dp"
             android:layout_height="45dp"
             android:background="@drawable/login_edittext_background"
             android:hint="아이디"
@@ -54,60 +56,64 @@
 
         <!-- 비밀번호 입력란 -->
         <EditText
-            android:layout_width="380dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_width="330dp"
             android:layout_gravity="center"
             android:layout_height="45dp"
             android:textSize="15sp"
             android:paddingLeft="10dp"
             android:background="@drawable/login_edittext_background"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:hint="비밀번호"
             android:textColor="@color/black"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="textPassword"
             android:layout_margin="10dp"/>
         <Button
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:layout_marginTop="10dp"
-            android:layout_width="380dp"
+            android:layout_width="330dp"
             android:layout_height="60dp"
             android:text="로그인"
             android:layout_gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/login_btn_background"/>
+
         <Button
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
             android:id="@+id/signup_btn"
-            android:layout_marginTop="50dp"
-            android:layout_width="380dp"
+            style="@style/SignUpButtonStyle"
+            android:layout_width="330dp"
             android:layout_height="60dp"
+            android:layout_marginTop="50dp"
             android:layout_gravity="center"
             android:text="간편가입하기"
-            android:background="@drawable/signup_btn"
-            android:textColor="@color/black"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textStyle="bold"/>
+            android:textColor="#000000"
+            android:textStyle="bold" />
 
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="100dp"
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
         <Button
-            android:layout_marginStart="0dp"
-            android:layout_width="215dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:background="@drawable/login_edittext_background"
+            android:gravity="center"
             android:text="아이디 찾기"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
+
         <Button
-            android:layout_marginEnd="0dp"
-            android:layout_width="210dp"
-            android:layout_height="match_parent"
+            android:gravity="center"
             android:background="@drawable/login_edittext_background"
-            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
             android:text="비밀번호 찾기"
             android:textColor="@color/black"/>
     </LinearLayout>

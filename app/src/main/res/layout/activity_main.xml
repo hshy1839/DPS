@@ -21,10 +21,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Aging In Place"
+            android:text="DPS"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:gravity="left|center" />
         <ImageView
             android:id="@+id/loginButton"
@@ -48,8 +48,8 @@
             android:id="@+id/firstTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aging In Place와"
-            android:textSize="40sp"
+            android:text="DPS와"
+            android:textSize="50sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
             android:fontFamily="@font/linebd"
@@ -204,15 +204,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/linebd"
-            android:text="Aging In Place"
-            android:textSize="18sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:text="오늘의 운동 목록"
+            android:textSize="30sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/linerg"
-            android:text="대표 홍길동 | 주소 충북 진천군 진천읍 |
-사업자등록번호 113-03222-1132"
+            android:text="시작날짜 24년 1월 17일"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
     </LinearLayout>

@@ -90,9 +90,10 @@
 
         <Button
             android:id="@+id/signup_nextbtn"
-            android:layout_width="match_parent"
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="200dp"
+            android:layout_gravity="center"
             android:background="@drawable/login_btn_background"
             android:text="다음"
             android:onClick="onNextButtonClicked"/>

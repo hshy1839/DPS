@@ -1,72 +1,46 @@
 package com.example.dps
 
-
-
 import android.content.Intent
-import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
+class SleepActivity : AppCompatActivity() {
 
-    private lateinit var firstTextView: TextView
-    private lateinit var secondTextView: TextView
     private lateinit var drawerLayout: DrawerLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_sleep)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
-            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            val intent = Intent(this@SleepActivity, LoginActivity::class.java)
             startActivity(intent)
         }
 
-        val heartrateBtn = findViewById<CardView>(R.id.heartrate_btn)
-        heartrateBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity, HeartbeatActivity::class.java)
-            startActivity(intent)
-        }
+        val lineChart = findViewById<LineChart>(R.id.lineChart)
+        setupLineChart(lineChart)
 
-        val workoutBtn = findViewById<CardView>(R.id.workout_btn)
-        workoutBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity, WorkoutActivity::class.java)
-            startActivity(intent)
-        }
-
-        val sleepBtn = findViewById<CardView>(R.id.sleep_btn)
-        sleepBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity, SleepActivity::class.java)
-            startActivity(intent)
-        }
-
-        firstTextView = findViewById(R.id.firstTextView)
-        secondTextView = findViewById(R.id.secondTextView)
-
-        firstTextView.alpha = 0f
-        secondTextView.alpha = 0f
-
-        firstTextView.animate()
-            .alpha(1f)
-            .setDuration(1000)
-            .withStartAction { }
-            .withEndAction {
-                secondTextView.animate()
-                    .alpha(1f)
-                    .setDuration(1000)
-                    .start()
-            }
-            .start()
+        // 시간별 심박수 데이터 추가 (예시)
+        val entries = mutableListOf<Entry>()
+        entries.add(Entry(1f, 80f))
+        entries.add(Entry(2f, 85f))
+        entries.add(Entry(3f, 90f))
+        entries.add(Entry(4f, 88f))
+        entries.add(Entry(5f, 95f))
+        addDataToLineChart(lineChart, entries)
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -99,11 +73,31 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        val menuButton = findViewById<ImageView>(R.id.menuButton)
+        val menuButton = findViewById<ImageView>(R.id.menuButton_heartbeat)
         menuButton.setOnClickListener {
             // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
         }
+    }
+    private fun setupLineChart(lineChart: LineChart) {
+        // LineChart 설정
+        lineChart.setTouchEnabled(true)
+        lineChart.setPinchZoom(true)
+        lineChart.description = Description().apply { text = "시간" }
+
+        // X 축 설정
+        val xAxis = lineChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawGridLines(false)
+
+        // Y 축 설정
+        val leftAxis = lineChart.axisLeft
+        leftAxis.setDrawGridLines(false)
+        leftAxis.setDrawZeroLine(false)
+
+        val rightAxis = lineChart.axisRight
+        rightAxis.isEnabled = false
+
     }
 
     override fun onBackPressed() {
@@ -121,26 +115,20 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        startAnimation()
-    }
+    private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
+        // LineDataSet 생성
+        val dataSet = LineDataSet(entries, "심박수")
+        dataSet.color = ContextCompat.getColor(this, R.color.black)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
-    private fun startAnimation() {
-        firstTextView.alpha = 0f
-        secondTextView.alpha = 0f
+        // LineData 생성 및 설정
+        val lineData = LineData(dataSet)
+        lineData.setDrawValues(true)
 
-        firstTextView.animate()
-            .alpha(1f)
-            .setDuration(1000)
-            .withStartAction { }
-            .withEndAction {
-                secondTextView.animate()
-                    .alpha(1f)
-                    .setDuration(1000)
-                    .start()
-            }
-            .start()
-
+        // LineChart에 데이터 추가
+        lineChart.data = lineData
+        lineChart.invalidate()
     }
 }
+
+
