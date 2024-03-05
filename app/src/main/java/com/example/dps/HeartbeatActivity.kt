@@ -1,6 +1,7 @@
 package com.example.dps
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
@@ -10,12 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
 
 class HeartbeatActivity : AppCompatActivity() {
@@ -40,13 +46,34 @@ class HeartbeatActivity : AppCompatActivity() {
         setupLineChart(lineChart)
 
         // 시간별 심박수 데이터 추가 (예시)
-        val entries = mutableListOf<Entry>()
-        entries.add(Entry(1f, 80f))
-        entries.add(Entry(2f, 85f))
-        entries.add(Entry(3f, 90f))
-        entries.add(Entry(4f, 88f))
-        entries.add(Entry(5f, 95f))
-        addDataToLineChart(lineChart, entries)
+        val lineEntries = mutableListOf<Entry>()
+        lineEntries.add(Entry(0f, 80f))
+        lineEntries.add(Entry(1f, 85f))
+        lineEntries.add(Entry(2f, 90f))
+        lineEntries.add(Entry(3f, 88f))
+        lineEntries.add(Entry(4f, 95f))
+        lineEntries.add(Entry(5f, 85f))
+        lineEntries.add(Entry(6f, 75f))
+        addDataToLineChart(lineChart, lineEntries)
+
+        val barChart = findViewById<BarChart>(R.id.barChart)
+        setupBarChart(barChart)
+
+        // BarChart에 데이터 추가
+        val barEntries = mutableListOf<BarEntry>()
+        barEntries.add(BarEntry(0f, 150f))
+        barEntries.add(BarEntry(1f, 170f))
+        barEntries.add(BarEntry(2f, 200f))
+        barEntries.add(BarEntry(3f, 180f))
+        barEntries.add(BarEntry(4f, 190f))
+        barEntries.add(BarEntry(5f, 130f))
+        barEntries.add(BarEntry(6f, 140f))
+        barEntries.add(BarEntry(7f, 160f))
+        barEntries.add(BarEntry(8f, 130f))
+        barEntries.add(BarEntry(9f, 190f))
+        barEntries.add(BarEntry(10f, 170f))
+        barEntries.add(BarEntry(11f, 180f))
+        addDataToBarChart(barChart, barEntries)
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -90,27 +117,6 @@ class HeartbeatActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
     }
-    private fun setupLineChart(lineChart: LineChart) {
-        // LineChart 설정
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
-        lineChart.description = Description().apply { text = "시간" }
-
-        // X 축 설정
-        val xAxis = lineChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-
-        // Y 축 설정
-        val leftAxis = lineChart.axisLeft
-        leftAxis.setDrawGridLines(false)
-        leftAxis.setDrawZeroLine(false)
-
-        val rightAxis = lineChart.axisRight
-        rightAxis.isEnabled = false
-
-    }
-
     override fun onBackPressed() {
         // 뒤로가기 버튼을 누를 때
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -125,10 +131,55 @@ class HeartbeatActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
+    private fun setupLineChart(lineChart: LineChart) {
+        // LineChart 설정
+        lineChart.setTouchEnabled(true)
+        lineChart.setPinchZoom(true)
+        lineChart.description = Description().apply { text = "" }
+
+        // X 축 설정
+        val xAxis = lineChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawGridLines(false)
+        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("일", "월", "화", "수", "목", "금", "토"))
+        xAxis.setGranularity(1f) // X축 간격 설정
+
+        // Y 축 설정
+        val leftAxis = lineChart.axisLeft
+        leftAxis.setDrawGridLines(false)
+        leftAxis.setDrawZeroLine(false)
+
+        val rightAxis = lineChart.axisRight
+        rightAxis.isEnabled = false
+    }
+
+    private fun setupBarChart(barChart: BarChart) {
+        // BarChart 설정
+        barChart.setTouchEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.description = Description().apply { text = "" }
+
+        // X 축 설정
+        val xAxis = barChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawGridLines(false)
+        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"))
+        xAxis.setGranularity(1f) // X축 간격 설정
+
+        // Y 축 설정
+        val leftAxis = barChart.axisLeft
+        leftAxis.setDrawGridLines(false)
+        leftAxis.setDrawZeroLine(false)
+
+        val rightAxis = barChart.axisRight
+        rightAxis.isEnabled = false
+    }
+
+
 
     private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
         // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "심박수")
+        val dataSet = LineDataSet(entries, "일별 심박수")
         dataSet.color = ContextCompat.getColor(this, R.color.black)
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
@@ -139,6 +190,21 @@ class HeartbeatActivity : AppCompatActivity() {
         // LineChart에 데이터 추가
         lineChart.data = lineData
         lineChart.invalidate()
+    }
+
+    private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
+        // BarDataSet 생성
+        val dataSet = BarDataSet(entries, "월별 심박수")
+        dataSet.color = Color.parseColor("#5271FE")
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
+
+        // BarData 생성 및 설정
+        val barData = BarData(dataSet)
+        barData.setDrawValues(true)
+
+        // BarChart에 데이터 추가
+        barChart.data = barData
+        barChart.invalidate()
     }
 }
 
