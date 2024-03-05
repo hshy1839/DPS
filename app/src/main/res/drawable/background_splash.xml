@@ -7,7 +7,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/dps_logo"/>
+            android:src="@drawable/aginginplace_splash"/>
     </item>
 
 </layer-list>

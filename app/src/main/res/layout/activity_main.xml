@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="DPS"
+                android:text="Aging In Place"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:textSize="30sp"
@@ -67,16 +67,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/img_oldman"/>
+                android:background="#5271FE"/>
 
             <TextView
                 android:id="@+id/firstTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DPS와"
-                android:textSize="50sp"
+                android:text="Aging In Place와"
+                android:textSize="40sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:fontFamily="@font/linebd"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"/>
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="새로운 경험을 해보세요"
                 android:fontFamily="@font/linerg"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="230dp"/>
@@ -120,7 +120,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/heartrate_icon"
+                    android:src="@drawable/ic_heartrate"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -152,7 +152,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/sleep_icon"
+                    android:src="@drawable/ic_sleep"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -195,7 +195,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/running_icon"
+                    android:src="@drawable/ic_running"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -212,7 +212,7 @@
 
             <!-- Heartrate 버튼 (다시 사용) -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/heartrate_btn2"
+                android:id="@+id/calorie_btn"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
@@ -230,7 +230,7 @@
                     android:layout_gravity="top|center"
                     android:layout_marginTop="20dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/heartrate_icon" />
+                    android:src="@drawable/ic_calories" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -238,7 +238,7 @@
                     android:layout_gravity="top|center"
                     android:layout_marginTop="100dp"
                     android:fontFamily="@font/linebd"
-                    android:text="HeartRate"
+                    android:text="Calorie"
                     android:textColor="@android:color/black"
                     android:textSize="25sp" />
             </androidx.cardview.widget.CardView>
@@ -265,9 +265,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/linebd"
-                android:text="오늘의 운동 목록"
-                android:textSize="30sp"
-                android:textColor="@android:color/black"
+                android:text="Aging In Place"
+                android:textSize="20sp"
+                android:textColor="@android:color/darker_gray"
                 android:textStyle="bold"/>
 
             <TextView
@@ -290,3 +290,9 @@
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/nav_menu" />
 </androidx.drawerlayout.widget.DrawerLayout>
+
+<!--아이콘 www.freepik.com 사용 명시
+ic_running : <a href="https://kr.freepik.com/icon/running_763812#fromView=search&page=1&position=17&uuid=1ac59bb1-822a-4615-8447-7032140786c7">Freepik 제작 아이콘</a>
+ic_heartrate : <a href="https://kr.freepik.com/icon/heart_7629483#fromView=search&page=1&position=35&uuid=cc311419-cdd8-4594-be2a-72467fc2fbbc">Creatype 제작 아이콘</a>
+ic_sleep : <a href="https://www.freepik.com/icon/sleeping_9638703#fromView=search&page=1&position=53&uuid=a49828ed-b29f-4b5c-a288-b01110c5af50">Icon by Iconjam</a>
+-->

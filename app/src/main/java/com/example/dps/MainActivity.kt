@@ -49,6 +49,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val calorieBtn = findViewById<CardView>(R.id.calorie_btn)
+        heartrateBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity, HeartbeatActivity::class.java)
+            startActivity(intent)
+        }
+
         firstTextView = findViewById(R.id.firstTextView)
         secondTextView = findViewById(R.id.secondTextView)
 
