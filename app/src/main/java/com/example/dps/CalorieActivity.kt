@@ -18,16 +18,16 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.navigation.NavigationView
 
-class HeartbeatActivity : AppCompatActivity() {
+class CalorieActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_heartbeat)
+        setContentView(R.layout.activity_calorie)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
-            val intent = Intent(this@HeartbeatActivity, LoginActivity::class.java)
+            val intent = Intent(this@CalorieActivity, LoginActivity::class.java)
             startActivity(intent)
         }
 
@@ -94,7 +94,7 @@ class HeartbeatActivity : AppCompatActivity() {
         // LineChart 설정
         lineChart.setTouchEnabled(true)
         lineChart.setPinchZoom(true)
-        lineChart.description = Description().apply { text = "시간" }
+        lineChart.description = Description().apply { text = "요일" }
 
         // X 축 설정
         val xAxis = lineChart.xAxis
@@ -112,7 +112,6 @@ class HeartbeatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        // 뒤로가기 버튼을 누를 때
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             // 만약 Navigation Drawer가 열려 있다면, 닫기
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -128,7 +127,7 @@ class HeartbeatActivity : AppCompatActivity() {
 
     private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
         // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "심박수")
+        val dataSet = LineDataSet(entries, "일별 칼로리 섭취량")
         dataSet.color = ContextCompat.getColor(this, R.color.black)
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 

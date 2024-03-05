@@ -1,6 +1,7 @@
 package com.example.dps
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
@@ -57,15 +58,20 @@ class WorkoutActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
                     // Menu 1 선택 시의 동작
-                    showToast("Select Menu 1")
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    startActivity(intent)
                 }
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
-                    showToast("Select Menu 2")
+                    showToast("고객센터 이동 버튼")
                 }
                 R.id.nav_item3 -> {
                     // Menu 3 선택 시의 동작
-                    showToast("Select Menu 3")
+                    showToast("설정 버튼")
+                }
+                R.id.nav_item4 -> {
+                    // Menu 3 선택 시의 동작
+                    showToast("로그아웃 버튼")
                 }
             }
             // 메뉴를 선택한 후에는 Drawer를 닫아줌
@@ -77,6 +83,11 @@ class WorkoutActivity : AppCompatActivity() {
         menuButton.setOnClickListener {
             // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        val backArrow = findViewById<ImageView>(R.id.back_arrow)
+        backArrow.setOnClickListener {
+            onBackPressed()
         }
     }
     private fun setupLineChart(lineChart: LineChart) {
@@ -108,6 +119,7 @@ class WorkoutActivity : AppCompatActivity() {
         } else {
             // 그렇지 않으면 기본 동작 수행
             super.onBackPressed()
+
         }
     }
 

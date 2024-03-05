@@ -1,6 +1,7 @@
 package com.example.dps
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
@@ -33,6 +34,11 @@ class SleepActivity : AppCompatActivity() {
         val lineChart = findViewById<LineChart>(R.id.lineChart)
         setupLineChart(lineChart)
 
+        val backArrow = findViewById<ImageView>(R.id.back_arrow)
+        backArrow.setOnClickListener {
+            onBackPressed()
+        }
+
         // 시간별 심박수 데이터 추가 (예시)
         val entries = mutableListOf<Entry>()
         entries.add(Entry(1f, 80f))
@@ -57,15 +63,20 @@ class SleepActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
                     // Menu 1 선택 시의 동작
-                    showToast("Select Menu 1")
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    startActivity(intent)
                 }
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
-                    showToast("Select Menu 2")
+                    showToast("고객센터 이동 버튼")
                 }
                 R.id.nav_item3 -> {
                     // Menu 3 선택 시의 동작
-                    showToast("Select Menu 3")
+                    showToast("설정 버튼")
+                }
+                R.id.nav_item4 -> {
+                    // Menu 3 선택 시의 동작
+                    showToast("로그아웃 버튼")
                 }
             }
             // 메뉴를 선택한 후에는 Drawer를 닫아줌

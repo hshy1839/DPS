@@ -37,6 +37,6 @@
         <activity android:name=".HeartbeatActivity"/>
         <activity android:name=".WorkoutActivity"/>
         <activity android:name=".SleepActivity"/>
-
+        <activity android:name=".CalorieActivity"/>
     </application>
 </manifest>

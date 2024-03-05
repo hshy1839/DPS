@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HeartbeatActivity">
+    tools:context=".WorkoutActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -167,7 +167,7 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:orientation="vertical">
 
@@ -180,7 +180,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
-                                    android:layout_marginTop="5dp"
                                     android:background="@color/white"
                                     android:gravity="left|center"
                                     android:text="월"
@@ -211,7 +210,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView
@@ -243,7 +241,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView
@@ -276,7 +273,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView
@@ -304,7 +300,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView
@@ -337,7 +332,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView
@@ -370,7 +364,6 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
                                 android:orientation="horizontal">
 
                                 <TextView

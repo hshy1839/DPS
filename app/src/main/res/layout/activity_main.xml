@@ -210,7 +210,7 @@
                     android:textSize="25sp"/>
             </androidx.cardview.widget.CardView>
 
-            <!-- Heartrate 버튼 (다시 사용) -->
+            <!-- 칼로리 버튼 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/calorie_btn"
                 android:layout_width="150dp"
@@ -221,8 +221,7 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="5dp"
                 app:strokeColor="#000000"
-                app:strokeWidth="1dp"
-                tools:ignore="DuplicateIds">
+                app:strokeWidth="1dp">
 
                 <ImageView
                     android:layout_width="60dp"

@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SleepActivity">
+    tools:context=".CalorieActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -93,7 +93,7 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="20dp"
                                 android:fontFamily="@font/linebd"
-                                android:text="Sleep"
+                                android:text="Calories"
                                 android:textColor="@android:color/black"
                                 android:textSize="25sp" />
 
@@ -102,7 +102,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="60dp"
-                                android:text="Good"
+                                android:text="12000 kcal"
                                 android:textColor="@color/black"
                                 android:textSize="25sp"
                                 android:textStyle="bold" />
@@ -112,7 +112,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="bottom|center"
                                 android:layout_marginTop="10dp"
-                                android:text="굿나잇 했군요"
+                                android:text="너무 많은 칼로리 섭취량"
                                 android:textColor="@android:color/black" />
                         </LinearLayout>
 
@@ -141,7 +141,7 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="20dp"
                                 android:fontFamily="@font/linebd"
-                                android:text="요일별 수면시간"
+                                android:text="요일별 운동시간"
                                 android:textColor="@android:color/black"
                                 android:textSize="18sp" />
 
@@ -192,7 +192,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -228,7 +228,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -259,7 +259,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -291,7 +291,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -318,7 +318,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -350,7 +350,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="120bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
@@ -382,7 +382,7 @@
                                     android:layout_marginStart="220dp"
                                     android:background="@color/white"
                                     android:gravity="right|center"
-                                    android:text="110bmp"
+                                    android:text="1236 kcal"
                                     android:textColor="@android:color/black"
                                     android:textSize="15sp" />
                             </LinearLayout>
