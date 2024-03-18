@@ -34,9 +34,9 @@
         <activity android:name=".loginActivity.SignupActivity1"/>
         <activity android:name=".loginActivity.SignupActivity2"/>
         <activity android:name=".loginActivity.SignupActivity3"/>
-        <activity android:name=".mainActivity.HeartbeatActivity"/>
-        <activity android:name=".mainActivity.WorkoutActivity"/>
-        <activity android:name=".mainActivity.SleepActivity"/>
-        <activity android:name=".mainActivity.CalorieActivity"/>
+        <activity android:name=".mainActivity.Heartrate.HeartbeatActivity"/>
+        <activity android:name=".mainActivity.Workout.WorkoutActivity"/>
+        <activity android:name=".mainActivity.Sleep.SleepActivity"/>
+        <activity android:name=".mainActivity.Calorie.CalorieActivity"/>
     </application>
 </manifest>

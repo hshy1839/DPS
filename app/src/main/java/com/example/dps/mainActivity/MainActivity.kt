@@ -14,6 +14,10 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.dps.loginActivity.LoginActivity
 import com.example.dps.R
+import com.example.dps.mainActivity.Calorie.CalorieActivity
+import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
+import com.example.dps.mainActivity.Sleep.SleepActivity
+import com.example.dps.mainActivity.Workout.WorkoutActivity
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {

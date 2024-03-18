@@ -1,4 +1,4 @@
-package com.example.dps.mainActivity
+package com.example.dps.mainActivity.Calorie
 
 import android.content.Intent
 import android.graphics.Color
@@ -26,16 +26,18 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
 
-class HeartbeatActivity : AppCompatActivity() {
+
+class CalorieActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_heartbeat)
+        setContentView(R.layout.activity_calorie)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
-            val intent = Intent(this@HeartbeatActivity, LoginActivity::class.java)
+            val intent = Intent(this@CalorieActivity, LoginActivity::class.java)
             startActivity(intent)
         }
 
@@ -47,7 +49,7 @@ class HeartbeatActivity : AppCompatActivity() {
         val lineChart = findViewById<LineChart>(R.id.lineChart)
         setupLineChart(lineChart)
 
-        // 시간별 심박수 데이터 추가 (예시)
+        // LineChart에 데이터 추가
         val lineEntries = mutableListOf<Entry>()
         lineEntries.add(Entry(0f, 80f))
         lineEntries.add(Entry(1f, 85f))
@@ -119,8 +121,8 @@ class HeartbeatActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
     }
+
     override fun onBackPressed() {
-        // 뒤로가기 버튼을 누를 때
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             // 만약 Navigation Drawer가 열려 있다면, 닫기
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -133,6 +135,7 @@ class HeartbeatActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
+
     private fun setupLineChart(lineChart: LineChart) {
         // LineChart 설정
         lineChart.setTouchEnabled(true)
@@ -181,7 +184,7 @@ class HeartbeatActivity : AppCompatActivity() {
 
     private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
         // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "일별 심박수")
+        val dataSet = LineDataSet(entries, "일별 칼로리 섭취량")
         dataSet.color = ContextCompat.getColor(this, R.color.black)
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
@@ -196,7 +199,7 @@ class HeartbeatActivity : AppCompatActivity() {
 
     private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
-        val dataSet = BarDataSet(entries, "월별 심박수")
+        val dataSet = BarDataSet(entries, "월별 칼로리 섭취량")
         dataSet.color = Color.parseColor("#5271FE")
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
@@ -209,5 +212,3 @@ class HeartbeatActivity : AppCompatActivity() {
         barChart.invalidate()
     }
 }
-
-
