@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dps.mainActivity.MainActivity
 
 
 class SplashActivity : AppCompatActivity() {

@@ -1,10 +1,11 @@
-package com.example.dps
+package com.example.dps.mainActivity
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.dps.R
 
 class InfoFragment : Fragment() {
     override fun onCreateView(

@@ -1,10 +1,11 @@
-package com.example.dps
+package com.example.dps.loginActivity
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dps.R
+import com.example.dps.mainActivity.MainActivity
 
 class SignupActivity3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
