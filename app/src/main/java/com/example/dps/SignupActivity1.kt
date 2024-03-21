@@ -1,14 +1,13 @@
 package com.example.dps
 
 import android.content.Intent
+import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dps.R
-import com.example.dps.SignupActivity
 import com.example.dps.SignupActivity2
 
 class SignupActivity1 : AppCompatActivity() {

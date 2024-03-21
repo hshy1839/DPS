@@ -73,19 +73,19 @@
                 android:id="@+id/firstTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aging In Place와"
+                android:text="Aging In Place"
                 android:textSize="40sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:fontFamily="@font/linebd"
-                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
                 android:layout_marginLeft="20dp"/>
 
             <TextView
                 android:id="@+id/secondTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="새로운 경험을 해보세요"
+                android:text=""
                 android:fontFamily="@font/linerg"
                 android:textColor="@android:color/white"
                 android:textSize="30sp"

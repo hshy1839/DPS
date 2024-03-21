@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         firstTextView.animate()
             .alpha(1f)
-            .setDuration(1000)
+            .setDuration(3000)
             .withStartAction { }
             .withEndAction {
                 secondTextView.animate()
