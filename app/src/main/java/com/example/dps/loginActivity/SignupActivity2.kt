@@ -1,25 +1,24 @@
-package com.example.dps
+package com.example.dps.loginActivity
 
-import com.example.dps.SignupActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dps.R
 
-class LoginActivity : AppCompatActivity() {
+class SignupActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_signup2)
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
-            // 뒤로 가기 버튼 클릭 시 MainActivity로 이동
             onBackPressed()
         }
-        val signupBtn = findViewById<Button>(R.id.signup_btn)
-        signupBtn.setOnClickListener {
-            val intent = Intent(this@LoginActivity, SignupActivity::class.java)
+        val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
+        signUpNextBtn.setOnClickListener{
+            val intent = Intent(this@SignupActivity2, SignupActivity3::class.java)
             startActivity(intent)
         }
     }

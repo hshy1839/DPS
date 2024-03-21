@@ -1,4 +1,4 @@
-package com.example.dps
+package com.example.dps.loginActivity
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -8,8 +8,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dps.LoginActivity
-import com.example.dps.SignupActivity1
+import com.example.dps.R
 
 class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

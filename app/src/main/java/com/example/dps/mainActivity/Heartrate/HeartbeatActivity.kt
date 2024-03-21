@@ -1,4 +1,4 @@
-package com.example.dps
+package com.example.dps.mainActivity.Heartrate
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.dps.loginActivity.LoginActivity
+import com.example.dps.R
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description

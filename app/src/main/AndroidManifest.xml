@@ -16,7 +16,7 @@
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
         <activity
-            android:name=".MainActivity"
+            android:name=".mainActivity.MainActivity"
             android:exported="true">
         </activity>
         <activity
@@ -29,14 +29,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".SignupActivity"/>
-        <activity android:name=".SignupActivity1"/>
-        <activity android:name=".SignupActivity2"/>
-        <activity android:name=".SignupActivity3"/>
-        <activity android:name=".HeartbeatActivity"/>
-        <activity android:name=".WorkoutActivity"/>
-        <activity android:name=".SleepActivity"/>
-        <activity android:name=".CalorieActivity"/>
+        <activity android:name=".loginActivity.LoginActivity"/>
+        <activity android:name=".loginActivity.SignupActivity"/>
+        <activity android:name=".loginActivity.SignupActivity1"/>
+        <activity android:name=".loginActivity.SignupActivity2"/>
+        <activity android:name=".loginActivity.SignupActivity3"/>
+        <activity android:name=".mainActivity.Heartrate.HeartbeatActivity"/>
+        <activity android:name=".mainActivity.Workout.WorkoutActivity"/>
+        <activity android:name=".mainActivity.Sleep.SleepActivity"/>
+        <activity android:name=".mainActivity.Calorie.CalorieActivity"/>
     </application>
 </manifest>

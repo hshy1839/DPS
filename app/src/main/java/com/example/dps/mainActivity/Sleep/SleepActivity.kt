@@ -1,4 +1,4 @@
-package com.example.dps
+package com.example.dps.mainActivity.Sleep
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.dps.loginActivity.LoginActivity
+import com.example.dps.R
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
@@ -24,22 +26,28 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
 
-class WorkoutActivity : AppCompatActivity() {
+class SleepActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_workout)
+        setContentView(R.layout.activity_sleep)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
-            val intent = Intent(this@WorkoutActivity, LoginActivity::class.java)
+            val intent = Intent(this@SleepActivity, LoginActivity::class.java)
             startActivity(intent)
         }
 
         val lineChart = findViewById<LineChart>(R.id.lineChart)
         setupLineChart(lineChart)
 
+        val backArrow = findViewById<ImageView>(R.id.back_arrow)
+        backArrow.setOnClickListener {
+            onBackPressed()
+        }
+
+        // 시간별 심박수 데이터 추가 (예시)
         val lineEntries = mutableListOf<Entry>()
         lineEntries.add(Entry(0f, 80f))
         lineEntries.add(Entry(1f, 85f))
@@ -110,11 +118,6 @@ class WorkoutActivity : AppCompatActivity() {
             // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
         }
-
-        val backArrow = findViewById<ImageView>(R.id.back_arrow)
-        backArrow.setOnClickListener {
-            onBackPressed()
-        }
     }
     override fun onBackPressed() {
         // 뒤로가기 버튼을 누를 때
@@ -124,7 +127,6 @@ class WorkoutActivity : AppCompatActivity() {
         } else {
             // 그렇지 않으면 기본 동작 수행
             super.onBackPressed()
-
         }
     }
 
@@ -157,7 +159,7 @@ class WorkoutActivity : AppCompatActivity() {
         // BarChart 설정
         barChart.setTouchEnabled(true)
         barChart.setPinchZoom(true)
-        barChart.description = Description().apply { text =""}
+        barChart.description = Description().apply { text = "" }
 
         // X 축 설정
         val xAxis = barChart.xAxis
@@ -179,7 +181,7 @@ class WorkoutActivity : AppCompatActivity() {
 
     private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
         // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "일별 운동량")
+        val dataSet = LineDataSet(entries, "일별 수면량")
         dataSet.color = ContextCompat.getColor(this, R.color.black)
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
@@ -194,7 +196,7 @@ class WorkoutActivity : AppCompatActivity() {
 
     private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
-        val dataSet = BarDataSet(entries, "월별 운동량")
+        val dataSet = BarDataSet(entries, "월별 수면량")
         dataSet.color = Color.parseColor("#5271FE")
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
 
