@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface ServiceApi {
+interface RetrofitInterface {
     @POST("/api/android/login")
     fun executeLogin(@Body map: HashMap<String, String>): Call<LoginResult>
 

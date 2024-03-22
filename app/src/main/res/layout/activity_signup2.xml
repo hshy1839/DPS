@@ -39,6 +39,7 @@
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
         <EditText
+            android:id="@+id/passwordEdit"
             android:layout_width="320dp"
             android:layout_gravity="center"
             android:layout_height="45dp"
@@ -53,6 +54,7 @@
             android:inputType="textPassword"
             android:layout_marginTop="50dp"/>
         <EditText
+            android:id="@+id/confirmPasswordEdit"
             android:layout_width="320dp"
             android:layout_gravity="center"
             android:layout_height="45dp"

@@ -47,6 +47,7 @@
 
         <!-- 이름 입력란 -->
         <EditText
+            android:id="@+id/nameEdit"
             android:layout_marginTop="20dp"
             android:layout_width="320dp"
             android:layout_height="45dp"
@@ -62,6 +63,7 @@
 
         <!-- 이메일 선택 박스 -->
         <EditText
+            android:id="@+id/emailEdit"
             android:layout_marginTop="20dp"
             android:layout_width="320dp"
             android:layout_height="45dp"
@@ -78,6 +80,7 @@
 
         <!-- 핸드폰 번호 입력 박스 -->
         <EditText
+            android:id="@+id/phoneNumberEdit"
             android:layout_marginTop="20dp"
             android:layout_width="320dp"
             android:layout_height="45dp"
@@ -94,8 +97,8 @@
 
         <!-- 생일 선택 날짜 -->
         <EditText
+            android:id="@+id/birthdayEdit"
             android:layout_marginTop="20dp"
-            android:id="@+id/birthday_edit_text"
             android:layout_width="320dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -117,7 +120,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/patient_radio_button"
+                android:id="@+id/patientRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="환자"
@@ -125,7 +128,7 @@
                 android:textColor="@color/black" />
 
             <RadioButton
-                android:id="@+id/guardian_radio_button"
+                android:id="@+id/guardianRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="보호자"
@@ -141,7 +144,7 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/male_radio_button"
+                android:id="@+id/maleRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="남자"
@@ -149,7 +152,7 @@
                 android:textColor="@color/black" />
 
             <RadioButton
-                android:id="@+id/female_radio_button"
+                android:id="@+id/femaleRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="여자"
