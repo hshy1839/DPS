@@ -22,7 +22,7 @@ class SignupActivity1 : AppCompatActivity() {
             onBackPressed()
         }
 
-        editTextId = findViewById(R.id.idEditbox)
+        editTextId = findViewById(R.id.idEdit)
 
         val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
         signUpNextBtn.setOnClickListener {
