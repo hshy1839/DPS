@@ -102,10 +102,6 @@
             android:orientation="horizontal"
             android:layout_gravity="center"
             android:layout_marginTop="50dp">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/connect_button"/>
             <!-- Heartrate 버튼 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/heartrate_btn"

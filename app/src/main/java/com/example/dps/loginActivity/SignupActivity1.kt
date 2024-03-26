@@ -1,37 +1,27 @@
 package com.example.dps.loginActivity
 
-import ApiService
 import android.content.Intent
-import com.example.dps.R
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dps.RetrofitClient
-import com.example.dps.UserData
-import com.example.dps.loginActivity.SignupActivity2
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.dps.R
 
 class SignupActivity1 : AppCompatActivity() {
     private lateinit var idEdit: EditText
+    private lateinit var username: String
+    private lateinit var pwEdit: EditText
+    private lateinit var pwcheckEdit: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup1)
-        idEdit = findViewById(R.id.idEdit)
+
+        idEdit = findViewById(R.id.idEdit) // 아이디 입력란 초기화
+        pwEdit = findViewById(R.id.passwordEdit)
+        pwcheckEdit = findViewById(R.id.confirmPasswordEdit)
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
@@ -40,31 +30,35 @@ class SignupActivity1 : AppCompatActivity() {
 
         val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
         signUpNextBtn.setOnClickListener {
-            val username = idEdit.text.toString() // 사용자가 입력한 데이터
-            val intent = Intent(this@SignupActivity1, SignupActivity2::class.java)
-            intent.putExtra("USERNAME", username)
-            startActivity(intent)
-            onNextButtonClicked()
-        }
-    }
-    private fun onNextButtonClicked() {
-        // 아이디 입력란 확인
-        val enteredId = idEdit.text.toString()
+            val password = pwEdit.text.toString()
+            val confirmPassword = pwcheckEdit.text.toString()
+            val enteredId = idEdit.text.toString() // 사용자가 입력한 아이디
 
-        if (enteredId.isEmpty()) {
-            showEmptyIdAlertDialog()
-        } else {
-
-            val intent = Intent(this@SignupActivity1, SignupActivity2::class.java)
-            startActivity(intent)
+            if (password.isEmpty() || confirmPassword.isEmpty() || enteredId.isEmpty()) {
+                showEmptyFieldAlertDialog()
+            } else if (password == confirmPassword) {
+                val intent = Intent(this@SignupActivity1, SignupActivity2::class.java)
+                intent.putExtra("USERNAME", enteredId) // 수정된 부분
+                intent.putExtra("PASSWORD", password)
+                startActivity(intent)
+            } else {
+                showPasswordMismatchAlertDialog()
+            }
         }
     }
 
-
-    private fun showEmptyIdAlertDialog() {
+    private fun showEmptyFieldAlertDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("아이디 입력")
-        alertDialogBuilder.setMessage("아이디를 입력해주세요.")
+        alertDialogBuilder.setTitle("입력 필요")
+        alertDialogBuilder.setMessage("모든 필드를 입력해주세요.")
+        alertDialogBuilder.setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
+        alertDialogBuilder.show()
+    }
+
+    private fun showPasswordMismatchAlertDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("비밀번호 불일치")
+        alertDialogBuilder.setMessage("비밀번호가 일치하지 않습니다. 다시 확인해주세요.")
         alertDialogBuilder.setPositiveButton("확인") { dialog, which -> dialog.dismiss() }
         alertDialogBuilder.show()
     }

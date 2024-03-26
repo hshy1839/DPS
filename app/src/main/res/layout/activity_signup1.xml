@@ -28,14 +28,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="아이디 입력"
+            android:text="아이디, 비밀번호 입력"
             android:textColor="@color/black"
             android:textSize="30sp"
             android:textStyle="bold"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="새로 사용할 아이디를 입력해주세요"
+            android:text="새로 사용할 아이디와 비밀번호를 입력해주세요"
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray"/>
         <EditText
@@ -52,6 +52,36 @@
             android:textColor="@color/black"
             android:textColorHint="#cccccc"
             android:layout_marginTop="50dp"/>
+        <EditText
+            android:id="@+id/passwordEdit"
+            android:layout_width="320dp"
+            android:layout_gravity="center"
+            android:layout_height="45dp"
+            android:textSize="15sp"
+            android:paddingLeft="10dp"
+            android:background="@drawable/login_edittext_background"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:hint="비밀번호"
+            android:textColor="@color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:inputType="textPassword"
+            android:layout_marginTop="20dp"/>
+        <EditText
+            android:id="@+id/confirmPasswordEdit"
+            android:layout_width="320dp"
+            android:layout_gravity="center"
+            android:layout_height="45dp"
+            android:textSize="15sp"
+            android:paddingLeft="10dp"
+            android:background="@drawable/login_edittext_background"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:hint="비밀번호 확인"
+            android:textColor="@color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:inputType="textPassword"
+            android:layout_marginTop="20dp"/>
         <Button
             android:id="@+id/signup_nextbtn"
             android:layout_width="330dp"

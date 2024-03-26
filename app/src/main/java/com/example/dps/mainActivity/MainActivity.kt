@@ -127,28 +127,6 @@ class MainActivity : AppCompatActivity() {
             // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
         }
-
-        findViewById<Button>(R.id.connect_button).setOnClickListener {
-            checkServerConnection()
-        }
-    }
-    private fun checkServerConnection() {
-        apiService.checkConnection().enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                if (response.isSuccessful) {
-                    // 서버와 연결 성공
-                    showToast("서버와 연결되었습니다.")
-                } else {
-                    // 서버와 연결 실패
-                    showToast("서버와 연결에 실패했습니다.")
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                // 네트워크 오류 등으로 연결 실패
-                showToast("서버와의 연결이 중단되었습니다.")
-            }
-        })
     }
 
     private fun showToast(message: String) {
