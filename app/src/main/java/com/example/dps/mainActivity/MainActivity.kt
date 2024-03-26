@@ -1,17 +1,26 @@
 package com.example.dps.mainActivity
 
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.health.connect.client.HealthConnectClient
+import androidx.lifecycle.lifecycleScope
+import com.example.dps.HealthConnectManager
 import com.example.dps.loginActivity.LoginActivity
 import com.example.dps.R
 import com.example.dps.mainActivity.Calorie.CalorieActivity
@@ -19,6 +28,10 @@ import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
 import com.example.dps.mainActivity.Sleep.SleepActivity
 import com.example.dps.mainActivity.Workout.WorkoutActivity
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+
+private const val APP_TAG = "Aging In Place"
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,9 +39,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var secondTextView: TextView
     private lateinit var drawerLayout: DrawerLayout
 
+    private lateinit var healthConnectManager: HealthConnectManager
+    private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        healthConnectManager = HealthConnectManager(this)
+        createRequestPermissionsObject()
+        checkAvailabilityAndPermissions()
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -120,6 +140,95 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
+    }
+
+    private fun checkAvailabilityAndPermissions() {
+        if (!checkAvailability()) {
+            return
+        }
+        lifecycleScope.launch {
+            if (!healthConnectManager.hasAllPermissions()) {
+                checkPermissions()
+            }
+        }
+    }
+
+    private fun createRequestPermissionsObject() {
+        requestPermissions =
+            registerForActivityResult(healthConnectManager.requestPermissionActivityContract) { granted ->
+                lifecycleScope.launch {
+                    if (granted.isNotEmpty() && healthConnectManager.hasAllPermissions()) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_granted,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    } else {
+                        AlertDialog.Builder(this@MainActivity)
+                            .setMessage(R.string.permissions_not_granted)
+                            .setPositiveButton("Ok", null)
+                            .show()
+                    }
+                }
+            }
+    }
+
+    private fun checkPermissions(): Job {
+        return lifecycleScope.launch {
+            try {
+                if (!healthConnectManager.hasAllPermissions()) {
+                    requestPermissions.launch(healthConnectManager.permissions)
+                }
+            } catch (exception: Exception) {
+                Log.e(APP_TAG, exception.toString())
+                Toast.makeText(this@MainActivity, "Error: $exception", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+    }
+
+    private fun checkAvailability(): Boolean {
+        when (HealthConnectClient.getSdkStatus(this)) {
+            HealthConnectClient.SDK_UNAVAILABLE -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "권한이 없습니다.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                return false
+            }
+
+            HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "헬스 커넥트가 설치되어있지 않습니다.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=com.google.android.apps.healthdata"),
+                        ),
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"),
+                        ),
+                    )
+                }
+                return false
+            }
+            else -> {
+                return true
+            }
+        }
     }
 
     override fun onBackPressed() {

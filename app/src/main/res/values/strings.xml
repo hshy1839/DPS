@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="permission_granted">All permissions were granted.</string>
+    <string name="permissions_not_granted">Permissions are not granted. Please grant data permissions through Health Connect permission settings.</string>
 </resources>
