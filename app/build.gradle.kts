@@ -58,7 +58,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation ("com.google.android.material:material:1.10.0")
     implementation ("androidx.wear.watchface:watchface-complications-data:1.2.0")
-
+    implementation ("com.google.code.gson:gson:2.8.5")
     implementation("org.apache.commons:commons-csv:1.5")
 
     //DrawerLayout

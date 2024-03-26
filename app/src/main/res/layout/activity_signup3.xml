@@ -117,7 +117,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/roleRadio">
 
             <RadioButton
                 android:id="@+id/patientRadio"
@@ -141,7 +142,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/genderRadio">
 
             <RadioButton
                 android:id="@+id/maleRadio"

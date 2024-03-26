@@ -19,11 +19,16 @@ class SignupActivity : AppCompatActivity() {
         loginBackArrowImageView.setOnClickListener {
             onBackPressed()
         }
+        val signupNextBtn = findViewById<Button>(R.id.signup_nextbtn)
+        signupNextBtn.setOnClickListener{
+            onNextButtonClicked(signupNextBtn)
+        }
 
         var SignUpcheckBoxAll: CheckBox
         var SignUpcheckBox1: CheckBox
         var SignUpcheckBox2: CheckBox
         var SignUpcheckBox3: CheckBox
+
 
         SignUpcheckBoxAll = findViewById(R.id.SignUpcheckBoxAll)
         SignUpcheckBox1 = findViewById(R.id.SignUpcheckBox1)
@@ -114,13 +119,11 @@ class SignupActivity : AppCompatActivity() {
             // 전체 동의하지 않은 경우 AlertDialog 표시
             showAlertDialog()
         } else {
-            val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
-            signUpNextBtn.setOnClickListener {
-                val intent = Intent(this@SignupActivity, SignupActivity1::class.java)
-                startActivity(intent)
-            }
+            val intent = Intent(this@SignupActivity, SignupActivity1::class.java)
+            startActivity(intent)
         }
     }
+
     private fun showAlertDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("약관 동의")

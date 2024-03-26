@@ -1,5 +1,6 @@
 package com.example.dps.mainActivity.Sleep
 
+import com.example.dps.loginActivity.LoginActivity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,7 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.lifecycle.lifecycleScope
 import com.example.dps.HealthConnectManager
-import com.example.dps.loginActivity.LoginActivity
 import com.example.dps.R
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.LineChart
