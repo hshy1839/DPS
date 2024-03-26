@@ -1,8 +1,12 @@
 package com.example.dps.loginActivity
 
 import ApiService
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,22 +23,16 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance()
     private lateinit var apiService: ApiService
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var mainLoginButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
-        loginBackArrowImageView.setOnClickListener {
-            onBackPressed()
-        }
-        val signupBtn = findViewById<Button>(R.id.signup_btn)
-        signupBtn.setOnClickListener {
-            val intent = Intent(this@LoginActivity, SignupActivity::class.java)
-            startActivity(intent)
-        }
-
-        apiService = RetrofitClient.getInstance().create(ApiService::class.java)
+        apiService = retrofit.create(ApiService::class.java)
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        checkLoginStatus()
 
         val idEdit = findViewById<EditText>(R.id.idEdit)
         val pwEdit = findViewById<EditText>(R.id.passwordEdit)
@@ -54,19 +52,36 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkLoginStatus() {
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            // 이미 로그인되어 있다면 MainActivity로 이동
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish() // 로그인 화면 종료
+        }
+    }
     private fun loginUser(username: String, password: String) {
         val call = apiService.login(LoginData(username, password))
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+
+
+
                 if (response.isSuccessful) {
+
                     // 로그인 성공
                     Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
-                    // 로그인 성공 시 메인 화면으로 이동
+                    // SharedPreferences에 로그인 상태 저장
+                    saveLoginStatus(true )
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish() // 로그인 화면 종료
                 } else {
                     // 로그인 실패
+                    mainLoginButton.visibility = View.VISIBLE
                     Toast.makeText(this@LoginActivity, "아이디 또는 비밀번호가 틀립니다.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -76,5 +91,11 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "로그인 실패: " + t.message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun saveLoginStatus(isLoggedIn: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", isLoggedIn)
+        editor.commit()
     }
 }

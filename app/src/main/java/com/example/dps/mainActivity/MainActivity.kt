@@ -2,11 +2,14 @@ package com.example.dps.mainActivity
 
 
 import ApiService
+import android.content.Context
 import com.example.dps.loginActivity.LoginActivity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.dps.LoginData
 import com.example.dps.R
 import com.example.dps.RetrofitClient
+import com.example.dps.UserData
 import com.example.dps.mainActivity.Calorie.CalorieActivity
 import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
 import com.example.dps.mainActivity.Sleep.SleepActivity
@@ -27,22 +32,46 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-
+    private val retrofit = RetrofitClient.getInstance()
     private lateinit var firstTextView: TextView
     private lateinit var secondTextView: TextView
+    private lateinit var mainLoginButton: ImageView
+    private lateinit var menuButton: ImageView
     private lateinit var drawerLayout: DrawerLayout
-    private val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
-
+    private lateinit var navView: NavigationView
+    private lateinit var apiService: ApiService
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val loginButton = findViewById<ImageView>(R.id.loginButton)
-        loginButton.setOnClickListener {
+        navView = findViewById(R.id.nav_view)
+
+        mainLoginButton = findViewById(R.id.mainLoginButton)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+
+        // 만약 로그인되어 있다면 mainLoginButton을 숨깁니다.
+        if (isLoggedIn) {
+            mainLoginButton.visibility = View.GONE
+        } else {
+            mainLoginButton.visibility = View.VISIBLE
+        }
+
+        mainLoginButton.setOnClickListener {
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(intent)
         }
+
+        menuButton = findViewById(R.id.menuButton)
+        menuButton.setOnClickListener {
+            // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        navView = findViewById(R.id.nav_view)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
         val heartrateBtn = findViewById<CardView>(R.id.heartrate_btn)
         heartrateBtn.setOnClickListener {
@@ -86,9 +115,6 @@ class MainActivity : AppCompatActivity() {
             }
             .start()
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-
         // 토글 버튼을 추가하여 메뉴가 열리고 닫히도록 함
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -106,15 +132,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
-                    menu_showToast("고객센터 이동 버튼")
+                    menushowToast("고객센터 이동 버튼")
                 }
                 R.id.nav_item3 -> {
                     // Menu 3 선택 시의 동작
-                    menu_showToast("설정 버튼")
+                    menushowToast("설정 버튼")
                 }
                 R.id.nav_item4 -> {
                     // Menu 3 선택 시의 동작
-                    menu_showToast("로그아웃 버튼")
+                    logout()
                 }
             }
             // 메뉴를 선택한 후에는 Drawer를 닫아줌
@@ -122,15 +148,19 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        val menuButton = findViewById<ImageView>(R.id.menuButton)
-        menuButton.setOnClickListener {
-            // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun logout() {
+        // SharedPreferences에서 로그인 상태를 false로 설정하여 로그아웃 상태로 변경합니다.
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
+
+        // 로그인 화면으로 이동합니다.
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onBackPressed() {
@@ -144,30 +174,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun menu_showToast(message: String) {
+    private fun menushowToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        startAnimation()
     }
-
-    private fun startAnimation() {
-        firstTextView.alpha = 0f
-        secondTextView.alpha = 0f
-
-        firstTextView.animate()
-            .alpha(1f)
-            .setDuration(1000)
-            .withStartAction { }
-            .withEndAction {
-                secondTextView.animate()
-                    .alpha(1f)
-                    .setDuration(1000)
-                    .start()
-            }
-            .start()
-
-    }
-}

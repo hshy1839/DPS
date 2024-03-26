@@ -41,12 +41,13 @@
 
             <!-- 로그인 버튼 -->
             <ImageView
-                android:id="@+id/loginButton"
+                android:id="@+id/mainLoginButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="right|center"
-                android:src="@drawable/baseline_account_circle_24" />
+                android:src="@drawable/baseline_account_circle_24"
+                android:visibility="visible"/>
 
             <!-- 오른쪽 메뉴 버튼 -->
             <ImageView
