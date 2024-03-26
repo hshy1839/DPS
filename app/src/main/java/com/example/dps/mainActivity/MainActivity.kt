@@ -172,6 +172,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
+    private fun aa(){
+
+    }
 
     private fun checkPermissions(): Job {
         return lifecycleScope.launch {
