@@ -132,7 +132,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
-                    menushowToast("고객센터 이동 버튼")
+                    val intent = Intent(this@MainActivity, UserinfoActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_item3 -> {
                     // Menu 3 선택 시의 동작
