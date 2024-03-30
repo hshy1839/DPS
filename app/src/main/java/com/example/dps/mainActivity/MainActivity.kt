@@ -2,6 +2,7 @@ package com.example.dps.mainActivity
 
 
 import ApiService
+import android.annotation.SuppressLint
 import android.content.Context
 import com.example.dps.loginActivity.LoginActivity
 import android.content.Intent
@@ -18,9 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.example.dps.LoginData
 import com.example.dps.R
 import com.example.dps.RetrofitClient
+import com.example.dps.SendWorker
 import com.example.dps.UserData
 import com.example.dps.mainActivity.Calorie.CalorieActivity
 import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
@@ -30,6 +35,7 @@ import com.google.android.material.navigation.NavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance()
@@ -45,6 +51,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // 정해진 기간마다 반복하는 Worker 실행
+        setPeriodicWorkRequest()
 
         navView = findViewById(R.id.nav_view)
 
@@ -175,8 +184,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    val SendWorker = OneTimeWorkRequest.Builder(SendWorker::class.java)
+        .build()
+
     private fun menushowToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
-
+    @SuppressLint("InvalidPeriodicWorkRequestInterval")
+    private fun setPeriodicWorkRequest(){
+        val periodicWorkRequest = PeriodicWorkRequest
+            .Builder(com.example.dps.SendWorker::class.java, 15, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(applicationContext).enqueue(periodicWorkRequest)
     }
+
+}
+
