@@ -10,8 +10,6 @@ import java.util.Date
 import java.util.Locale
 
 data class UserData(
-    val username: String?,
-    val password: String?,
     val email: String,
     val name: String,
     val birthdate: Date,

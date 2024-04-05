@@ -62,6 +62,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.5")
     implementation("org.apache.commons:commons-csv:1.5")
 
+    implementation ("com.google.code.gson:gson:2.8.8")
     //DrawerLayout
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
 }

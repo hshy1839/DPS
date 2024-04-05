@@ -4,139 +4,97 @@ import ApiService
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import com.example.dps.R
 import com.example.dps.RetrofitClient
-import com.example.dps.UserData
 import com.example.dps.loginActivity.LoginActivity
-import com.google.android.material.navigation.NavigationView
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 
 class UserinfoActivity : AppCompatActivity() {
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navView: NavigationView
-    private val retrofit = RetrofitClient.getInstance()
     private lateinit var apiService: ApiService
-    private lateinit var LoginButton: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
+    private var userId: Int = 0 // userId를 정수형으로 변경
+
+    // UI 요소들은 액티비티가 생성될 때 초기화
+    private lateinit var nameText: TextView
+    private lateinit var birthdayText: TextView
+    private lateinit var genderText: TextView
+    private lateinit var phoneNumberText: TextView
+    private lateinit var roleText: TextView
+    private lateinit var emailText: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_userinfo)
 
-        navView = findViewById(R.id.nav_view)
-        drawerLayout = findViewById(R.id.drawer_layout)
-        LoginButton = findViewById(R.id.LoginButton)
-        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        // UI 요소 초기화
+        nameText = findViewById(R.id.nameText)
+        birthdayText = findViewById(R.id.birthdayText)
+        genderText = findViewById(R.id.genderText)
+        phoneNumberText = findViewById(R.id.numberText)
+        roleText = findViewById(R.id.roleText)
+        emailText = findViewById(R.id.emailText)
 
-        if (!isLoggedIn) {
-            AlertDialog.Builder(this@UserinfoActivity)
-                .setMessage("로그인이 필요합니다. 로그인 해주세요.")
-                .setPositiveButton("확인") { _, _ ->
-                    val intent = Intent(this@UserinfoActivity, LoginActivity::class.java)
-                    startActivity(intent)
-                }
-                .setCancelable(false)
-                .show()
-        } else {
-            LoginButton.visibility = View.GONE
-        }
+        // Retrofit 인스턴스 생성
+        apiService = RetrofitClient.getInstance().create(ApiService::class.java)
 
-        val genderText = findViewById<TextView>(R.id.genderText)
-        val nameText = findViewById<TextView>(R.id.nameText)
-        val roleText = findViewById<TextView>(R.id.roleText)
-        val numberText = findViewById<TextView>(R.id.numberText)
-        val birthdayText = findViewById<TextView>(R.id.birthdayText)
+        // SharedPreferences 초기화
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
-        apiService = retrofit.create(ApiService::class.java)
-        val call = apiService.getUserInfo()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        // 로그인 시 저장된 userId 가져오기
+        userId = sharedPreferences.getInt("userId", 0) // getInt 메서드를 사용하여 가져옴
 
-        call.enqueue(object : Callback<List<UserData>> {
-            override fun onResponse(call: Call<List<UserData>>, response: Response<List<UserData>>) {
+        // 사용자 정보 가져오기 요청
+        fetchUserInfo()
+    }
+
+    private fun fetchUserInfo() {
+        // 사용자 정보 요청 (쿼리에 userId와 sessionId를 함께 요청)
+        val sessionId = sharedPreferences.getString("sessionId", "")
+        val call = apiService.getUserInfo(userId, sessionId)
+        call.enqueue(object : Callback<JsonArray> {
+            override fun onResponse(call: Call<JsonArray>, response: Response<JsonArray>) {
                 if (response.isSuccessful) {
-                    val userList = response.body() // 사용자 정보 리스트
-                    if (userList.isNullOrEmpty()) {
-                        // 사용자 정보가 없는 경우 처리
-                        Log.e("API", "User data list is empty")
+                    val jsonArray = response.body()
+
+                    // JSON 배열이 유효한지 확인
+                    if (jsonArray != null && jsonArray.size() > 0) {
+                        val jsonObject = jsonArray.get(0).asJsonObject
+
+                        // 사용자 정보 추출
+                        val email = jsonObject.get("email").asString
+                        val name = jsonObject.get("name").asString
+                        val birthdate = jsonObject.get("birthdate").asString
+                        val gender = jsonObject.get("gender").asString
+                        val phoneNumber = jsonObject.get("phoneNumber").asString
+                        val role = jsonObject.get("role").asString
+
+                        // UI에 사용자 정보 설정
+                        emailText.text = email
+                        nameText.text = name
+                        birthdayText.text = birthdate
+                        genderText.text = gender
+                        phoneNumberText.text = phoneNumber
+                        roleText.text = role
                     } else {
-                        val userData = userList[0] // 첫 번째 사용자 정보를 가져옴
-                        val formattedDate = dateFormat.format(userData.birthdate)
-                        genderText.text = userData.gender
-                        nameText.text = userData.name
-                        roleText.text = userData.role
-                        numberText.text = userData.phoneNumber
-                        birthdayText.text = formattedDate
+                        Log.e("EmptyData", "JsonArray is null or empty")
                     }
                 } else {
-                    // 요청이 실패한 경우 처리
                     Log.e("API", "Request failed: ${response.code()}")
                 }
             }
 
-            override fun onFailure(call: Call<List<UserData>>, t: Throwable) {
-                Log.e("UserinfoActivity", "Failed to fetch user info", t)
+            override fun onFailure(call: Call<JsonArray>, t: Throwable) {
+                Log.e("API", "Network error: ${t.message}")
             }
         })
-        val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_item1 -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
-                    startActivity(intent)
-                }
-                R.id.nav_item2 -> {
-                    menushowToast("고객센터 이동 버튼")
-                }
-                R.id.nav_item3 -> {
-                    menushowToast("설정 버튼")
-                }
-                R.id.nav_item4 -> {
-                    logout()
-                }
-            }
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
-    }
-
-    private fun logout() {
-        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isLoggedIn", false)
-        editor.apply()
-
-        val intent = Intent(this@UserinfoActivity, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    private fun menushowToast(message: String) {
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -19,9 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.work.OneTimeWorkRequest
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import com.example.dps.LoginData
 import com.example.dps.R
 import com.example.dps.RetrofitClient
@@ -52,13 +49,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 정해진 기간마다 반복하는 Worker 실행
-        setPeriodicWorkRequest()
-
         navView = findViewById(R.id.nav_view)
 
         mainLoginButton = findViewById(R.id.mainLoginButton)
-        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
 
         // 만약 로그인되어 있다면 mainLoginButton을 숨깁니다.
@@ -161,11 +155,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        // SharedPreferences에서 로그인 상태를 false로 설정하여 로그아웃 상태로 변경합니다.
-        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
-        editor.apply()
+        editor.commit()
 
         // 로그인 화면으로 이동합니다.
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
@@ -183,19 +175,8 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
-    val SendWorker = OneTimeWorkRequest.Builder(SendWorker::class.java)
-        .build()
-
     private fun menushowToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-    @SuppressLint("InvalidPeriodicWorkRequestInterval")
-    private fun setPeriodicWorkRequest(){
-        val periodicWorkRequest = PeriodicWorkRequest
-            .Builder(com.example.dps.SendWorker::class.java, 15, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(applicationContext).enqueue(periodicWorkRequest)
     }
 
 }

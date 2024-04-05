@@ -24,7 +24,6 @@ class LoginActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance()
     private lateinit var apiService: ApiService
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var mainLoginButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,23 +64,22 @@ class LoginActivity : AppCompatActivity() {
         val call = apiService.login(LoginData(username, password))
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-
-                val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-
-
-
                 if (response.isSuccessful) {
+                    // 세션 ID를 받아와 SharedPreferences에 저장
+                    val sessionId = response.headers()["sessionId"]
+                    sessionId?.let {
+                        saveSessionId(it.toInt()) // 정수형으로 변환하여 저장
+                    }
 
                     // 로그인 성공
                     Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
                     // SharedPreferences에 로그인 상태 저장
-                    saveLoginStatus(true )
+                    saveLoginStatus(true)
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish() // 로그인 화면 종료
                 } else {
                     // 로그인 실패
-                    mainLoginButton.visibility = View.VISIBLE
                     Toast.makeText(this@LoginActivity, "아이디 또는 비밀번호가 틀립니다.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -91,6 +89,11 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "로그인 실패: " + t.message, Toast.LENGTH_SHORT).show()
             }
         })
+    }
+    private fun saveSessionId(sessionId: Int) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("sessionId", sessionId)
+        editor.apply()
     }
 
     private fun saveLoginStatus(isLoggedIn: Boolean) {

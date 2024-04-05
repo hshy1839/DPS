@@ -72,14 +72,15 @@ class SignupActivity2 : AppCompatActivity() {
             val selectedRole = findViewById<RadioButton>(selectedRoleId).text.toString()
             val selectedGender = findViewById<RadioButton>(selectedGenderId).text.toString()
 
+            val birthdayString = birthdayEdit.text.toString()
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val birthdayDate: Date = sdf.parse(birthdayString)
             val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
             val call = apiService.signup(
                 UserData(
-                    username,
-                    password,
                     emailEdit.text.toString(),
                     nameEdit.text.toString(),
-                    sdf.parse(birthdayEdit.text.toString()),
+                    birthdayDate,
                     selectedGender,
                     phoneNumberEdit.text.toString(),
                     selectedRole

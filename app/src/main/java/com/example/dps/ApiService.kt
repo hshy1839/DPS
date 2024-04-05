@@ -1,10 +1,13 @@
 
 import com.example.dps.LoginData
 import com.example.dps.UserData
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -17,5 +20,5 @@ interface ApiService {
     fun getUserName(@Body data: LoginData, password: Any?): Call<UserData>
 
     @GET("/api/android/userinfo")
-    fun getUserInfo(): Call<List<UserData>>
+    fun getUserInfo(@Query("userId") userId: Int, @Query("sessionId") sessionId: String?): Call<JsonArray>
 }
