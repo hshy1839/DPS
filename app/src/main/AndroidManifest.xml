@@ -88,7 +88,7 @@
         <activity android:name=".loginActivity.SignupActivity1"/>
         <activity android:name=".loginActivity.SignupActivity3"/>
         <activity android:name=".loginActivity.SignupActivity2"/>
-        <activity android:name=".mainActivity.UserinfoActivity"/>
+        <activity android:name=".mainActivity.UserInfoActivity"/>
         <activity android:name=".mainActivity.Heartrate.HeartbeatActivity"/>
         <activity android:name=".mainActivity.Workout.WorkoutActivity"/>
         <activity android:name=".mainActivity.Sleep.SleepActivity"/>

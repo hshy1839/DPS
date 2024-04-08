@@ -75,7 +75,8 @@ class SignupActivity2 : AppCompatActivity() {
             val birthdayString = birthdayEdit.text.toString()
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val birthdayDate: Date = sdf.parse(birthdayString)
-            val apiService = RetrofitClient.getInstance().create(ApiService::class.java)
+            val apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
+
             val call = apiService.signup(
                 UserData(
                     emailEdit.text.toString(),

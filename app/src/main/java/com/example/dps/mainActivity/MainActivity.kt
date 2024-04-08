@@ -29,13 +29,14 @@ import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
 import com.example.dps.mainActivity.Sleep.SleepActivity
 import com.example.dps.mainActivity.Workout.WorkoutActivity
 import com.google.android.material.navigation.NavigationView
+import com.example.dps.mainActivity.UserInfoActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
-    private val retrofit = RetrofitClient.getInstance()
+    private val retrofit = RetrofitClient.getInstance(this)
     private lateinit var firstTextView: TextView
     private lateinit var secondTextView: TextView
     private lateinit var mainLoginButton: ImageView
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
-                    val intent = Intent(this@MainActivity, UserinfoActivity::class.java)
+                    val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
                     startActivity(intent)
                 }
                 R.id.nav_item3 -> {
@@ -180,4 +181,5 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
 
