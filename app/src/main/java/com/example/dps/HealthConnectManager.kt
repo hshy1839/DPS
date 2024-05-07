@@ -5,6 +5,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.BasalMetabolicRateRecord
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
 import androidx.health.connect.client.records.HeartRateRecord
@@ -47,7 +48,7 @@ class HealthConnectManager(private val context: Context) {
 
     val requestPermissionActivityContract by lazy { PermissionController.createRequestPermissionResultContract() }
 
-    suspend fun readCalActiveRecords(start: Instant, end: Instant): String {
+    suspend fun readCalActive(start: Instant, end: Instant): String {
         val response = healthConnectClient.aggregate(
             AggregateRequest(
                 metrics = setOf(ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL),
@@ -57,15 +58,6 @@ class HealthConnectManager(private val context: Context) {
         return response[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL].toString()
     }
 
-    suspend fun readActive(start: Instant, end: Instant): List<ActiveCaloriesBurnedRecord> {
-        val response =
-            healthConnectClient.readRecords(
-                ReadRecordsRequest<ActiveCaloriesBurnedRecord>(
-                    timeRangeFilter = TimeRangeFilter.between(start, end)
-                )
-            )
-        return response.records
-    }
     suspend fun readDistance(start: Instant, end: Instant): List<DistanceRecord> {
         val response =
             healthConnectClient.readRecords(
@@ -114,6 +106,15 @@ class HealthConnectManager(private val context: Context) {
         val duration = response[ExerciseSessionRecord.EXERCISE_DURATION_TOTAL]
         return duration?.toMillis()?.div(60000) // 변환된 값을 분으로 나눕니다.
     }
+    suspend fun readBMR(start: Instant, end: Instant): String {
+        val response = healthConnectClient.aggregate(
+            AggregateRequest(
+                metrics = setOf(BasalMetabolicRateRecord.BASAL_CALORIES_TOTAL),
+                timeRangeFilter = TimeRangeFilter.between(start, end)
+            )
+        )
+        return response[BasalMetabolicRateRecord.BASAL_CALORIES_TOTAL].toString()
+    }
 
     suspend fun readSleep(start: Instant, end: Instant): List<SleepSessionRecord> {
         val response =
@@ -135,16 +136,16 @@ class HealthConnectManager(private val context: Context) {
         return response.records
     }
 
-    suspend fun readHeartRateAggregate(start: Instant, end: Instant): Pair<Long?, Long?> {
+    suspend fun readHeartRateAggregate(start: Instant, end: Instant): Pair<Double, Double> {
         val response = healthConnectClient.aggregate(
             AggregateRequest(
-                metrics = setOf(HeartRateRecord.BPM_MIN,HeartRateRecord.BPM_AVG),
+                metrics = setOf(HeartRateRecord.BPM_AVG,HeartRateRecord.BPM_MIN),
                 timeRangeFilter = TimeRangeFilter.between(start, end)
             )
         )
-        val minimumHeartRate = response[HeartRateRecord.BPM_MIN]
         val averageHeartRate = response[HeartRateRecord.BPM_AVG]
-        return Pair(minimumHeartRate, averageHeartRate)
+        val minimumHeartRate = response[HeartRateRecord.BPM_MIN]
+        return Pair(averageHeartRate!!.toDouble(), minimumHeartRate!!.toDouble())
     }
 
     suspend fun readRespiratoryRateRecords(start: Instant, end: Instant): List<RespiratoryRateRecord> {

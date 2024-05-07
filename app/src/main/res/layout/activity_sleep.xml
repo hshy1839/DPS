@@ -153,8 +153,14 @@
                             <Button
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Test Button"
+                                android:text="Sleep"
                                 android:onClick="writeSleepCsv"
+                                tools:ignore="OnClick" />
+                            <Button
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Train"
+                                android:onClick="writeTrainCsv"
                                 tools:ignore="OnClick" />
 
                             <com.github.mikephil.charting.charts.LineChart
