@@ -1,12 +1,11 @@
 package com.example.dps.mainActivity.Sleep
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -41,10 +40,15 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -59,11 +63,14 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
+
 class SleepActivity : AppCompatActivity() {
 
     private lateinit var healthConnectManager: HealthConnectManager
     private val PERMISSION_REQUEST_CODE = 1001
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var lineChart: LineChart
+    private lateinit var barChart: BarChart
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         healthConnectManager = HealthConnectManager(this)
@@ -75,43 +82,20 @@ class SleepActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val lineChart = findViewById<LineChart>(R.id.lineChart)
+        lineChart = findViewById(R.id.lineChart)
+        barChart = findViewById(R.id.barChart)
+
         setupLineChart(lineChart)
+        setupBarChart(barChart)
+
+        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", userId = "Lee")
 
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {
             onBackPressed()
         }
 
-        // 시간별 심박수 데이터 추가 (예시)
-        val lineEntries = mutableListOf<Entry>()
-        lineEntries.add(Entry(0f, 80f))
-        lineEntries.add(Entry(1f, 85f))
-        lineEntries.add(Entry(2f, 90f))
-        lineEntries.add(Entry(3f, 88f))
-        lineEntries.add(Entry(4f, 95f))
-        lineEntries.add(Entry(5f, 85f))
-        lineEntries.add(Entry(6f, 75f))
-        addDataToLineChart(lineChart, lineEntries)
 
-        val barChart = findViewById<BarChart>(R.id.barChart)
-        setupBarChart(barChart)
-
-        // BarChart에 데이터 추가
-        val barEntries = mutableListOf<BarEntry>()
-        barEntries.add(BarEntry(0f, 150f))
-        barEntries.add(BarEntry(1f, 170f))
-        barEntries.add(BarEntry(2f, 200f))
-        barEntries.add(BarEntry(3f, 180f))
-        barEntries.add(BarEntry(4f, 190f))
-        barEntries.add(BarEntry(5f, 130f))
-        barEntries.add(BarEntry(6f, 140f))
-        barEntries.add(BarEntry(7f, 160f))
-        barEntries.add(BarEntry(8f, 130f))
-        barEntries.add(BarEntry(9f, 190f))
-        barEntries.add(BarEntry(10f, 170f))
-        barEntries.add(BarEntry(11f, 180f))
-        addDataToBarChart(barChart, barEntries)
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -170,25 +154,11 @@ class SleepActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
     private fun setupLineChart(lineChart: LineChart) {
-        // LineChart 설정
         lineChart.setTouchEnabled(true)
         lineChart.setPinchZoom(true)
-        lineChart.description = Description().apply { text = "" }
-
-        // X 축 설정
-        val xAxis = lineChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("일", "월", "화", "수", "목", "금", "토"))
-        xAxis.setGranularity(1f) // X축 간격 설정
-
-        // Y 축 설정
-        val leftAxis = lineChart.axisLeft
-        leftAxis.setDrawGridLines(false)
-        leftAxis.setDrawZeroLine(false)
-
-        val rightAxis = lineChart.axisRight
-        rightAxis.isEnabled = false
+        lineChart.description.text = ""
+        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        lineChart.xAxis.setDrawGridLines(false)
     }
 
     private fun setupBarChart(barChart: BarChart) {
@@ -213,65 +183,73 @@ class SleepActivity : AppCompatActivity() {
         rightAxis.isEnabled = false
     }
 
-
-
-    private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
-        // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "일별 수면량")
-        dataSet.color = ContextCompat.getColor(this, R.color.black)
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
-
-        // LineData 생성 및 설정
-        val lineData = LineData(dataSet)
-        lineData.setDrawValues(true)
-
-        // LineChart에 데이터 추가
-        lineChart.data = lineData
-        lineChart.invalidate()
-    }
-
-    private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
-        // BarDataSet 생성
-        val dataSet = BarDataSet(entries, "월별 수면량")
-        dataSet.color = Color.parseColor("#5271FE")
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
-
-        // BarData 생성 및 설정
-        val barData = BarData(dataSet)
-        barData.setDrawValues(true)
-
-        // BarChart에 데이터 추가
-        barChart.data = barData
-        barChart.invalidate()
-    }
-
-    // 외부 저장소에 있는 Download 폴더의 경로 반환
-    fun getTrainDownloadFilePath(): String {
-        val folder = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-        return File(folder, "Train.csv").absolutePath
-    }
-    fun getSleepDownloadFilePath(): String {
-        val folder = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-        return File(folder, "Sleep.csv").absolutePath
-    }
-
-    // CSV 데이터를 파일로 저장하는 함수
-    fun appendToCSV(csvData: List<String>, filePath: String) {
-        val file = File(filePath)
+    private fun parseJsonDataForCharts(jsonData: String) {
         try {
-            val writer = FileWriter(file, true) // true를 넘겨서 파일을 추가 모드로 열기
+            val jsonObject = JSONObject(jsonData)
+            val dataArray = jsonObject.getJSONArray("data")
 
-            for (line in csvData) {
-                writer.append(line)
-                writer.append('\n')
+            val lineEntries = ArrayList<Entry>()
+            val barEntries = ArrayList<BarEntry>()
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val xValue = item.getDouble("x_value").toFloat()
+                val yValue = item.getDouble("y_value").toFloat()
+                lineEntries.add(Entry(xValue, yValue))
+                barEntries.add(BarEntry(xValue, yValue))
             }
 
-            writer.flush()
-            writer.close()
+            val lineDataSet = LineDataSet(lineEntries, "Line Chart Label")
+            val lineData = LineData(lineDataSet)
+            lineChart.data = lineData
+            lineChart.invalidate() // 차트 갱신
 
-            Log.i("CSV", "데이터가 CSV 파일에 추가되었습니다. 경로: $filePath")
-        } catch (e: IOException) {
-            Log.e("CSV", "CSV 파일에 데이터 추가 중 오류 발생: ${e.message}")
+            val barDataSet = BarDataSet(barEntries, "Bar Chart Label")
+            val barData = BarData(barDataSet)
+            barChart.data = barData
+            barChart.invalidate() // 차트 갱신
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveUserId(userId: String) {
+        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("userId", userId).apply()
+    }
+
+    private fun getUserId(): String? {
+        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("userId", null)
+    }
+
+    private fun post(apiURL: String, userId: String): String {
+        val client = OkHttpClient()
+
+        val jsonBody = "{\"username\":\"$userId\"}"  // JSON 본문에 userId 추가
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val body = jsonBody.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(apiURL)
+            .post(body)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            return response.body?.string() ?: ""
+        }
+    }
+
+    private fun fetchDataFromApi(apiURL: String, userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("SleepActivity", "Error fetching data", e)
+            }
         }
     }
 
@@ -281,7 +259,6 @@ class SleepActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
             return
         }
-
         CoroutineScope(Dispatchers.IO).launch  {
             if (!healthConnectManager.hasAllPermissions()) {
                 showDialogInfo(R.string.permissions_not_granted)
@@ -349,7 +326,7 @@ class SleepActivity : AppCompatActivity() {
             )
             // 수면 데이터 전송
             // 수면 데이터 전송
-            post(data, "http://3.34.218.215:8082/topics/activity_data/")
+            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
 
             Log.i("ddd", "하루간 활동 칼로리: ${activeCalrorie}")
 
@@ -474,7 +451,7 @@ class SleepActivity : AppCompatActivity() {
                 )
                 // 수면 데이터 전송
                 // 수면 데이터 전송
-                post(data, "http://3.34.218.215:8082/topics/sleep_data/")
+                Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
 
 //                Log.i("ddd","깬 시간: ${totalAwakeDuration}")
 //
@@ -506,7 +483,7 @@ class SleepActivity : AppCompatActivity() {
 
             }
 
-            appendToCSV(csvData, getSleepDownloadFilePath())
+//            appendToCSV(csvData, getSleepDownloadFilePath())
         }
     }
 
@@ -522,7 +499,7 @@ class SleepActivity : AppCompatActivity() {
     fun returnToMenu(@Suppress("UNUSED_PARAMETER") view: View) {
         finish()
     }
-    fun post(data: AvroRESTVO, apiURL: String?) {
+    fun Avropost(data: AvroRESTVO, apiURL: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             var output: OutputStream? = null
             var reader: BufferedReader? = null
