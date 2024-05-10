@@ -26,6 +26,7 @@ import com.example.dps.restClient.models.ActivityDataVO
 import com.example.dps.restClient.models.AvroRESTVO
 import com.example.dps.restClient.models.SleepDataVO
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.Chart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -36,15 +37,18 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -55,6 +59,7 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -62,6 +67,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.Date
+import java.util.Locale
 
 
 class SleepActivity : AppCompatActivity() {
@@ -85,10 +92,7 @@ class SleepActivity : AppCompatActivity() {
         lineChart = findViewById(R.id.lineChart)
         barChart = findViewById(R.id.barChart)
 
-        setupLineChart(lineChart)
-        setupBarChart(barChart)
-
-        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", userId = "Lee")
+        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", "Lee")
 
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {
@@ -153,62 +157,65 @@ class SleepActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
-    private fun setupLineChart(lineChart: LineChart) {
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
-        lineChart.description.text = ""
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.setDrawGridLines(false)
+    private fun setupLineChart(lineChart: LineChart, entries: List<Entry>) {
+        val dataSet = LineDataSet(entries, "Total Sleep")
+        val data = LineData(dataSet)
+        lineChart.data = data  // LineChart에 LineData 설정
+
+        setupXAxisDate(lineChart)  // X축 날짜 설정
+        lineChart.invalidate()  // 차트 갱신
     }
 
-    private fun setupBarChart(barChart: BarChart) {
-        // BarChart 설정
-        barChart.setTouchEnabled(true)
-        barChart.setPinchZoom(true)
-        barChart.description = Description().apply { text = "" }
+    private fun setupBarChart(barChart: BarChart, entries: List<BarEntry>) {
+        val dataSet = BarDataSet(entries, "Total Sleep")
+        val data = BarData(dataSet)
+        barChart.data = data  // BarChart에 BarData 설정
 
-        // X 축 설정
-        val xAxis = barChart.xAxis
+        setupXAxisDate(barChart)  // X축 날짜 설정
+        barChart.invalidate()  // 차트 갱신
+    }
+    private fun setupXAxisDate(chart: Chart<*>) {
+        val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"))
-        xAxis.setGranularity(1f) // X축 간격 설정
+        xAxis.valueFormatter = object : ValueFormatter() {
+            private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
-        // Y 축 설정
-        val leftAxis = barChart.axisLeft
-        leftAxis.setDrawGridLines(false)
-        leftAxis.setDrawZeroLine(false)
+            override fun getFormattedValue(value: Float): String {
+                // 유닉스 타임스탬프 확인: 초 단위인지 밀리초 단위인지에 따라 다름
+                val date = Date(value.toLong() * 1000)
+                return dateFormatter.format(date)
+            }
+        }
+    }
+    private fun setupCharts(chart: Chart<*>, entries: List<Entry>, chartLabel: String) {
+        val dataSet = LineDataSet(entries, chartLabel)
+        val data = LineData(dataSet)
+        chart.data = data
 
-        val rightAxis = barChart.axisRight
-        rightAxis.isEnabled = false
+        setupXAxisDate(chart)  // 날짜 설정 호출
+        chart.invalidate()  // 차트 갱신
     }
 
     private fun parseJsonDataForCharts(jsonData: String) {
         try {
-            val jsonObject = JSONObject(jsonData)
-            val dataArray = jsonObject.getJSONArray("data")
-
+            val dataArray = JSONArray(jsonData)
             val lineEntries = ArrayList<Entry>()
             val barEntries = ArrayList<BarEntry>()
+
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
-                val xValue = item.getDouble("x_value").toFloat()
-                val yValue = item.getDouble("y_value").toFloat()
-                lineEntries.add(Entry(xValue, yValue))
-                barEntries.add(BarEntry(xValue, yValue))
+                val sleepTotal = item.getInt("sleep_data.sleep_total").toFloat()
+                val timestamp = item.getLong("sleep_data.create_date")
+                lineEntries.add(Entry(timestamp.toFloat(), sleepTotal))
+                barEntries.add(BarEntry(timestamp.toFloat(), sleepTotal))
             }
 
-            val lineDataSet = LineDataSet(lineEntries, "Line Chart Label")
-            val lineData = LineData(lineDataSet)
-            lineChart.data = lineData
-            lineChart.invalidate() // 차트 갱신
-
-            val barDataSet = BarDataSet(barEntries, "Bar Chart Label")
-            val barData = BarData(barDataSet)
-            barChart.data = barData
-            barChart.invalidate() // 차트 갱신
+            setupLineChart(lineChart, lineEntries)  // 라인 차트 설정
+            setupBarChart(barChart, barEntries)  // 바 차트 설정
         } catch (e: JSONException) {
-            e.printStackTrace()
+            Log.e("SleepActivity", "Error parsing JSON data", e)
+            showToast("Error parsing data for charts: ${e.localizedMessage}")
         }
     }
 
@@ -225,13 +232,13 @@ class SleepActivity : AppCompatActivity() {
     private fun post(apiURL: String, userId: String): String {
         val client = OkHttpClient()
 
-        val jsonBody = "{\"username\":\"$userId\"}"  // JSON 본문에 userId 추가
-        val mediaType = "application/json; charset=utf-8".toMediaType()
-        val body = jsonBody.toRequestBody(mediaType)
+        val formBody = FormBody.Builder()
+            .add("username", userId)
+            .build()
 
         val request = Request.Builder()
             .url(apiURL)
-            .post(body)
+            .post(formBody)
             .build()
 
         client.newCall(request).execute().use { response ->
@@ -366,11 +373,22 @@ class SleepActivity : AppCompatActivity() {
             }
             val csvData = mutableListOf<String>()
 
-            val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
-            val yesterday = today.minusDays(1)
+//            val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
+//            val yesterday = today.minusDays(1)
 
-            val startDateTime = LocalDateTime.of(yesterday, LocalTime.of(0, 0, 1))
+//            val startDateTime = LocalDateTime.of(yesterday, LocalTime.of(0, 0, 1))
+//            val startTime = startDateTime.toInstant(ZoneOffset.UTC)
+//            val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
+//            val endTime = endDateTime.toInstant(ZoneOffset.UTC)
+
+            val twoMonthsAgo = LocalDate.now(ZoneId.of("Asia/Seoul")).minusMonths(2)
+
+// 두 달 전 자정부터 시작합니다.
+            val startDateTime = LocalDateTime.of(twoMonthsAgo, LocalTime.of(0, 0, 1))
             val startTime = startDateTime.toInstant(ZoneOffset.UTC)
+
+// 현재 날짜의 23시 59분 59초까지를 종료 시간으로 설정합니다.
+            val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
             val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
             val endTime = endDateTime.toInstant(ZoneOffset.UTC)
 
@@ -444,11 +462,17 @@ class SleepActivity : AppCompatActivity() {
 
                 }
                 // 수면 데이터 인스턴스 생성
-                val data: AvroRESTVO = SleepDataVO(
-                    "Lee", "이석영123", Instant.now(), awake,
-                    bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
-                    rem, durationMinutes+stageDuration, true
+//                val data: AvroRESTVO = SleepDataVO(
+//                    "Lee", "이석영123", Instant.now(), awake,
+//                    bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
+//                    rem, durationMinutes+stageDuration, true
+//                )
+                val data: AvroRESTVO = SleepDataVO(           //임시 데이터
+                    "Lee", "이석영123", Instant.now(), 1713293550,
+                    Instant.now(), Instant.now(), 0.0, 0, 0, 0.0, 0.0, 0,
+                    0, 500, true
                 )
+
                 // 수면 데이터 전송
                 // 수면 데이터 전송
                 Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
