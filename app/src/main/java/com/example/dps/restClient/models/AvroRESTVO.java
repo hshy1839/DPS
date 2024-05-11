@@ -33,12 +33,12 @@ public abstract class AvroRESTVO {
         return patient;
     }
 
-    public AvroRESTVO(String username, String name, Instant birthDate, boolean patient) {
+    public AvroRESTVO(String username, String name, Instant birthDate, Instant createDate, boolean patient) {
         this.key = UUID.randomUUID().toString();
         this.username = username;
         this.name = name;
         this.birthDate = birthDate;
-        this.createDate = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+        this.createDate = createDate;
         this.patient = patient;
     }
 

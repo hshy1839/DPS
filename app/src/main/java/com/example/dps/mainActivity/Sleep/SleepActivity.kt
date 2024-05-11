@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,8 +14,10 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.util.LocalePreferences.FirstDayOfWeek.Days
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.health.connect.client.records.SleepSessionRecord
@@ -41,6 +44,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
@@ -67,8 +71,11 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.Random
 
 
 class SleepActivity : AppCompatActivity() {
@@ -89,10 +96,11 @@ class SleepActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        lineChart = findViewById(R.id.lineChart)
-        barChart = findViewById(R.id.barChart)
 
-        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", "Lee")
+        barChart = findViewById(R.id.barChart)
+        setupBarChart(barChart)
+
+        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", "ChartTest2")
 
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {
@@ -157,62 +165,88 @@ class SleepActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
-    private fun setupLineChart(lineChart: LineChart, entries: List<Entry>) {
-        val dataSet = LineDataSet(entries, "Total Sleep")
-        val data = LineData(dataSet)
-        lineChart.data = data  // LineChart에 LineData 설정
-
-        setupXAxisDate(lineChart)  // X축 날짜 설정
-        lineChart.invalidate()  // 차트 갱신
-    }
-
-    private fun setupBarChart(barChart: BarChart, entries: List<BarEntry>) {
-        val dataSet = BarDataSet(entries, "Total Sleep")
-        val data = BarData(dataSet)
-        barChart.data = data  // BarChart에 BarData 설정
+    private fun setupBarChart(barChart: BarChart) {
+        // BarChart 설정
+        barChart.setTouchEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.description = Description().apply { text = "" }
+        barChart.animateX(500)
 
         setupXAxisDate(barChart)  // X축 날짜 설정
-        barChart.invalidate()  // 차트 갱신
+
     }
-    private fun setupXAxisDate(chart: Chart<*>) {
+
+    private fun setupXAxisDate(chart: BarChart) {
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
         xAxis.valueFormatter = object : ValueFormatter() {
-            private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            private val calendar = Calendar.getInstance()
+            private val dateFormatter = SimpleDateFormat("MM-dd", Locale.KOREA) // "yyyy-MM-dd"에서 "MM-dd"로 변경
 
             override fun getFormattedValue(value: Float): String {
-                // 유닉스 타임스탬프 확인: 초 단위인지 밀리초 단위인지에 따라 다름
-                val date = Date(value.toLong() * 1000)
-                return dateFormatter.format(date)
+                calendar.timeInMillis = (value.toLong() * 1000)
+                // 자정으로 시간을 설정합니다.
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.SECOND, 0)
+                calendar.set(Calendar.MILLISECOND, 0)
+                return dateFormatter.format(calendar.time)
             }
         }
-    }
-    private fun setupCharts(chart: Chart<*>, entries: List<Entry>, chartLabel: String) {
-        val dataSet = LineDataSet(entries, chartLabel)
-        val data = LineData(dataSet)
-        chart.data = data
+        xAxis.granularity = 86400f
+//        xAxis.setCenterAxisLabels(true)
+        xAxis.isAvoidFirstLastClippingEnabled
+        xAxis.spaceMax = 0.1f
+        xAxis.spaceMin = 0.1f
 
-        setupXAxisDate(chart)  // 날짜 설정 호출
-        chart.invalidate()  // 차트 갱신
+        val rightAxis = barChart.axisRight
+        rightAxis.isEnabled = false
+        barChart.invalidate()
+
+    }
+    private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
+        // BarDataSet 생성
+        val dataSet = BarDataSet(entries, "수면 시간")
+        dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
+        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.barBorderColor = Color.parseColor("#5271FE")
+        dataSet.barBorderWidth = 27f
+
+        // BarData 생성 및 설정
+        val barData = BarData(dataSet)
+        barData.setDrawValues(false)
+
+        // BarChart에 데이터 추가
+        barChart.data = barData
+        barChart.setMaxVisibleValueCount(7)
+        barChart.setFitBars(true)
+        barChart.invalidate()
     }
 
     private fun parseJsonDataForCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
-            val lineEntries = ArrayList<Entry>()
-            val barEntries = ArrayList<BarEntry>()
+            val entries = mutableListOf<BarEntry>()
+            var minTimestamp = Float.MAX_VALUE
+            var maxTimestamp = Float.MIN_VALUE
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
                 val sleepTotal = item.getInt("sleep_data.sleep_total").toFloat()
                 val timestamp = item.getLong("sleep_data.create_date")
-                lineEntries.add(Entry(timestamp.toFloat(), sleepTotal))
-                barEntries.add(BarEntry(timestamp.toFloat(), sleepTotal))
+                minTimestamp = Math.min(minTimestamp, timestamp.toFloat())
+                maxTimestamp = Math.max(maxTimestamp, timestamp.toFloat())
+                entries.add(BarEntry(timestamp.toFloat(), sleepTotal))
             }
 
-            setupLineChart(lineChart, lineEntries)  // 라인 차트 설정
-            setupBarChart(barChart, barEntries)  // 바 차트 설정
+            if (entries.isNotEmpty()) {
+                addDataToBarChart(barChart,entries)
+                barChart.xAxis.axisMinimum = minTimestamp - 86400f// X축 최소값 설정
+                barChart.xAxis.axisMaximum = maxTimestamp + 86400f// X축 최대값 설정
+            } else {
+                showToast("No data found for chart.")
+            }
         } catch (e: JSONException) {
             Log.e("SleepActivity", "Error parsing JSON data", e)
             showToast("Error parsing data for charts: ${e.localizedMessage}")
@@ -327,13 +361,12 @@ class SleepActivity : AppCompatActivity() {
 
             // 활동 데이터 인스턴스 생성
             val data = ActivityDataVO(
-                "Lee", "운동_이석영", Instant.now(), activeCalrorie,
+                "Lee", "운동_이석영", Instant.now(), Instant.now(),activeCalrorie,
                 calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
                 0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
             )
-            // 수면 데이터 전송
-            // 수면 데이터 전송
-            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
+                //데이터 전송
+//            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
 
             Log.i("ddd", "하루간 활동 칼로리: ${activeCalrorie}")
 
@@ -358,8 +391,7 @@ class SleepActivity : AppCompatActivity() {
         }
     }
 
-
-    fun writeSleepCsv(@Suppress("UNUSED_PARAMETER") view: View) {
+fun writeSleep(@Suppress("UNUSED_PARAMETER") view: View) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
             return
@@ -371,7 +403,6 @@ class SleepActivity : AppCompatActivity() {
                 return@launch
 
             }
-            val csvData = mutableListOf<String>()
 
 //            val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
 //            val yesterday = today.minusDays(1)
@@ -381,13 +412,13 @@ class SleepActivity : AppCompatActivity() {
 //            val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
 //            val endTime = endDateTime.toInstant(ZoneOffset.UTC)
 
-            val twoMonthsAgo = LocalDate.now(ZoneId.of("Asia/Seoul")).minusMonths(2)
+            val twoMonthsAgo = LocalDate.now(ZoneId.of("Asia/Seoul")).minusMonths(1)
 
-// 두 달 전 자정부터 시작합니다.
+            // 두 달 전 자정부터 시작합니다.
             val startDateTime = LocalDateTime.of(twoMonthsAgo, LocalTime.of(0, 0, 1))
             val startTime = startDateTime.toInstant(ZoneOffset.UTC)
 
-// 현재 날짜의 23시 59분 59초까지를 종료 시간으로 설정합니다.
+            // 현재 날짜의 23시 59분 59초까지를 종료 시간으로 설정합니다.
             val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
             val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
             val endTime = endDateTime.toInstant(ZoneOffset.UTC)
@@ -399,15 +430,17 @@ class SleepActivity : AppCompatActivity() {
             )
 
             var awake = 0
-            var deep = 0
-            var rem = 0
-            var light = 0
-            var bedTimeStart: Instant = Instant.now() // 현재 시간으로 초기화
             var bedTimeEnd: Instant = Instant.now() // 현재 시간으로 초기화
-            var durationMinutes = 0
-            var stageDuration = 0
-
+            var bedTimeStart: Instant = Instant.now() // 현재 시간으로 초기화
             var breathAverage = 0.0
+            var deep = 0
+            var stageDuration = 0
+            var HRAverage = 0.0
+            var HRLowest = 0.0
+            var light = 0
+            var rem = 0
+            var durationMinutes = 0
+
 
 
             for (sleepRecord in sleep) {
@@ -421,8 +454,8 @@ class SleepActivity : AppCompatActivity() {
                     sleepRecord.startTime,
                     sleepRecord.endTime,
                 )
-                val HRAverage = heartRate.first
-                val HRLowest = heartRate.second
+                HRAverage = heartRate.first
+                HRLowest = heartRate.second
 
                 for(rates in rate){
                     breathAverage = rates.rate
@@ -459,57 +492,22 @@ class SleepActivity : AppCompatActivity() {
 
                     }
 
-
                 }
-                // 수면 데이터 인스턴스 생성
-//                val data: AvroRESTVO = SleepDataVO(
-//                    "Lee", "이석영123", Instant.now(), awake,
-//                    bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
-//                    rem, durationMinutes+stageDuration, true
-//                )
-                val data: AvroRESTVO = SleepDataVO(           //임시 데이터
-                    "Lee", "이석영123", Instant.now(), 1713293550,
-                    Instant.now(), Instant.now(), 0.0, 0, 0, 0.0, 0.0, 0,
-                    0, 500, true
-                )
+                val epochSeconds = 1715455805L
+                val instant = Instant.ofEpochSecond(epochSeconds)
 
-                // 수면 데이터 전송
-                // 수면 데이터 전송
-                Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
-
-//                Log.i("ddd","깬 시간: ${totalAwakeDuration}")
-//
-                Log.i("ddd","잠 종료 시간: ${bedTimeEnd}")
-
-                Log.i("ddd","잠 시작 시간: ${bedTimeStart}")
-//
-//                Log.i("ddd","분당 평균 호흡 수: ${ratesRate}")
-//
-//                Log.i("ddd","깊은 수면 시간: ${totalDeepSleepDuration}")
-//
-//                Log.i("ddd","잠 시간: ${durationMinutes + stageDuration }")
-//
-//                Log.i("ddd","분당 평균 심박동 수: ${heartRate.second}")
-//
-//                Log.i("ddd","분당 낮은 심박동 수: ${heartRate.first}")
-//
-//                Log.i("ddd","본 수면 여부: ")
-//
-//                Log.i("ddd","가벼운 수면 시간: ${totalLightSleepDuration}")
-//
-//                Log.i("ddd","램수면 시간: ${totalRemSleepDuration}")
-//
-//                Log.i("ddd","수면 시간: ${durationMinutes}")
-//
-//                csvData.add("${totalAwakeDuration},${sleepEnd},${sleepStart},${ratesRate},${totalDeepSleepDuration}" +
-//                        ",${durationMinutes + stageDuration},${heartRate.second},${heartRate.first},${totalLightSleepDuration}" +
-//                        ",${totalRemSleepDuration},${durationMinutes}")
+                    val data: AvroRESTVO = SleepDataVO(
+                        "ChartTest2", "이석영12345", Instant.now(),
+                        Instant.now(),500,
+                        bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
+                        rem, durationMinutes+stageDuration, true)
+                    Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
 
             }
-
-//            appendToCSV(csvData, getSleepDownloadFilePath())
         }
     }
+
+
 
     private fun showDialogInfo(resId: Int) {
         runOnUiThread {

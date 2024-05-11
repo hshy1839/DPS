@@ -19,11 +19,11 @@ public class ActivityDataVO extends AvroRESTVO {
     private int steps;
     private int total;
 
-    public ActivityDataVO(String username, String name, Instant birthDate, int calActive,
+    public ActivityDataVO(String username, String name, Instant birthDate,Instant createDate, int calActive,
                           int calTotal, int dailyMovement, Instant dayEnd, Instant dayStart, int high, int inactive,
                           int inactivityAlerts, int low, int medium, int nonWear, int score, int scoreMeetDailyTargets,
                           int steps, int total, boolean patient) {
-        super(username, name, birthDate, patient);
+        super(username, name, birthDate,createDate, patient);
         this.calActive = calActive;
         this.calTotal = calTotal;
         this.dailyMovement = dailyMovement;

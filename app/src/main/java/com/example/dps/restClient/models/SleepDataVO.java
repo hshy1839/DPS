@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class SleepDataVO extends AvroRESTVO {
     private int awake;
+
+    private Instant createDate;
     private Instant bedTimeEnd;
     private Instant bedTimeStart;
     private double breathAverage;
@@ -27,10 +29,11 @@ public class SleepDataVO extends AvroRESTVO {
     private int scoreTotal;
     private int total;
 
-    public SleepDataVO(String username, String name, Instant birthDate, int awake,
+    public SleepDataVO(String username, String name, Instant birthDate,Instant createDate, int awake,
                        Instant bedTimeEnd, Instant bedTimeStart, double breathAverage, int deep, int duration,
                        double HRAverage, double HRLowest, int light, int rem, int total, boolean patient) {
-        super(username, name, birthDate, patient);
+        super(username, name, birthDate,createDate, patient);
+        this.createDate = createDate;
         this.awake = awake;
         this.bedTimeEnd = bedTimeEnd;
         this.bedTimeStart = bedTimeStart;

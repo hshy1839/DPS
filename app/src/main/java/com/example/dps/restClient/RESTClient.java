@@ -13,21 +13,21 @@ import java.util.Date;
 public class RESTClient {
     public static void main(String[] args) throws Exception {
         RESTClient client = new RESTClient();
-        // 수면 데이터 인스턴스 생성
-        AvroRESTVO data = new SleepDataVO("moodeath", "김용기123", Instant.now(), 0,
-                Instant.now(), Instant.now(), 0.0, 0, 1000, 60, 40, 10000,
-                1000, 1000, true);
-        // 수면 데이터 전송
-        client.post(data, "http://3.34.218.215:8082/topics/sleep_data/");
-
-        Thread.sleep(1000);
-
-        // 활동 데이터 인스턴스 생성
-        data = new ActivityDataVO("moodeath", "김용기", Instant.now(), 100,
-                100 ,100, Instant.now(), Instant.now(), 10, 0, 0, 10,
-                0, 0, 100, 100, 100, 100, false);
-        // 수면 데이터 전송
-        client.post(data, "http://3.34.218.215:8082/topics/activity_data/");
+//        // 수면 데이터 인스턴스 생성
+//        AvroRESTVO data = new SleepDataVO("moodeath", "김용기123", Instant.now(), 0,
+//                Instant.now(), Instant.now(), 0.0, 0, 1000, 60, 40, 10000,
+//                1000, 1000, true);
+//        // 수면 데이터 전송
+//        client.post(data, "http://3.34.218.215:8082/topics/sleep_data/");
+//
+//        Thread.sleep(1000);
+//
+//        // 활동 데이터 인스턴스 생성
+//        data = new ActivityDataVO("moodeath", "김용기", Instant.now(), 100,
+//                100 ,100, Instant.now(), Instant.now(), 10, 0, 0, 10,
+//                0, 0, 100, 100, 100, 100, false);
+//        // 수면 데이터 전송
+//        client.post(data, "http://3.34.218.215:8082/topics/activity_data/");
     }
 
     public void post(AvroRESTVO data, String apiURL) {
