@@ -140,12 +140,14 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 R.id.nav_item3 -> {
-                    // Menu 3 선택 시의 동작
                     menushowToast("설정 버튼")
                 }
                 R.id.nav_item4 -> {
-                    // Menu 3 선택 시의 동작
                     logout()
+                }
+                R.id.nav_item5 -> {
+                    val intent = Intent(this@MainActivity, MedicationActivity::class.java)
+                    startActivity(intent)
                 }
             }
             // 메뉴를 선택한 후에는 Drawer를 닫아줌

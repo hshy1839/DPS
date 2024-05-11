@@ -15,7 +15,10 @@ data class UserData(
     val birthdate: Date,
     val gender: String,
     val phoneNumber: String,
-    val role: String
+    val role: String,
+    val medication : String,
+    val medicationTime : String,
+    val diagnosis : String,
 )
 
 data class LoginData(

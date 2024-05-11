@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:coners="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:background="@android:color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#ffffff">
+
+                <!-- 좌측 DPS 텍스트 -->
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Aging In Place"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:gravity="left|center" />
+
+                <!-- 로그인 버튼 -->
+                <ImageView
+                    android:id="@+id/LoginButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="right|center"
+                    android:src="@drawable/baseline_account_circle_24"
+                    android:visibility="visible"/>
+
+                <!-- 오른쪽 메뉴 버튼 -->
+                <ImageView
+                    android:id="@+id/menuButton"
+                    android:layout_width="35dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="right|center"
+                    android:src="@drawable/menu"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f5f5f5"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="약물 복용 페이지"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="50dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:text="복용약물 : "
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/medicationText"
+                        android:layout_width="30dp"
+                        android:layout_height="45dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/login_edittext_background"
+                        android:paddingLeft="10dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textColorHint="#cccccc"
+                        android:textSize="25sp" />
+
+                    <Button
+                        android:id="@+id/editMedicationButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="수정" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:text="복용시간 : "
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/medicationTimeText"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/login_edittext_background"
+                        android:paddingLeft="10dp"
+                        android:text=""
+                        android:textColor="@color/black"
+                        android:textColorHint="#cccccc"
+                        android:textSize="25sp" />
+
+                    <Button
+                        android:id="@+id/editMedicationTimeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="수정" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="50dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:text="알람"
+                        android:textColor="@color/black"
+                        android:textSize="25sp" />
+                    <ToggleButton
+                        android:id="@+id/toggleAlarmButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textOff="끄기"
+                        android:textOn="켜기" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="50dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:text="알람시간 : "
+                    android:textColor="@color/black"
+                    android:textSize="25sp" />
+                <TextView
+                    android:id="@+id/alarmTimeText"
+                    android:layout_width="150dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/login_edittext_background"
+                    android:paddingLeft="10dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textColorHint="#cccccc"
+                    android:textSize="25sp" />
+                </LinearLayout>
+                <Button
+                    android:id="@+id/myinfo_modifyBtn"
+                    android:layout_width="330dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="80dp"
+                    android:layout_marginBottom="50dp"
+                    android:background="@drawable/login_btn_background"
+                    android:onClick="onNextButtonClicked"
+                    android:text="수정" />
+            </LinearLayout>
+        </LinearLayout>
+    <com.google.android.material.navigation.NavigationView
+        android:background="@color/white"
+        android:id="@+id/nav_view"
+        app:itemTextColor="@color/black"
+        android:layout_width="220dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/nav_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
