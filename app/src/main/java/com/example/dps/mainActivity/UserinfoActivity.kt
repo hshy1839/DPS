@@ -29,6 +29,9 @@ class UserInfoActivity : AppCompatActivity() {
     private lateinit var phoneNumberText: TextView
     private lateinit var roleText: TextView
     private lateinit var emailText: TextView
+    private lateinit var medicationText: TextView
+    private lateinit var medicationTimeText: TextView
+    private lateinit var diagnosisText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +43,9 @@ class UserInfoActivity : AppCompatActivity() {
         phoneNumberText = findViewById(R.id.numberText)
         roleText = findViewById(R.id.roleText)
         emailText = findViewById(R.id.emailText)
-
+        medicationText = findViewById(R.id.medicationText)
+        medicationTimeText = findViewById(R.id.medicationTimeText)
+        diagnosisText = findViewById(R.id.diagnosisText)
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getInt("userId", 0)
@@ -63,6 +68,9 @@ class UserInfoActivity : AppCompatActivity() {
                         val gender = jsonObject.get("gender").asString
                         val phoneNumber = jsonObject.get("phoneNumber").asString
                         val role = jsonObject.get("role").asString
+                        val medication = jsonObject.get("medication").asString
+                        val medicationTime = jsonObject.get("medicationTime").asString
+                        val diagnosis = jsonObject.get("diagnosis").asString
 
                         emailText.text = email
                         nameText.text = name
@@ -70,6 +78,9 @@ class UserInfoActivity : AppCompatActivity() {
                         genderText.text = gender
                         phoneNumberText.text = phoneNumber
                         roleText.text = role
+                        medicationText.text = medication
+                        medicationTimeText.text = medicationTime
+                        diagnosisText.text = diagnosis
                     } else {
                         Log.e("EmptyData", "JsonObject is null")
                     }
