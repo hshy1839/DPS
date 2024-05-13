@@ -1,10 +1,12 @@
 package com.example.dps.mainActivity.Calorie
 
+import android.content.Context
 import com.example.dps.loginActivity.LoginActivity
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -25,12 +27,29 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONArray
+import org.json.JSONException
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 class CalorieActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var stepBarChart: BarChart
+    private lateinit var calorieBarChart: BarChart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,39 +65,20 @@ class CalorieActivity : AppCompatActivity() {
         backArrow.setOnClickListener {
             onBackPressed()
         }
+        var id = getUserId()
 
-        val lineChart = findViewById<LineChart>(R.id.lineChart)
-        setupLineChart(lineChart)
+        stepBarChart = findViewById<BarChart>(R.id.stepBarChart)
+        setupStepBarChart(stepBarChart)
 
-        // LineChart에 데이터 추가
-        val lineEntries = mutableListOf<Entry>()
-        lineEntries.add(Entry(0f, 80f))
-        lineEntries.add(Entry(1f, 85f))
-        lineEntries.add(Entry(2f, 90f))
-        lineEntries.add(Entry(3f, 88f))
-        lineEntries.add(Entry(4f, 95f))
-        lineEntries.add(Entry(5f, 85f))
-        lineEntries.add(Entry(6f, 75f))
-        addDataToLineChart(lineChart, lineEntries)
 
-        val barChart = findViewById<BarChart>(R.id.barChart)
-        setupBarChart(barChart)
+         calorieBarChart = findViewById<BarChart>(R.id.calorieBarChart)
+        setupCalorieBarChart(calorieBarChart)
 
-        // BarChart에 데이터 추가
-        val barEntries = mutableListOf<BarEntry>()
-        barEntries.add(BarEntry(0f, 150f))
-        barEntries.add(BarEntry(1f, 170f))
-        barEntries.add(BarEntry(2f, 200f))
-        barEntries.add(BarEntry(3f, 180f))
-        barEntries.add(BarEntry(4f, 190f))
-        barEntries.add(BarEntry(5f, 130f))
-        barEntries.add(BarEntry(6f, 140f))
-        barEntries.add(BarEntry(7f, 160f))
-        barEntries.add(BarEntry(8f, 130f))
-        barEntries.add(BarEntry(9f, 190f))
-        barEntries.add(BarEntry(10f, 170f))
-        barEntries.add(BarEntry(11f, 180f))
-        addDataToBarChart(barChart, barEntries)
+
+            fetchDataFromApi("http://43.200.2.115:8080/chart/activityUsername/steps", "Lee")
+            fetchDataFromApiCalories("http://43.200.2.115:8080/chart/activityUsername/calories", "Lee")
+
+
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -136,80 +136,193 @@ class CalorieActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
-
-    private fun setupLineChart(lineChart: LineChart) {
-        // LineChart 설정
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
-        lineChart.description = Description().apply { text = "" }
-
-        // X 축 설정
-        val xAxis = lineChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("일", "월", "화", "수", "목", "금", "토"))
-        xAxis.setGranularity(1f) // X축 간격 설정
-
-        // Y 축 설정
-        val leftAxis = lineChart.axisLeft
-        leftAxis.setDrawGridLines(false)
-        leftAxis.setDrawZeroLine(false)
-
-        val rightAxis = lineChart.axisRight
-        rightAxis.isEnabled = false
+    private fun saveUserId(userId: String) {
+        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("userId", userId).apply()
     }
 
-    private fun setupBarChart(barChart: BarChart) {
+    private fun getUserId(): String? {
+        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("userId", null)
+    }
+    private fun setupStepBarChart(barChart: BarChart) {
         // BarChart 설정
         barChart.setTouchEnabled(true)
         barChart.setPinchZoom(true)
         barChart.description = Description().apply { text = "" }
+        barChart.setFitBars(true)
+        barChart.animateX(1000)
 
-        // X 축 설정
-        val xAxis = barChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = IndexAxisValueFormatter(arrayOf("1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"))
-        xAxis.setGranularity(1f) // X축 간격 설정
+        setupXAxisDate(stepBarChart)  // X축 날짜 설정
 
-        // Y 축 설정
-        val leftAxis = barChart.axisLeft
-        leftAxis.setDrawGridLines(false)
-        leftAxis.setDrawZeroLine(false)
+    }
+    private fun setupCalorieBarChart(barChart: BarChart) {
+        // BarChart 설정
+        barChart.setTouchEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.description = Description().apply { text = "" }
+        barChart.setFitBars(true)
+        barChart.animateX(1000)
 
-        val rightAxis = barChart.axisRight
-        rightAxis.isEnabled = false
+        setupXAxisDate(calorieBarChart)  // X축 날짜 설정
+
     }
 
+    private fun setupXAxisDate(chart: BarChart) {
 
+        chart.xAxis.setDrawLabels(true)
+        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        chart.xAxis.textSize = 12f
+        chart.xAxis.textColor = Color.BLACK
+        chart.xAxis.setDrawAxisLine(true)
+        chart.xAxis.setDrawGridLines(false)
+        chart.xAxis.granularity = 1f
 
-    private fun addDataToLineChart(lineChart: LineChart, entries: List<Entry>) {
-        // LineDataSet 생성
-        val dataSet = LineDataSet(entries, "일별 칼로리 섭취량")
-        dataSet.color = ContextCompat.getColor(this, R.color.black)
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
+        chart.invalidate()
 
-        // LineData 생성 및 설정
-        val lineData = LineData(dataSet)
-        lineData.setDrawValues(true)
-
-        // LineChart에 데이터 추가
-        lineChart.data = lineData
-        lineChart.invalidate()
     }
-
-    private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
+    private fun addDataToStepBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
-        val dataSet = BarDataSet(entries, "월별 칼로리 섭취량")
-        dataSet.color = Color.parseColor("#5271FE")
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
+        val dataSet = BarDataSet(entries, "걸음 수")
+        dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
+        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.barBorderColor = Color.parseColor("#5271FE")
 
         // BarData 생성 및 설정
         val barData = BarData(dataSet)
         barData.setDrawValues(true)
+        barData.setValueTextSize(10f)
 
         // BarChart에 데이터 추가
         barChart.data = barData
+//        barChart.setMaxVisibleValueCount(7)
+        barChart.setFitBars(true)
         barChart.invalidate()
     }
+    private fun addDataToCalorieBarChart(barChart: BarChart, entries: List<BarEntry>) {
+        // BarDataSet 생성
+        val dataSet = BarDataSet(entries, "총 소모 칼로리")
+        dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
+        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.barBorderColor = Color.parseColor("#5271FE")
+
+        // BarData 생성 및 설정
+        val barData = BarData(dataSet)
+        barData.setDrawValues(true)
+        barData.setValueTextSize(10f)
+
+        // BarChart에 데이터 추가
+        barChart.data = barData
+//        barChart.setMaxVisibleValueCount(7)
+        barChart.setFitBars(true)
+        barChart.invalidate()
+    }
+
+    private fun formatDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
+        return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
+    }
+
+    private fun parseJsonDataForStepCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            val entries = mutableListOf<BarEntry>()
+            val dateLabels = mutableListOf<String>()
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val sleepTotal = item.getInt("activity_data.activity_steps").toFloat()
+                val timestamp = item.getLong("activity_data.create_date")
+                val formattedDate = formatDate(timestamp)
+                dateLabels.add(formattedDate)
+                entries.add(BarEntry(i.toFloat(), sleepTotal))
+            }
+
+            if (entries.isNotEmpty()) {
+                stepBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
+
+                addDataToStepBarChart(stepBarChart, entries)
+                stepBarChart.invalidate()
+            } else {
+                showToast("No data found for chart.")
+            }
+        } catch (e: JSONException) {
+            Log.e("SleepActivity", "Error parsing JSON data", e)
+            showToast("Error parsing data for charts: ${e.localizedMessage}")
+        }
+    }
+    private fun parseJsonDataForCalorieCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            val entries = mutableListOf<BarEntry>()
+            val dateLabels = mutableListOf<String>()
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val sleepTotal = item.getInt("activity_data.activity_cal_total").toFloat()
+                val timestamp = item.getLong("activity_data.create_date")
+                val formattedDate = formatDate(timestamp)
+                dateLabels.add(formattedDate)
+                entries.add(BarEntry(i.toFloat(), sleepTotal))
+            }
+
+            if (entries.isNotEmpty()) {
+                calorieBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
+
+                addDataToCalorieBarChart(calorieBarChart, entries)
+                calorieBarChart.invalidate()
+            } else {
+                showToast("No data found for chart.")
+            }
+        } catch (e: JSONException) {
+            Log.e("SleepActivity", "Error parsing JSON data", e)
+            showToast("Error parsing data for charts: ${e.localizedMessage}")
+        }
+    }
+
+
+    private fun post(apiURL: String, userId: String): String {
+        val client = OkHttpClient()
+
+        val formBody = FormBody.Builder()
+            .add("username", userId)
+            .build()
+
+        val request = Request.Builder()
+            .url(apiURL)
+            .post(formBody)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            return response.body?.string() ?: ""
+        }
+    }
+
+    private fun fetchDataFromApi(apiURL: String, userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForStepCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("Activity", "Error fetching data", e)
+            }
+        }
+    }
+    private fun fetchDataFromApiCalories(apiURL: String, userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForCalorieCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("Activity", "Error fetching data", e)
+            }
+        }
+    }
+
+
 }

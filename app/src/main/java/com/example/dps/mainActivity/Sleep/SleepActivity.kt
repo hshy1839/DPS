@@ -21,6 +21,7 @@ import androidx.core.text.util.LocalePreferences.FirstDayOfWeek.Days
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.health.connect.client.records.SleepSessionRecord
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import com.example.dps.HealthConnectManager
 import com.example.dps.R
@@ -177,31 +178,15 @@ class SleepActivity : AppCompatActivity() {
     }
 
     private fun setupXAxisDate(chart: BarChart) {
-        val xAxis = chart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = object : ValueFormatter() {
-            private val calendar = Calendar.getInstance()
-            private val dateFormatter = SimpleDateFormat("MM-dd", Locale.KOREA) // "yyyy-MM-dd"에서 "MM-dd"로 변경
 
-            override fun getFormattedValue(value: Float): String {
-                calendar.timeInMillis = (value.toLong() * 1000)
-                // 자정으로 시간을 설정합니다.
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
-                return dateFormatter.format(calendar.time)
-            }
-        }
-        xAxis.granularity = 86400f
-//        xAxis.setCenterAxisLabels(true)
-        xAxis.isAvoidFirstLastClippingEnabled
-        xAxis.spaceMax = 0.1f
-        xAxis.spaceMin = 0.1f
+        barChart.xAxis.setDrawLabels(true)
+        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        barChart.xAxis.textSize = 12f
+        barChart.xAxis.textColor = Color.BLACK
+        barChart.xAxis.setDrawAxisLine(true)
+        barChart.xAxis.setDrawGridLines(false)
+        barChart.xAxis.granularity = 1f
 
-        val rightAxis = barChart.axisRight
-        rightAxis.isEnabled = false
         barChart.invalidate()
 
     }
@@ -211,7 +196,6 @@ class SleepActivity : AppCompatActivity() {
         dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
         dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
         dataSet.barBorderColor = Color.parseColor("#5271FE")
-        dataSet.barBorderWidth = 27f
 
         // BarData 생성 및 설정
         val barData = BarData(dataSet)
@@ -223,27 +207,31 @@ class SleepActivity : AppCompatActivity() {
         barChart.setFitBars(true)
         barChart.invalidate()
     }
+    private fun formatDate(timestamp: Long): String {
+        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
+        return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
+    }
 
     private fun parseJsonDataForCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
             val entries = mutableListOf<BarEntry>()
-            var minTimestamp = Float.MAX_VALUE
-            var maxTimestamp = Float.MIN_VALUE
+            val dateLabels = mutableListOf<String>()
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
-                val sleepTotal = item.getInt("sleep_data.sleep_total").toFloat()
+                val sleepTotal = item.getInt("sleep_data.sleep_total").toFloat()/60
                 val timestamp = item.getLong("sleep_data.create_date")
-                minTimestamp = Math.min(minTimestamp, timestamp.toFloat())
-                maxTimestamp = Math.max(maxTimestamp, timestamp.toFloat())
-                entries.add(BarEntry(timestamp.toFloat(), sleepTotal))
+                val formattedDate = formatDate(timestamp)
+                dateLabels.add(formattedDate)
+                entries.add(BarEntry(i.toFloat(), sleepTotal))
             }
 
             if (entries.isNotEmpty()) {
-                addDataToBarChart(barChart,entries)
-                barChart.xAxis.axisMinimum = minTimestamp - 86400f// X축 최소값 설정
-                barChart.xAxis.axisMaximum = maxTimestamp + 86400f// X축 최대값 설정
+                barChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
+
+                addDataToBarChart(barChart, entries)
+                barChart.invalidate()
             } else {
                 showToast("No data found for chart.")
             }
@@ -308,7 +296,7 @@ class SleepActivity : AppCompatActivity() {
 
 
             val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
-            val yesterday =  today.minusDays(1)
+            val yesterday =  today.minusMonths(3)
 
             val startDateTime = LocalDateTime.of(yesterday, LocalTime.of(0, 0, 1))
             val dayStart = startDateTime.toInstant(ZoneOffset.UTC)
@@ -317,7 +305,7 @@ class SleepActivity : AppCompatActivity() {
             val dayEnd = endDateTime.toInstant(ZoneOffset.UTC)
 
 
-            val calActiveAggregate = healthConnectManager.readCalActive(
+            val calActive = healthConnectManager.readCalActive(
                 dayStart,
                 dayEnd
             )
@@ -351,7 +339,6 @@ class SleepActivity : AppCompatActivity() {
                 dayEnd
             )
 
-//            val csvData = mutableListOf<String>()
             val cal = calTotal.substring(0 until 4 )
             val Bmr = bmr.substring(0 until 4)
             val activeCalrorie = cal.toInt()-Bmr.toInt()
@@ -360,15 +347,15 @@ class SleepActivity : AppCompatActivity() {
 
 
             // 활동 데이터 인스턴스 생성
-            val data = ActivityDataVO(
-                "Lee", "운동_이석영", Instant.now(), Instant.now(),activeCalrorie,
-                calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
-                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
-            )
+//            val data = ActivityDataVO(
+//                "Lee", "운동_이석영", Instant.now(), Instant.now(),activeCalrorie,
+//                calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
+//                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
+//            )
                 //데이터 전송
 //            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
 
-            Log.i("ddd", "하루간 활동 칼로리: ${activeCalrorie}")
+            Log.i("ddd", "하루간 활동 칼로리: ${calActive}")
 
             Log.i("ddd", "하루간 총 사용 칼로리: ${calTotalInt}")
 
@@ -384,10 +371,6 @@ class SleepActivity : AppCompatActivity() {
 
             Log.i("ddd", "BMR: ${bmr}")
 
-
-//            csvData.add("${activeCalorie},${calTotal},${distance},${endTime},${startTime},${steps},${exerciseTime}")
-//
-//            appendToCSV(csvData, getTrainDownloadFilePath())
         }
     }
 
