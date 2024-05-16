@@ -1,6 +1,7 @@
 package com.example.dps.mainActivity.Sleep
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -85,7 +86,9 @@ class SleepActivity : AppCompatActivity() {
     private val PERMISSION_REQUEST_CODE = 1001
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var lineChart: LineChart
-    private lateinit var barChart: BarChart
+    private lateinit var durationBarChart: BarChart
+    private lateinit var remBarChart: BarChart
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         healthConnectManager = HealthConnectManager(this)
@@ -98,10 +101,15 @@ class SleepActivity : AppCompatActivity() {
         }
 
 
-        barChart = findViewById(R.id.barChart)
-        setupBarChart(barChart)
+        durationBarChart = findViewById<BarChart>(R.id.durationBarChart)
+        setupDurationBarChart(durationBarChart)
 
-        fetchDataFromApi("http://43.200.2.115:8080/chart/sleepUsername", "ChartTest2")
+        remBarChart = findViewById<BarChart>(R.id.remBarChart)
+        setupRemBarChart(remBarChart)
+
+
+        fetchDataFromDurationApi("http://43.200.2.115:8080/chart/duration", "ChartTest2")
+        fetchDataFromRemApi("http://43.200.2.115:8080/chart/rem", "ChartTest2")
 
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {
@@ -166,7 +174,17 @@ class SleepActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
-    private fun setupBarChart(barChart: BarChart) {
+    private fun setupDurationBarChart(barChart: BarChart) {
+        // BarChart 설정
+        barChart.setTouchEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.description = Description().apply { text = "" }
+        barChart.animateX(500)
+
+        setupXAxisDate(barChart)  // X축 날짜 설정
+
+    }
+    private fun setupRemBarChart(barChart: BarChart) {
         // BarChart 설정
         barChart.setTouchEnabled(true)
         barChart.setPinchZoom(true)
@@ -179,18 +197,35 @@ class SleepActivity : AppCompatActivity() {
 
     private fun setupXAxisDate(chart: BarChart) {
 
-        barChart.xAxis.setDrawLabels(true)
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        barChart.xAxis.textSize = 12f
-        barChart.xAxis.textColor = Color.BLACK
-        barChart.xAxis.setDrawAxisLine(true)
-        barChart.xAxis.setDrawGridLines(false)
-        barChart.xAxis.granularity = 1f
+        chart.xAxis.setDrawLabels(true)
+        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        chart.xAxis.textSize = 12f
+        chart.xAxis.textColor = Color.BLACK
+        chart.xAxis.setDrawAxisLine(true)
+        chart.xAxis.setDrawGridLines(false)
+        chart.xAxis.granularity = 1f
 
-        barChart.invalidate()
+        chart.invalidate()
 
     }
-    private fun addDataToBarChart(barChart: BarChart, entries: List<BarEntry>) {
+    private fun addDataToDurationBarChart(barChart: BarChart, entries: List<BarEntry>) {
+        // BarDataSet 생성
+        val dataSet = BarDataSet(entries, "수면 시간")
+        dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
+        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.barBorderColor = Color.parseColor("#5271FE")
+
+        // BarData 생성 및 설정
+        val barData = BarData(dataSet)
+        barData.setDrawValues(false)
+
+        // BarChart에 데이터 추가
+        barChart.data = barData
+        barChart.setMaxVisibleValueCount(7)
+        barChart.setFitBars(true)
+        barChart.invalidate()
+    }
+    private fun addDataToRemBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
         val dataSet = BarDataSet(entries, "수면 시간")
         dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
@@ -212,7 +247,7 @@ class SleepActivity : AppCompatActivity() {
         return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
     }
 
-    private fun parseJsonDataForCharts(jsonData: String) {
+    private fun parseJsonDataForDurationCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
             val entries = mutableListOf<BarEntry>()
@@ -220,7 +255,7 @@ class SleepActivity : AppCompatActivity() {
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
-                val sleepTotal = item.getInt("sleep_data.sleep_total").toFloat()/60
+                val sleepTotal = item.getInt("sleep_data.sleep_duration").toFloat()
                 val timestamp = item.getLong("sleep_data.create_date")
                 val formattedDate = formatDate(timestamp)
                 dateLabels.add(formattedDate)
@@ -228,10 +263,38 @@ class SleepActivity : AppCompatActivity() {
             }
 
             if (entries.isNotEmpty()) {
-                barChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
+                durationBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
 
-                addDataToBarChart(barChart, entries)
-                barChart.invalidate()
+                addDataToDurationBarChart(durationBarChart, entries)
+                durationBarChart.invalidate()
+            } else {
+                showToast("No data found for chart.")
+            }
+        } catch (e: JSONException) {
+            Log.e("SleepActivity", "Error parsing JSON data", e)
+            showToast("Error parsing data for charts: ${e.localizedMessage}")
+        }
+    }
+    private fun parseJsonDataForRemCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            val entries = mutableListOf<BarEntry>()
+            val dateLabels = mutableListOf<String>()
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val rem = item.getInt("sleep_data.sleep_rem").toFloat()
+                val timestamp = item.getLong("sleep_data.create_date")
+                val formattedDate = formatDate(timestamp)
+                dateLabels.add(formattedDate)
+                entries.add(BarEntry(i.toFloat(), rem))
+            }
+
+            if (entries.isNotEmpty()) {
+                remBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
+
+                addDataToRemBarChart(remBarChart, entries)
+                remBarChart.invalidate()
             } else {
                 showToast("No data found for chart.")
             }
@@ -269,12 +332,24 @@ class SleepActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchDataFromApi(apiURL: String, userId: String) {
+    private fun fetchDataFromDurationApi(apiURL: String, userId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val jsonResponse = post(apiURL, userId)
                 withContext(Dispatchers.Main) {
-                    parseJsonDataForCharts(jsonResponse)
+                    parseJsonDataForDurationCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("SleepActivity", "Error fetching data", e)
+            }
+        }
+    }
+    private fun fetchDataFromRemApi(apiURL: String, userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForRemCharts(jsonResponse)
                 }
             } catch (e: Exception) {
                 Log.e("SleepActivity", "Error fetching data", e)

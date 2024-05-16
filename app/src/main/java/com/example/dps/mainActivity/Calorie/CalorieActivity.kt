@@ -75,8 +75,8 @@ class CalorieActivity : AppCompatActivity() {
         setupCalorieBarChart(calorieBarChart)
 
 
-            fetchDataFromApi("http://43.200.2.115:8080/chart/activityUsername/steps", "Lee")
-            fetchDataFromApiCalories("http://43.200.2.115:8080/chart/activityUsername/calories", "Lee")
+            fetchDataFromApi("http://43.200.2.115:8080/chart/steps", "Lee")
+            fetchDataFromApiCalories("http://43.200.2.115:8080/chart/calories", "Lee")
 
 
 
