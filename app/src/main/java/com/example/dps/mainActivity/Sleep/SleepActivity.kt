@@ -217,11 +217,13 @@ class SleepActivity : AppCompatActivity() {
 
         // BarData 생성 및 설정
         val barData = BarData(dataSet)
-        barData.setDrawValues(false)
+        barData.setDrawValues(true)
+        barData.setValueTextSize(10f)
+
 
         // BarChart에 데이터 추가
         barChart.data = barData
-        barChart.setMaxVisibleValueCount(7)
+//        barChart.setMaxVisibleValueCount(7)
         barChart.setFitBars(true)
         barChart.invalidate()
     }
@@ -234,11 +236,12 @@ class SleepActivity : AppCompatActivity() {
 
         // BarData 생성 및 설정
         val barData = BarData(dataSet)
-        barData.setDrawValues(false)
+        barData.setDrawValues(true)
+        barData.setValueTextSize(10f)
 
         // BarChart에 데이터 추가
         barChart.data = barData
-        barChart.setMaxVisibleValueCount(7)
+//        barChart.setMaxVisibleValueCount(7)
         barChart.setFitBars(true)
         barChart.invalidate()
     }
