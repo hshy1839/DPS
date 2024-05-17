@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://www.aginginplaces.net"
+    private const val BASE_URL = "http://172.16.3.22:5000"
     private var retrofit: Retrofit? = null
 
     fun getInstance(context: Context): Retrofit {

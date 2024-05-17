@@ -10,6 +10,7 @@ import java.util.Date
 import java.util.Locale
 
 data class UserData(
+    val userId: Int,
     val email: String,
     val name: String,
     val birthdate: Date,
