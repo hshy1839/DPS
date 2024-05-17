@@ -375,6 +375,27 @@
 
             </androidx.cardview.widget.CardView>
         </LinearLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/risk_btn"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#ffffff"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="5dp"
+            app:strokeColor="#ffffff"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:padding="20dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="치매 위험군 페이지 이동"
+                android:fontFamily="@font/linebd"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"/>
+        </androidx.cardview.widget.CardView>
 
 
 

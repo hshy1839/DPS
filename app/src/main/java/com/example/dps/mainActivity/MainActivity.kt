@@ -100,6 +100,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, CalorieActivity::class.java)
             startActivity(intent)
         }
+        val risk_btn = findViewById<CardView>(R.id.risk_btn)
+        risk_btn.setOnClickListener {
+            val intent = Intent(this@MainActivity, DementiaRiskActivity::class.java)
+            startActivity(intent)
+        }
 
         firstTextView = findViewById(R.id.firstTextView)
         secondTextView = findViewById(R.id.secondTextView)
