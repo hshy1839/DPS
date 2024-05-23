@@ -359,7 +359,7 @@ class SleepActivity : AppCompatActivity() {
     }
 
 
-    fun writeTrainCsv(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun sendTrain(@Suppress("UNUSED_PARAMETER") view: View) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
             return
@@ -450,7 +450,7 @@ class SleepActivity : AppCompatActivity() {
         }
     }
 
-fun writeSleep(@Suppress("UNUSED_PARAMETER") view: View) {
+fun sendSleep(@Suppress("UNUSED_PARAMETER") view: View) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
             return

@@ -2,12 +2,16 @@ package com.example.dps.mainActivity
 
 
 import ApiService
-import android.annotation.SuppressLint
+import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import com.example.dps.loginActivity.LoginActivity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,23 +21,42 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.dps.LoginData
+import androidx.health.connect.client.records.SleepSessionRecord
+import androidx.lifecycle.lifecycleScope
+import com.example.dps.HealthConnectManager
 import com.example.dps.R
 import com.example.dps.RetrofitClient
-import com.example.dps.SendWorker
-import com.example.dps.UserData
 import com.example.dps.mainActivity.Calorie.CalorieActivity
 import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
 import com.example.dps.mainActivity.Sleep.SleepActivity
 import com.example.dps.mainActivity.Workout.WorkoutActivity
 import com.google.android.material.navigation.NavigationView
-import com.example.dps.mainActivity.UserInfoActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.concurrent.TimeUnit
+import com.example.dps.restClient.models.ActivityDataVO
+import com.example.dps.restClient.models.AvroRESTVO
+import com.example.dps.restClient.models.SleepDataVO
+import com.example.dps.receiver.MyBroadcastReceiver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance(this)
@@ -45,10 +68,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private lateinit var apiService: ApiService
     private lateinit var sharedPreferences: SharedPreferences
+    private val PERMISSION_REQUEST_CODE = 100
+    lateinit var healthConnectManager: HealthConnectManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        healthConnectManager = HealthConnectManager(this)
+
+        setDailyAlarm(this)
+
+        requestNotificationPermission()
+
+        if (intent.getBooleanExtra("trigger_functions", false)) {
+            Log.d("MainActivity", "Triggering functions from intent")
+            sendSleepAndThenTrain()
+        }
 
         navView = findViewById(R.id.nav_view)
 
@@ -162,6 +198,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     private fun logout() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
@@ -186,6 +223,277 @@ class MainActivity : AppCompatActivity() {
     private fun menushowToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
+
+    private fun sendSleepAndThenTrain() {
+        Log.d("MainActivity", "sendSleepAndThenTrain called")
+        sendSleep {
+            sendTrain()
+        }
+    }
+    fun sendTrain() {
+        CoroutineScope(Dispatchers.IO).launch  {
+
+            if (!healthConnectManager.hasAllPermissions()) {
+                Log.d("MainActivity", "HealthConnect permissions not granted")
+                return@launch
+            }
+
+            val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
+            val yesterday =  today.minusMonths(3)
+
+            val startDateTime = LocalDateTime.of(yesterday, LocalTime.of(0, 0, 1))
+            val dayStart = startDateTime.toInstant(ZoneOffset.UTC)
+
+            val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
+            val dayEnd = endDateTime.toInstant(ZoneOffset.UTC)
+
+
+            val calActive = healthConnectManager.readCalActive(
+                dayStart,
+                dayEnd
+            )
+
+            val calTotal = healthConnectManager.readCalTotalRecords(
+                dayStart,
+                dayEnd
+            )
+
+            val dailyMovement = healthConnectManager.readTotalDistance(
+                dayStart,
+                dayEnd
+            )
+
+            val distance = healthConnectManager.readDistance(
+                dayStart,
+                dayEnd
+            )
+
+            val steps = healthConnectManager.readTotalSteps(
+                dayStart,
+                dayEnd
+            )
+
+            val exerciseTime = healthConnectManager.readExerciseTime(
+                dayStart,
+                dayEnd
+            )
+            val bmr = healthConnectManager.readBMR(
+                dayStart,
+                dayEnd
+            )
+
+            val cal = calTotal.substring(0 until 4 )
+            val Bmr = bmr.substring(0 until 4)
+            val activeCalrorie = cal.toInt()-Bmr.toInt()
+
+            val calTotalInt = cal.toInt()
+
+
+//             활동 데이터 인스턴스 생성
+            val data = ActivityDataVO(
+                "Lee123", "운동_이석영", Instant.now(), Instant.now(),activeCalrorie,
+                calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
+                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
+            )
+//            데이터 전송
+            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
+
+            Log.i("ddd", "하루간 활동 칼로리: ${calActive}")
+
+            Log.i("ddd", "하루간 총 사용 칼로리: ${calTotalInt}")
+
+            Log.i("ddd", "매일 움직인 거리: ${dailyMovement}")
+
+            Log.i("ddd", "활동 종료 시간: ${dayEnd}")
+
+            Log.i("ddd", "활동 시작 시간: ${dayStart}")
+
+            Log.i("ddd", "매일 걸음 수: ${steps}")
+
+            Log.i("ddd", "활동 총 시간: ${exerciseTime}")
+
+            Log.i("ddd", "BMR: ${bmr}")
+
+        }
+    }
+
+    private fun sendSleep(onComplete: () -> Unit) {
+        Log.d("MainActivity", "sendSleep called")
+        lifecycleScope.launch {
+            try {
+                if (!healthConnectManager.hasAllPermissions()) {
+                    Log.d("MainActivity", "HealthConnect permissions not granted")
+                    return@launch
+                }
+
+                val twoMonthsAgo = LocalDate.now(ZoneId.of("Asia/Seoul")).minusMonths(3)
+                val startDateTime = LocalDateTime.of(twoMonthsAgo, LocalTime.of(0, 0, 1))
+                val startTime = startDateTime.toInstant(ZoneOffset.UTC)
+                val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
+                val endDateTime = LocalDateTime.of(today, LocalTime.of(23, 59, 59))
+                val endTime = endDateTime.toInstant(ZoneOffset.UTC)
+
+                val sleepRecords = healthConnectManager.readSleep(startTime, endTime)
+
+                var awake = 0
+                var bedTimeEnd: Instant = Instant.now()
+                var bedTimeStart: Instant = Instant.now()
+                var breathAverage = 0.0
+                var deep = 0
+                var stageDuration = 0
+                var HRAverage = 0.0
+                var HRLowest = 0.0
+                var light = 0
+                var rem = 0
+                var durationMinutes = 0
+
+                for (sleepRecord in sleepRecords) {
+                    val rates = healthConnectManager.readRespiratoryRateRecords(
+                        sleepRecord.startTime,
+                        sleepRecord.endTime
+                    )
+                    val heartRate = healthConnectManager.readHeartRateAggregate(
+                        sleepRecord.startTime,
+                        sleepRecord.endTime
+                    )
+                    HRAverage = heartRate.first
+                    HRLowest = heartRate.second
+
+                    for (rate in rates) {
+                        breathAverage = rate.rate
+                    }
+
+                    for (stage in sleepRecord.stages) {
+                        bedTimeStart = sleepRecord.startTime.atZone(ZoneId.of("Asia/Seoul")).toInstant()
+                        bedTimeEnd = sleepRecord.endTime.atZone(ZoneId.of("Asia/Seoul")).toInstant()
+                        durationMinutes = Duration.between(bedTimeStart, bedTimeEnd).toMinutes().toInt()
+
+                        val stageStart = stage.startTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+                        val stageEnd = stage.endTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+                        stageDuration = Duration.between(stageStart, stageEnd).toMinutes().toInt()
+
+                        when (stage.stage) {
+                            SleepSessionRecord.STAGE_TYPE_AWAKE, SleepSessionRecord.STAGE_TYPE_AWAKE_IN_BED -> awake += stageDuration
+                            SleepSessionRecord.STAGE_TYPE_DEEP -> deep += stageDuration
+                            SleepSessionRecord.STAGE_TYPE_REM -> rem += stageDuration
+                            SleepSessionRecord.STAGE_TYPE_LIGHT -> light += stageDuration
+                        }
+                    }
+                    Log.i("ddd","${bedTimeEnd}")
+                    Log.i("ddd","${bedTimeStart}")
+                    Log.i("ddd","${rem}")
+
+
+                    val data = SleepDataVO(
+                        "aaa", "aaa", Instant.now(),
+                        Instant.now(), awake,
+                        bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
+                        rem, durationMinutes + stageDuration, true
+                    )
+                    Log.i("MainActivity", "Sending sleep data: $data")
+
+                    // 데이터 전송
+                    Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
+                }
+                onComplete()
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error in sendSleep", e)
+                onComplete() // 예외 발생 시에도 onComplete를 호출하여 sendTrain이 실행되도록 합니다.
+            }
+        }
+    }
+
+    fun Avropost(data: AvroRESTVO, apiURL: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            var output: OutputStream? = null
+            var reader: BufferedReader? = null
+            var writer: BufferedWriter? = null
+            var conn: HttpURLConnection? = null
+            val connTimeout = 5000
+            val readTimeout = 3000
+            try {
+                val url = URL(apiURL)
+                conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.connectTimeout = connTimeout
+                conn.readTimeout = readTimeout
+                conn.setRequestProperty("Content-Type", "application/vnd.kafka.avro.v2+json")
+                conn.doOutput = true
+                conn.instanceFollowRedirects = true
+                output = conn.outputStream
+                writer = BufferedWriter(OutputStreamWriter(output))
+                writer.write(data.toRESTMessage())
+                writer.flush()
+                val buffer = StringBuilder()
+                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                    reader = BufferedReader(InputStreamReader(conn.inputStream, "UTF-8"))
+                    var message: String? = null
+                    while (reader.readLine().also { message = it } != null) {
+                        buffer.append(message).append("\n")
+                    }
+                } else {
+                    buffer.append("code : ")
+                    buffer.append(conn.responseCode).append("\n")
+                    buffer.append("message : ")
+                    buffer.append(conn.responseMessage).append("\n")
+                }
+                println(buffer.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                try {
+                    writer?.close()
+                    output?.close()
+                    reader?.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), PERMISSION_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Log.d("Permission", "Notification permission granted")
+            } else {
+                Log.d("Permission", "Notification permission denied")
+            }
+        }
+    }
+    fun setDailyAlarm(context: Context) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 19)
+            set(Calendar.MINUTE, 57)
+            set(Calendar.SECOND, 0)
+        }
+
+        if (calendar.timeInMillis < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, MyBroadcastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+
+        Log.d("Alarm", "Alarm set for: ${calendar.time}")
+    }
+
 
 }
 
