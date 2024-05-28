@@ -25,19 +25,19 @@ class LoginActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance(this)
     private lateinit var apiService: ApiService
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var mainLoginButton: ImageView
+    private lateinit var mainLoginButton: Button // Button으로 변경
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        apiService = retrofit.create(ApiService::class.java)
+        apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         checkLoginStatus()
 
         val idEdit = findViewById<EditText>(R.id.idEdit)
         val pwEdit = findViewById<EditText>(R.id.passwordEdit)
-        val loginBtn = findViewById<Button>(R.id.login_btn)
+        val loginBtn = findViewById<Button>(R.id.login_btn) // Button으로 변경
 
         loginBtn.setOnClickListener {
             val username = idEdit.text.toString()
@@ -62,29 +62,35 @@ class LoginActivity : AppCompatActivity() {
             finish() // 로그인 화면 종료
         }
     }
+
     private fun loginUser(username: String, password: String) {
-        val call = apiService.login(LoginData(username, password))
+        val loginData = LoginData(username, password) // LoginData 객체 생성
+
+        val call = apiService.login(loginData)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-
-                val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-
-
-
                 if (response.isSuccessful) {
+                    val jsonResponse = response.body()
+                if (jsonResponse != null && jsonResponse.has("userId")) { // 서버에서 userId를 반환하도록 변경
+                    val userId = jsonResponse.get("userId").asInt
+                    saveUserId(userId) // userId를 저장
 
                     // 로그인 성공
                     Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
                     // SharedPreferences에 로그인 상태 저장
-                    saveLoginStatus(true )
+                    saveLoginStatus(true)
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish() // 로그인 화면 종료
                 } else {
-                    // 로그인 실패
-                    mainLoginButton.visibility = View.VISIBLE
-                    Toast.makeText(this@LoginActivity, "아이디 또는 비밀번호가 틀립니다.", Toast.LENGTH_SHORT).show()
+                    // userId가 없는 경우
+                    Toast.makeText(this@LoginActivity, "로그인 실패: 사용자 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
+
+            } else {
+                // 로그인 실패
+             Toast.makeText(this@LoginActivity, "로그인 실패: 아이디 또는 비밀번호가 틀립니다.", Toast.LENGTH_SHORT).show()
+                                }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
@@ -94,9 +100,15 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+    private fun saveUserId(userId: Int) {
+        val editor = sharedPreferences.edit()
+        editor.putInt("userId", userId)
+        editor.apply()
+    }
+
     private fun saveLoginStatus(isLoggedIn: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
-        editor.commit()
+        editor.apply() // commit() 대신 apply()를 사용하여 비동기로 저장
     }
 }
