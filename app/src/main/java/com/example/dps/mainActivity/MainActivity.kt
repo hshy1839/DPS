@@ -5,8 +5,8 @@ import ApiService
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.Context
-import com.example.dps.loginActivity.LoginActivity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -18,30 +18,37 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.lifecycle.lifecycleScope
 import com.example.dps.HealthConnectManager
 import com.example.dps.R
 import com.example.dps.RetrofitClient
+import com.example.dps.loginActivity.LoginActivity
 import com.example.dps.mainActivity.Calorie.CalorieActivity
 import com.example.dps.mainActivity.Heartrate.HeartbeatActivity
 import com.example.dps.mainActivity.Sleep.SleepActivity
 import com.example.dps.mainActivity.Workout.WorkoutActivity
-import com.google.android.material.navigation.NavigationView
+import com.example.dps.receiver.MyBroadcastReceiver
 import com.example.dps.restClient.models.ActivityDataVO
 import com.example.dps.restClient.models.AvroRESTVO
 import com.example.dps.restClient.models.SleepDataVO
-import com.example.dps.receiver.MyBroadcastReceiver
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -70,16 +77,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private val PERMISSION_REQUEST_CODE = 100
     lateinit var healthConnectManager: HealthConnectManager
+    private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         healthConnectManager = HealthConnectManager(this)
-
+        setContentView(R.layout.activity_main)
+        createRequestPermissionsObject()
+        checkAvailabilityAndPermissions()
         setDailyAlarm(this)
 
         requestNotificationPermission()
+
 
         if (intent.getBooleanExtra("trigger_functions", false)) {
             Log.d("MainActivity", "Triggering functions from intent")
@@ -230,6 +240,97 @@ class MainActivity : AppCompatActivity() {
             sendTrain()
         }
     }
+    private fun checkAvailabilityAndPermissions() {
+        if (!checkAvailability()) {
+            return
+        }
+        lifecycleScope.launch {
+            if (!healthConnectManager.hasAllPermissions()) {
+                checkPermissions()
+            }
+        }
+    }
+
+    private fun createRequestPermissionsObject() {
+        // registerForActivityResult를 사용하여 권한 요청 결과를 처리하는 객체를 생성
+         requestPermissions =
+            registerForActivityResult(healthConnectManager.requestPermissionActivityContract) { granted ->
+                // granted는 사용자가 부여한 권한 목록입니다.
+                lifecycleScope.launch {
+                    // granted 목록이 비어있지 않고 모든 권한이 부여되었는지 확인
+                    if (granted.isNotEmpty() && healthConnectManager.hasAllPermissions()) {
+                        // 모든 권한이 부여되었으면 Toast 메시지 표시
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_granted,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    } else {
+                        // 권한이 부여되지 않았으면 AlertDialog를 표시
+                        AlertDialog.Builder(this@MainActivity)
+                            .setMessage(R.string.permissions_not_granted)
+                            .setPositiveButton("Ok", null)
+                            .show()
+                    }
+                }
+            }
+    }
+    private fun checkPermissions(): Job {
+        return lifecycleScope.launch {
+            try {
+                if (!healthConnectManager.hasAllPermissions()) {
+                    requestPermissions.launch(healthConnectManager.permissions)
+                }
+            } catch (exception: Exception) {
+                Log.e("ddd", exception.toString())
+                Toast.makeText(this@MainActivity, "Error: $exception", Toast.LENGTH_LONG)
+                    .show()
+            }
+        }
+    }
+    private fun checkAvailability(): Boolean {
+        when (HealthConnectClient.getSdkStatus(this)) {
+            HealthConnectClient.SDK_UNAVAILABLE -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "not_supported_description",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                return false
+            }
+
+            HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "not_installed_description",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=com.google.android.apps.healthdata"),
+                        ),
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata"),
+                        ),
+                    )
+                }
+                return false
+            }
+            else -> {
+                return true
+            }
+        }
+    }
     fun sendTrain() {
         CoroutineScope(Dispatchers.IO).launch  {
 
@@ -291,12 +392,12 @@ class MainActivity : AppCompatActivity() {
 
 //             활동 데이터 인스턴스 생성
             val data = ActivityDataVO(
-                "Lee123", "운동_이석영", Instant.now(), Instant.now(),activeCalrorie,
+                "Lee1234567", "운동_이석영", Instant.now(),activeCalrorie,
                 calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
                 0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
             )
 //            데이터 전송
-            Avropost(data, "http://3.34.218.215:8082/topics/activity_data/")
+            post(data, "http://3.34.218.215:8082/topics/activity_data/")
 
             Log.i("ddd", "하루간 활동 칼로리: ${calActive}")
 
@@ -317,7 +418,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendSleep(onComplete: () -> Unit) {
+ fun sendSleep(onComplete: () -> Unit) {
         Log.d("MainActivity", "sendSleep called")
         lifecycleScope.launch {
             try {
@@ -385,15 +486,15 @@ class MainActivity : AppCompatActivity() {
 
 
                     val data = SleepDataVO(
-                        "aaa", "aaa", Instant.now(),
-                        Instant.now(), awake,
+                        "Test9", "이석영", Instant.now(),
+                         awake,
                         bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
                         rem, durationMinutes + stageDuration, true
                     )
                     Log.i("MainActivity", "Sending sleep data: $data")
 
                     // 데이터 전송
-                    Avropost(data, "http://3.34.218.215:8082/topics/sleep_data/")
+                    post(data, "http://3.34.218.215:8082/topics/sleep_data/")
                 }
                 onComplete()
             } catch (e: Exception) {
@@ -403,7 +504,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun Avropost(data: AvroRESTVO, apiURL: String?) {
+    fun post(data: AvroRESTVO, apiURL: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             var output: OutputStream? = null
             var reader: BufferedReader? = null
@@ -427,7 +528,7 @@ class MainActivity : AppCompatActivity() {
                 val buffer = StringBuilder()
                 if (conn.responseCode == HttpURLConnection.HTTP_OK) {
                     reader = BufferedReader(InputStreamReader(conn.inputStream, "UTF-8"))
-                    var message: String? = null
+                    var message: String?
                     while (reader.readLine().also { message = it } != null) {
                         buffer.append(message).append("\n")
                     }
@@ -437,7 +538,9 @@ class MainActivity : AppCompatActivity() {
                     buffer.append("message : ")
                     buffer.append(conn.responseMessage).append("\n")
                 }
-                println(buffer.toString())
+                withContext(Dispatchers.Main) {
+                    println(buffer.toString())
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -471,8 +574,8 @@ class MainActivity : AppCompatActivity() {
     }
     fun setDailyAlarm(context: Context) {
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 19)
-            set(Calendar.MINUTE, 57)
+            set(Calendar.HOUR_OF_DAY, 16)
+            set(Calendar.MINUTE, 10)
             set(Calendar.SECOND, 0)
         }
 
@@ -493,6 +596,19 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("Alarm", "Alarm set for: ${calendar.time}")
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Log.d("Permissions", "Health Connect permissions granted")
+            } else {
+                Log.d("Permissions", "Health Connect permissions denied")
+                Toast.makeText(this, "Health Connect permissions are required for the app to function properly", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
 
 }

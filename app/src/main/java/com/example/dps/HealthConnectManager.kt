@@ -1,6 +1,8 @@
 package com.example.dps
 
 import android.content.Context
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -27,7 +29,6 @@ class HealthConnectManager(private val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
 
     val permissions = setOf(
-        HealthPermission.getWritePermission(SleepSessionRecord::class),
         HealthPermission.getReadPermission(SleepSessionRecord::class),
         HealthPermission.getReadPermission(HeartRateRecord::class),
         HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
@@ -36,7 +37,6 @@ class HealthConnectManager(private val context: Context) {
         HealthPermission.getReadPermission(StepsRecord::class),
         HealthPermission.getReadPermission(ExerciseSessionRecord::class),
         HealthPermission.getReadPermission(RespiratoryRateRecord::class)
-
     )
 
     suspend fun hasAllPermissions(): Boolean {
@@ -48,6 +48,7 @@ class HealthConnectManager(private val context: Context) {
     }
 
     val requestPermissionActivityContract by lazy { PermissionController.createRequestPermissionResultContract() }
+
 
     suspend fun readCalActive(start: Instant, end: Instant): String {
         val response = healthConnectClient.aggregate(

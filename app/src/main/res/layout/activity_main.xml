@@ -69,6 +69,11 @@
                 android:layout_height="400dp"
                 android:scaleType="centerCrop"
                 android:background="#5271FE"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sleep_data"
+                android:onClick="sendSleep" />
 
             <TextView
                 android:id="@+id/firstTextView"
