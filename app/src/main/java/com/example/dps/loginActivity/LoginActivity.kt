@@ -39,6 +39,8 @@ class LoginActivity : AppCompatActivity() {
         val pwEdit = findViewById<EditText>(R.id.passwordEdit)
         val loginBtn = findViewById<Button>(R.id.login_btn) // Button으로 변경
 
+        val signupButton = findViewById<Button>(R.id.signup_btn)
+
         loginBtn.setOnClickListener {
             val username = idEdit.text.toString()
             val password = pwEdit.text.toString()
@@ -50,6 +52,11 @@ class LoginActivity : AppCompatActivity() {
                 // 아이디와 비밀번호가 입력되었을 때
                 loginUser(username, password)
             }
+        }
+        signupButton.setOnClickListener {
+            // SignupActivity로 이동하는 인텐트 생성
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
         }
     }
 
