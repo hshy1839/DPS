@@ -1,131 +1,112 @@
-package com.example.dps.loginActivity
-
-import ApiService
-import android.content.Intent
-import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.Button
-import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.example.dps.R
-import com.example.dps.RetrofitClient
-import com.example.dps.SignupData
-import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
-
-class SignupActivity2 : AppCompatActivity() {
-    private lateinit var nameEdit: EditText
-    private lateinit var emailEdit: EditText
-    private lateinit var phoneNumberEdit: EditText
-    private lateinit var birthdayEdit: EditText
-    private lateinit var roleRadio: RadioGroup
-    private lateinit var genderRadio: RadioGroup
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup2)
-
-        var username = intent.getStringExtra("USERNAME")
-        var password = intent.getStringExtra("PASSWORD")
-        nameEdit = findViewById(R.id.nameEdit)
-        emailEdit = findViewById(R.id.emailEdit)
-        phoneNumberEdit = findViewById(R.id.phoneNumberEdit)
-        birthdayEdit = findViewById(R.id.birthdayEdit)
-        roleRadio = findViewById(R.id.roleRadio)
-        genderRadio = findViewById(R.id.genderRadio)
-
-        val sdfInput = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-        val sdfOutput = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-        birthdayEdit.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                try {
-                    val birthdayString = s.toString()
-                    if (birthdayString.length == 8) {
-                        val birthdayDate = sdfInput.parse(birthdayString)
-                        // birthdayDate를 사용하여 원하는 작업을 수행
-                    }
-                } catch (e: ParseException) {
-                    e.printStackTrace()
-                }
-            }
-        })
-
-        val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
-        signUpNextBtn.setOnClickListener {
-            val selectedRoleId = roleRadio.checkedRadioButtonId
-            val selectedGenderId = genderRadio.checkedRadioButtonId
-
-            if (selectedRoleId == -1 || selectedGenderId == -1) {
-                Toast.makeText(applicationContext, "역할과 성별을 선택해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val selectedRole = findViewById<RadioButton>(selectedRoleId).text.toString()
-            val selectedGender = findViewById<RadioButton>(selectedGenderId).text.toString()
-
-            val birthdayString = birthdayEdit.text.toString()
-            val birthdayDate: Date
-            val formattedDate: String
-
-            try {
-                birthdayDate = sdfInput.parse(birthdayString)
-                formattedDate = sdfOutput.format(birthdayDate)
-            } catch (e: ParseException) {
-                Toast.makeText(applicationContext, "잘못된 생일 형식입니다.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
-
-            if (username.isNullOrEmpty() || password.isNullOrEmpty() ||
-                emailEdit.text.isNullOrEmpty() || nameEdit.text.isNullOrEmpty() ||
-                formattedDate.isNullOrEmpty() || selectedGender.isNullOrEmpty() ||
-                phoneNumberEdit.text.isNullOrEmpty() || selectedRole.isNullOrEmpty()) {
-                Toast.makeText(applicationContext, "모든 항목을 입력하세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val signupData = SignupData(
-                username!!,
-                password!!,
-                emailEdit.text.toString(),
-                nameEdit.text.toString(),
-                formattedDate,
-                selectedGender,
-                phoneNumberEdit.text.toString(),
-                selectedRole,
-            )
-
-            val call = apiService.signup(signupData)
-            call.enqueue(object : Callback<JsonObject> {
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, "데이터가 성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@SignupActivity2, SignupActivity3::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(applicationContext, "데이터 전송에 실패했습니다. 응답 코드: ${response.code()}, 메시지: ${response.message()}", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Toast.makeText(applicationContext, "네트워크 오류: " + t.message, Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-    }
-}
+//package com.example.dps.loginActivity
+//
+//import ApiService
+//import android.content.Intent
+//import android.os.Bundle
+//import android.text.Editable
+//import android.text.TextWatcher
+//import android.widget.Button
+//import android.widget.EditText
+//import android.widget.RadioButton
+//import android.widget.RadioGroup
+//import android.widget.Toast
+//import androidx.appcompat.app.AppCompatActivity
+//import com.example.dps.R
+//import com.example.dps.RetrofitClient
+//import com.example.dps.UserData
+//import retrofit2.Call
+//import retrofit2.Callback
+//import retrofit2.Response
+//import java.text.ParseException
+//import java.text.SimpleDateFormat
+//import java.util.*
+//
+//class SignupActivity2 : AppCompatActivity() {
+//    private lateinit var nameEdit: EditText
+//    private lateinit var emailEdit: EditText
+//    private lateinit var phoneNumberEdit: EditText
+//    private lateinit var birthdayEdit: EditText
+//    private lateinit var roleRadio: RadioGroup
+//    private lateinit var genderRadio: RadioGroup
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.activity_signup2)
+//
+//        val username = intent.getStringExtra("USERNAME")
+//        val password = intent.getStringExtra("PASSWORD")
+//        nameEdit = findViewById(R.id.nameEdit)
+//        emailEdit = findViewById(R.id.emailEdit)
+//        phoneNumberEdit = findViewById(R.id.phoneNumberEdit)
+//        birthdayEdit = findViewById(R.id.birthdayEdit)
+//        roleRadio = findViewById(R.id.roleRadio)
+//        genderRadio = findViewById(R.id.genderRadio)
+//
+//        val sdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+//
+//        birthdayEdit.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                try {
+//                    val birthdayString = s.toString()
+//                    if (birthdayString.length == 8) {
+//                        val birthdayDate = sdf.parse(birthdayString)
+//                        // birthdayDate를 사용하여 원하는 작업을 수행
+//                    }
+//                } catch (e: ParseException) {
+//                    e.printStackTrace()
+//                }
+//            }
+//        })
+//
+//
+//
+//        val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
+//        signUpNextBtn.setOnClickListener {
+//            val selectedRoleId = roleRadio.checkedRadioButtonId
+//            val selectedGenderId = genderRadio.checkedRadioButtonId
+//
+//            val selectedRole = findViewById<RadioButton>(selectedRoleId).text.toString()
+//            val selectedGender = findViewById<RadioButton>(selectedGenderId).text.toString()
+//
+//            val birthdayString = birthdayEdit.text.toString()
+//            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//            val birthdayDate: Date = sdf.parse(birthdayString)
+//            val apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
+//
+//            val call = apiService.signup(
+//                UserData(
+//                    emailEdit.text.toString(),
+//                    nameEdit.text.toString(),
+//                    birthdayDate,
+//                    selectedGender,
+//                    phoneNumberEdit.text.toString(),
+//                    selectedRole,
+//                )
+//            )
+//            call.enqueue(object : Callback<Void> {
+//                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+//                    if (response.isSuccessful) {
+//                        // 서버에서 정상적으로 응답을 받았을 때의 처리
+//                        Toast.makeText(applicationContext, "데이터가 성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show()
+//
+//                        // 서버 응답에 따라 다음 액티비티로 이동
+//                        val intent = Intent(this@SignupActivity2, SignupActivity3::class.java)
+//                        startActivity(intent)
+//                    } else {
+//                        // 서버에서 응답이 실패했을 때의 처리
+//                        Toast.makeText(applicationContext, "데이터 전송에 실패했습니다.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<Void>, t: Throwable) {
+//                    // 네트워크 오류 등으로 전송에 실패했을 때의 처리
+//                    Toast.makeText(applicationContext, "네트워크 오류: " + t.message, Toast.LENGTH_SHORT).show()
+//                }
+//            })
+//        }
+//    }
+//}

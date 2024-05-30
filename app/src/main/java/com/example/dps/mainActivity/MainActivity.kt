@@ -5,6 +5,7 @@ import ApiService
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.bluetooth.BluetoothAdapter
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -28,7 +30,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.lifecycle.lifecycleScope
 import com.example.dps.HealthConnectManager
@@ -65,6 +66,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Calendar
 
+
 class MainActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance(this)
     private lateinit var firstTextView: TextView
@@ -78,8 +80,10 @@ class MainActivity : AppCompatActivity() {
     private val PERMISSION_REQUEST_CODE = 100
     lateinit var healthConnectManager: HealthConnectManager
     private lateinit var requestPermissions: ActivityResultLauncher<Set<String>>
-
-
+    private val WATCH_DEVICE_NAME = "YourWatchDeviceName" // 워치 이름으로 변경
+    private var triggerFunctions = false
+    private val REQUEST_ENABLE_BT = 1
+    private val REQUEST_BLUETOOTH_PERMISSION = 2
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,7 +95,8 @@ class MainActivity : AppCompatActivity() {
         setDailyAlarm(this)
 
         requestNotificationPermission()
-
+        val intent = intent
+        handleIntentWithBluetooth(intent)
 
         if (intent.getBooleanExtra("trigger_functions", false)) {
             Log.d("MainActivity", "Triggering functions from intent")
@@ -210,7 +215,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun logout() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
@@ -234,6 +238,73 @@ class MainActivity : AppCompatActivity() {
     }
     private fun menushowToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleIntentWithBluetooth(intent: Intent) {
+        if (intent.getBooleanExtra("trigger_functions", false)) {
+            Log.d("MainActivity", "Triggering functions from intent")
+
+            // Bluetooth Adapter 객체 가져오기
+            val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                if (bluetoothAdapter != null) {
+                    // Bluetooth가 켜져있는지 확인
+                    if (bluetoothAdapter.isEnabled) {
+                        // Bluetooth 끄기
+                        bluetoothAdapter.disable()
+                        Log.d("MainActivity", "Turning off Bluetooth")
+
+                        // 2초 기다렸다가 Bluetooth 다시 켜기
+                        Handler().postDelayed({
+                            if (ActivityCompat.checkSelfPermission(
+                                    this,
+                                    Manifest.permission.BLUETOOTH_CONNECT
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                ActivityCompat.requestPermissions(
+                                    this,
+                                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                                    REQUEST_BLUETOOTH_PERMISSION
+                                )
+                                return@postDelayed
+                            }
+                            bluetoothAdapter.enable()
+                            Log.d("MainActivity", "Turning on Bluetooth")
+
+                            // Bluetooth가 켜진 후 5초 뒤에 sendSleepAndThenTrain() 함수 실행
+                            Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
+                        }, 2000) // 2초 대기
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.BLUETOOTH_CONNECT
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            ActivityCompat.requestPermissions(
+                                this,
+                                arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+                                REQUEST_BLUETOOTH_PERMISSION
+                            )
+                            return
+                        }
+                        // Bluetooth가 꺼져있다면 바로 켜기
+                        bluetoothAdapter.enable()
+                        Log.d("MainActivity", "Turning on Bluetooth directly")
+
+                        // Bluetooth가 켜진 후 5초 뒤에 sendSleepAndThenTrain() 함수 실행
+                        Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
+                    }
+                } else {
+                    Log.d("MainActivity", "Bluetooth not supported on this device")
+                    // Bluetooth를 사용할 수 없는 경우 바로 sendSleepAndThenTrain() 실행
+                    sendSleepAndThenTrain()
+                }
+            }
+        }
     }
 
     private fun sendSleepAndThenTrain() {
@@ -333,6 +404,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
     fun sendTrain() {
         CoroutineScope(Dispatchers.IO).launch  {
 
@@ -393,10 +467,15 @@ class MainActivity : AppCompatActivity() {
 
 
 //             활동 데이터 인스턴스 생성
+//            val data = ActivityDataVO(
+//                "Lee1234567", "운동_이석영", Instant.now(),activeCalrorie,
+//                calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
+//                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
+//            )
             val data = ActivityDataVO(
-                "Lee1234567", "운동_이석영", Instant.now(),activeCalrorie,
-                calTotalInt, dailyMovement.substring(0 until 3).toInt(), dayEnd, dayStart, 0, 0, 0, 10,
-                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
+                "Test10", "운동_이석영", Instant.now(),activeCalrorie,
+                calTotalInt, 1000, dayEnd, dayStart, 0, 0, 0, 10,
+                0, 0, 100, 100, 1000, 1000, false
             )
 //            데이터 전송
             post(data, "http://3.34.218.215:8082/topics/activity_data/")
@@ -482,22 +561,24 @@ class MainActivity : AppCompatActivity() {
                             SleepSessionRecord.STAGE_TYPE_LIGHT -> light += stageDuration
                         }
                     }
-                    Log.i("ddd","${bedTimeEnd}")
-                    Log.i("ddd","${bedTimeStart}")
-                    Log.i("ddd","${rem}")
 
-
-                    val data = SleepDataVO(
-                        "Test9", "이석영", Instant.now(),
-                         awake,
-                        bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
-                        rem, durationMinutes + stageDuration, true
-                    )
-                    Log.i("MainActivity", "Sending sleep data: $data")
-
-                    // 데이터 전송
-                    post(data, "http://3.34.218.215:8082/topics/sleep_data/")
+//                    val data = SleepDataVO(
+//                        "Test9", "이석영", Instant.now(),
+//                         awake,
+//                        bedTimeEnd, bedTimeStart, breathAverage, deep, durationMinutes, HRAverage, HRLowest, light,
+//                        rem, durationMinutes + stageDuration, true
+//                    )
                 }
+                val data = SleepDataVO(
+                    "Test10", "이석영", Instant.now(),
+                    1000,
+                    Instant.now(),  Instant.now(), 100.0, 1000, 1000, 60.0, 60.0, 1000,
+                    1000, 10000, true
+                )
+                Log.i("MainActivity", "Sending sleep data: $data")
+
+                // 데이터 전송
+                post(data, "http://3.34.218.215:8082/topics/sleep_data/")
                 onComplete()
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error in sendSleep", e)
@@ -564,20 +645,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                Log.d("Permission", "Notification permission granted")
-            } else {
-                Log.d("Permission", "Notification permission denied")
-            }
-        }
-    }
     fun setDailyAlarm(context: Context) {
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 16)
-            set(Calendar.MINUTE, 10)
+            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.MINUTE, 19)
             set(Calendar.SECOND, 0)
         }
 
@@ -587,7 +658,7 @@ class MainActivity : AppCompatActivity() {
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, MyBroadcastReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -610,9 +681,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_BLUETOOTH_PERMISSION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    handleIntentWithBluetooth(intent)
+                } else {
+                    Log.d("MainActivity", "Bluetooth permissions not granted")
+                    Toast.makeText(
+                        this,
+                        "Bluetooth permissions are required to use this feature",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                return
+            }
+        }
+    }
 }
 
 

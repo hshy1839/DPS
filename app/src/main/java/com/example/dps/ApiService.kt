@@ -1,5 +1,4 @@
 import com.example.dps.LoginData
-import com.example.dps.SignupData
 import com.example.dps.UserData
 import com.google.gson.JsonObject
 import okhttp3.RequestBody
@@ -16,7 +15,7 @@ interface ApiService {
     @POST("/api/android/login")
     fun login(@Body data: LoginData): Call<JsonObject>
     @POST("/api/android/signup")
-    fun signup(@Body data: SignupData): Call<JsonObject>
+    fun signup(@Body data: UserData): Call<Void>
 
     @POST("/api/android/updateUserInfo")
     fun updateUserInfo(@Body data: UserData): Call<JsonObject>

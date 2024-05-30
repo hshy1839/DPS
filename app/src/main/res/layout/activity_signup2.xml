@@ -171,6 +171,6 @@
             android:layout_gravity="center"
             android:layout_marginTop="40dp"
             android:background="@drawable/login_btn_background"
-            android:text="가입하기" />
+            android:text="다음" />
     </LinearLayout>
 </LinearLayout>

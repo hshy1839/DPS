@@ -17,6 +17,7 @@ import com.example.dps.R
 import com.example.dps.mainActivity.MainActivity
 
 class MyBroadcastReceiver : BroadcastReceiver() {
+
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("BroadcastReceiver", "Alarm received")
 
@@ -43,7 +44,7 @@ class MyBroadcastReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("trigger_functions", true)
         }
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context, "DAILY_ALARM_CHANNEL")
             .setSmallIcon(R.drawable.dps_logo) // 알림 아이콘 설정

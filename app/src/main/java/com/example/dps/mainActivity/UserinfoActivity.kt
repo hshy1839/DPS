@@ -95,7 +95,7 @@ class UserInfoActivity : AppCompatActivity() {
 
                         emailText.text = email
                         nameText.text = name
-                        birthdayText.text = birthdate.substring(0, 10)
+                        birthdayText.text = birthdate
                         genderText.text = gender
                         phoneNumberText.text = phoneNumber
                         roleText.text = role
