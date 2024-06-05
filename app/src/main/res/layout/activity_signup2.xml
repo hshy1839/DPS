@@ -17,7 +17,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="center"
-            android:src="@drawable/baseline_arrow_back_24" />
+            android:src="@drawable/baseline_arrow_back_
+            24" />
     </LinearLayout>
 
     <!-- 사용자 정보 입력 폼 레이아웃 -->
