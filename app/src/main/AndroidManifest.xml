@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:targetSandboxVersion="1"
-    package="com.example.dps">
+    package="com.woosuk.AgingInPlace">
 
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
@@ -60,25 +60,19 @@
         android:theme="@style/Theme.DPS"
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
-        <receiver android:name=".receiver.MyBroadcastReceiver"
+        <receiver android:name="com.woosuk.AgingInPlace.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-<!--        <receiver android:name=".BootReceiver"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
         <activity
-            android:name=".mainActivity.MainActivity"
+            android:name="com.woosuk.AgingInPlace.mainActivity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -87,7 +81,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SplashActivity"
+            android:name="com.woosuk.AgingInPlace.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
             android:exported="true"
@@ -97,22 +91,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".loginActivity.LoginActivity"/>
-    <activity android:name=".loginActivity.SignupActivity"/>
-        <activity android:name=".loginActivity.SignupActivity1"/>
-        <activity android:name=".loginActivity.SignupActivity3"/>
-        <activity android:name=".loginActivity.SignupActivity2"/>
-        <activity android:name=".mainActivity.UserInfoActivity"/>
-        <activity android:name=".mainActivity.Heartrate.HeartbeatActivity"/>
-        <activity android:name=".mainActivity.Workout.WorkoutActivity"/>
-        <activity android:name=".mainActivity.Sleep.SleepActivity"/>
-        <activity android:name=".mainActivity.Calorie.CalorieActivity"/>
-        <activity android:name=".mainActivity.MedicationActivity"/>
-        <activity android:name=".mainActivity.DementiaRiskActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.loginActivity.LoginActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.loginActivity.SignupActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.loginActivity.SignupActivity1"/>
+        <activity android:name="com.woosuk.AgingInPlace.loginActivity.SignupActivity3"/>
+        <activity android:name="com.woosuk.AgingInPlace.loginActivity.SignupActivity2"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.UserInfoActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.Heartrate.HeartbeatActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.Workout.WorkoutActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.Sleep.SleepActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.Calorie.CalorieActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.MedicationActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.DementiaRiskActivity"/>
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
-            android:targetActivity=".mainActivity.MainActivity"
+            android:targetActivity="com.woosuk.AgingInPlace.mainActivity.MainActivity"
             android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />

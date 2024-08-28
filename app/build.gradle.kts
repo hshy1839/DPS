@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dps"
+    namespace = "com.woosuk.AgingInPlace"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.dps"
+        applicationId = "com.woosuk.AgingInPlace"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
@@ -38,6 +38,7 @@ android {
 }
 dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation ("com.google.android.gms:play-services-wearable:18.1.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
