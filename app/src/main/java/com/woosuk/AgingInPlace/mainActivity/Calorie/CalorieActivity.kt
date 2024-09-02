@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -33,6 +36,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.internal.format
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
@@ -50,16 +54,19 @@ class CalorieActivity : AppCompatActivity() {
     private lateinit var calorie_text: TextView
     private lateinit var calorie_icon: ImageView
     private lateinit var calorie_message: TextView
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var navView: NavigationView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calorie)
-
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         // View 초기화
         calorie_text = findViewById(R.id.calorie_text)
         calorie_icon = findViewById(R.id.calorie_icon)
         calorie_message = findViewById(R.id.calorie_message)
+        navView = findViewById(R.id.nav_view)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -84,9 +91,22 @@ class CalorieActivity : AppCompatActivity() {
         fetchDataFromApiCalories("http://3.39.236.95:8080/chart/calories", id)
 
 
-
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        // 헤더 뷰 접근
+        val headerView = navView.getHeaderView(0)
+
+        // 로그인 상태에 따라 헤더의 버튼 가시성 조정
+        val menuLoginBtn: Button = headerView.findViewById(R.id.menu_loginBtn)
+        menuLoginBtn.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
+
+        menuLoginBtn.setOnClickListener {
+            if (!isLoggedIn) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+        }
 
         // 토글 버튼을 추가하여 메뉴가 열리고 닫히도록 함
         val toggle = ActionBarDrawerToggle(
@@ -94,6 +114,10 @@ class CalorieActivity : AppCompatActivity() {
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
+
+
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
         // 네비게이션 메뉴 아이템 클릭 리스너 설정
         navView.setNavigationItemSelectedListener { menuItem ->
@@ -112,8 +136,13 @@ class CalorieActivity : AppCompatActivity() {
                     showToast("설정 버튼")
                 }
                 R.id.nav_item4 -> {
-                    // Menu 3 선택 시의 동작
-                    showToast("로그아웃 버튼")
+                    val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+                    if (isLoggedIn) {
+                        logout()
+                    } else {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
             }
             // 메뉴를 선택한 후에는 Drawer를 닫아줌
@@ -126,6 +155,33 @@ class CalorieActivity : AppCompatActivity() {
             // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
         }
+        updateWelcomeMessage()
+    }
+
+    private fun updateWelcomeMessage() {
+        // NavigationView의 헤더 가져오기
+        val headerView = navView.getHeaderView(0)
+        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
+
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val username = sharedPreferences.getInt("userId", 0)
+
+        if (isLoggedIn) {
+            welcomeTextView.text = "안녕하세요 $username"
+        } else {
+            welcomeTextView.text = "로그인 후 사용해주세요"
+        }
+    }
+
+    private fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.commit()
+
+        // 로그인 화면으로 이동합니다.
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onBackPressed() {
@@ -345,7 +401,7 @@ class CalorieActivity : AppCompatActivity() {
     }
     private fun updateCalorieUI(averageCalories: Float) {
         // 평균 칼로리 표시
-        calorie_text.text = "$averageCalories kcal"
+        calorie_text.text = "${String.format("%.1f", averageCalories)}kcal"
 
         // 평균 칼로리에 따라 아이콘 및 문구 변경
         when {

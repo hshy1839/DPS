@@ -121,8 +121,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         requestNotificationPermission()
-        val intent = intent
-        sendSleepDataAndActivityData(intent)
 
         if (intent.getBooleanExtra("trigger_functions", false)) {
             Log.d("MainActivity", "Triggering functions from intent")
@@ -150,10 +148,9 @@ class MainActivity : AppCompatActivity() {
         menuButton.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
-
-        navView = findViewById(R.id.nav_view)
         drawerLayout = findViewById(R.id.drawer_layout)
 
+        navView = findViewById(R.id.nav_view)
         // 헤더 뷰 접근
         val headerView = navView.getHeaderView(0)
 
@@ -482,15 +479,6 @@ class MainActivity : AppCompatActivity() {
         }
     }*/
 
-    private fun sendSleepDataAndActivityData(intent: Intent) {
-        if (intent.getBooleanExtra("trigger_functions", false)) {
-            Log.d("MainActivity", "Triggering functions from intent")
-
-            // Bluetooth 관련 코드를 모두 제거하고 바로 sendSleepAndThenTrain() 호출
-            sendSleepAndThenTrain()
-        }
-    }
-
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -508,8 +496,8 @@ class MainActivity : AppCompatActivity() {
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 14)
-            set(Calendar.MINUTE,54)
+            set(Calendar.HOUR_OF_DAY, 17)
+            set(Calendar.MINUTE,35)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 

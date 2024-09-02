@@ -107,7 +107,7 @@
                                 android:id="@+id/heart_rate_message"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Your heart rate is normal."
+                                android:text="서버에서 데이터를 가져올 수 없습니다."
                                 android:textSize="18sp"
                                 android:textColor="@android:color/black"
                                 android:layout_gravity="center"
@@ -119,7 +119,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="10dp"
-                                android:text="Average Heart Rate"
+                                android:text="네트워크 연결을 확인해 주세요."
                                 android:textColor="@android:color/black"
                                 android:textSize="25sp" />
                         </LinearLayout>
