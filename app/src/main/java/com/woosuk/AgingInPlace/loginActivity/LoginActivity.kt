@@ -7,8 +7,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import com.woosuk.AgingInPlace.LoginData
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
@@ -27,6 +29,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        val backArrow = findViewById<ImageView>(R.id.back_arrow)
+        backArrow.setOnClickListener {
+            onBackPressed()
+        }
 
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -97,6 +103,10 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+    override fun onBackPressed() {
+            super.onBackPressed()
+    }
+
     private fun saveUserId(userId: Int) {
         val editor = sharedPreferences.edit()
         editor.putInt("userId", userId)
@@ -108,4 +118,5 @@ class LoginActivity : AppCompatActivity() {
         editor.putBoolean("isLoggedIn", isLoggedIn)
         editor.apply() // commit() 대신 apply()를 사용하여 비동기로 저장
     }
+
 }

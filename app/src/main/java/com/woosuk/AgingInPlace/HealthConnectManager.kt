@@ -20,6 +20,7 @@ import androidx.health.connect.client.records.TotalCaloriesBurnedRecord
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import androidx.health.connect.client.units.Energy
 import java.time.Instant
 
 class HealthConnectManager(private val context: Context) {
@@ -77,14 +78,14 @@ class HealthConnectManager(private val context: Context) {
         )
         return response[TotalCaloriesBurnedRecord.ENERGY_TOTAL].toString()
     }
-    suspend fun readTotalDistance(start: Instant, end: Instant): String {
+    suspend fun readTotalDistance(start: Instant, end: Instant): Double? {
         val response = healthConnectClient.aggregate(
             AggregateRequest(
                 metrics = setOf(DistanceRecord.DISTANCE_TOTAL),
                 timeRangeFilter = TimeRangeFilter.between(start, end)
             )
         )
-        return response[DistanceRecord.DISTANCE_TOTAL]?.inMeters.toString()
+        return response[DistanceRecord.DISTANCE_TOTAL]?.inMeters
     }
     suspend fun readTotalSteps(start: Instant, end: Instant): Long? {
         val response = healthConnectClient.aggregate(

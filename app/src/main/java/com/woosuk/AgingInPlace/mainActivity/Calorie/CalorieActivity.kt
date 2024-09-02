@@ -1,5 +1,6 @@
 package com.woosuk.AgingInPlace.mainActivity.Calorie
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -45,10 +47,19 @@ class CalorieActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var stepBarChart: BarChart
     private lateinit var calorieBarChart: BarChart
+    private lateinit var calorie_text: TextView
+    private lateinit var calorie_icon: ImageView
+    private lateinit var calorie_message: TextView
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calorie)
+
+        // View 초기화
+        calorie_text = findViewById(R.id.calorie_text)
+        calorie_icon = findViewById(R.id.calorie_icon)
+        calorie_message = findViewById(R.id.calorie_message)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -131,13 +142,13 @@ class CalorieActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
     private fun saveUserId(userId: String) {
-        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("userId", userId).apply()
     }
 
     private fun getUserId(): Int {
-        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("userId", 120)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("userId", 0)
     }
     private fun setupStepBarChart(barChart: BarChart) {
         // BarChart 설정
@@ -145,7 +156,7 @@ class CalorieActivity : AppCompatActivity() {
         barChart.setPinchZoom(true)
         barChart.description = Description().apply { text = "" }
         barChart.setFitBars(true)
-        barChart.animateX(1000)
+        barChart.animateY(1000)
 
         setupXAxisDate(stepBarChart)  // X축 날짜 설정
 
@@ -156,7 +167,7 @@ class CalorieActivity : AppCompatActivity() {
         barChart.setPinchZoom(true)
         barChart.description = Description().apply { text = "" }
         barChart.setFitBars(true)
-        barChart.animateX(1000)
+        barChart.animateY(1000)
 
         setupXAxisDate(calorieBarChart)  // X축 날짜 설정
 
@@ -186,11 +197,12 @@ class CalorieActivity : AppCompatActivity() {
         val barData = BarData(dataSet)
         barData.setDrawValues(true)
         barData.setValueTextSize(10f)
+        barData.barWidth = 0.16f
 
         // BarChart에 데이터 추가
         barChart.data = barData
 //        barChart.setMaxVisibleValueCount(7)
-        barChart.setFitBars(true)
+        barChart.setFitBars(false)
         barChart.invalidate()
     }
     private fun addDataToCalorieBarChart(barChart: BarChart, entries: List<BarEntry>) {
@@ -204,17 +216,23 @@ class CalorieActivity : AppCompatActivity() {
         val barData = BarData(dataSet)
         barData.setDrawValues(true)
         barData.setValueTextSize(10f)
+        barData.barWidth = 0.16f
 
         // BarChart에 데이터 추가
         barChart.data = barData
 //        barChart.setMaxVisibleValueCount(7)
-        barChart.setFitBars(true)
+        barChart.setFitBars(false)
         barChart.invalidate()
     }
 
-    private fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
-        return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
+    private fun formatDate(dateString: String): String {
+        // 원래의 날짜 형식인 "yyyy-MM-dd"로부터 Date 객체를 생성
+        val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date: Date = originalFormat.parse(dateString)
+
+        // 새로운 형식 "dd/MM/yy"로 포맷 변경
+        val newFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+        return newFormat.format(date)
     }
 
     private fun parseJsonDataForStepCharts(jsonData: String) {
@@ -227,8 +245,8 @@ class CalorieActivity : AppCompatActivity() {
                 val item = dataArray.getJSONObject(i)
                 val steps = item.getInt("steps").toFloat()
                 val birthDate = item.getString("birthDate").substring(0,10)
-                //val formattedDate = formatDate(timestamp)
-                dateLabels.add(birthDate)
+                val formattedDate = formatDate(birthDate)
+                dateLabels.add(formattedDate)
                 entries.add(BarEntry(i.toFloat(), steps))
             }
 
@@ -245,35 +263,43 @@ class CalorieActivity : AppCompatActivity() {
             showToast("Error parsing data for charts: ${e.localizedMessage}")
         }
     }
+
     private fun parseJsonDataForCalorieCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
             val entries = mutableListOf<BarEntry>()
             val dateLabels = mutableListOf<String>()
+            var totalCalories = 0f
+            var count = 0
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
-                val sleepTotal = item.getInt("calTotal").toFloat()
+                val calTotal = item.getInt("calTotal").toFloat()
+                totalCalories += calTotal
+                count++
+
                 val birthDate = item.getString("birthDate").substring(0,10)
-               // val formattedDate = formatDate(timestamp)
-                dateLabels.add(birthDate)
-                entries.add(BarEntry(i.toFloat(), sleepTotal))
+                val formattedDate = formatDate(birthDate)
+                dateLabels.add(formattedDate)
+                entries.add(BarEntry(i.toFloat(), calTotal))
             }
 
             if (entries.isNotEmpty()) {
                 calorieBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
-
                 addDataToCalorieBarChart(calorieBarChart, entries)
                 calorieBarChart.invalidate()
+
+                // 평균 칼로리 계산 및 UI 업데이트
+                val averageCalories = totalCalories / count
+                updateCalorieUI(averageCalories)
             } else {
                 showToast("No data found for chart.")
             }
         } catch (e: JSONException) {
-            Log.e("SleepActivity", "Error parsing JSON data", e)
+            Log.e("CalorieActivity", "Error parsing JSON data", e)
             showToast("Error parsing data for charts: ${e.localizedMessage}")
         }
     }
-
 
     private fun post(apiURL: String, userId: Int): String {
         val client = OkHttpClient()
@@ -314,6 +340,26 @@ class CalorieActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("Activity", "Error fetching data", e)
+            }
+        }
+    }
+    private fun updateCalorieUI(averageCalories: Float) {
+        // 평균 칼로리 표시
+        calorie_text.text = "$averageCalories kcal"
+
+        // 평균 칼로리에 따라 아이콘 및 문구 변경
+        when {
+            averageCalories < 153.3f -> {
+                calorie_icon.setImageResource(R.drawable.ic_bad)  // 낮은 칼로리 아이콘
+                calorie_message.text = "칼로리 소모가 낮아요."
+            }
+            averageCalories in 153.4f..200f -> {
+                calorie_icon.setImageResource(R.drawable.ic_good)  // 정상 칼로리 아이콘
+                calorie_message.text = "칼로리 소모가 적당해요."
+            }
+            else -> {
+                calorie_icon.setImageResource(R.drawable.ic_good)  // 높은 칼로리 아이콘
+                calorie_message.text = "칼로리 소모가 많아요."
             }
         }
     }

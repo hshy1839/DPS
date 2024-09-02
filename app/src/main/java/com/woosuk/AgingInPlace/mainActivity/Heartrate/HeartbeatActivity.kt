@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -45,11 +46,23 @@ class HeartbeatActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var heartRateLineChart: LineChart
     private lateinit var heartRateBarChart: BarChart
+    private lateinit var averageHeartRateText: TextView
+    private lateinit var heartRateIcon: ImageView
+    private lateinit var heartRateMessage: TextView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_heartbeat)
+
+        // View 초기화
+        averageHeartRateText = findViewById(R.id.average_heart_rate_text)
+        heartRateIcon = findViewById(R.id.heart_rate_icon)
+        heartRateMessage = findViewById(R.id.heart_rate_message)
+
+        // 기존 코드
+        heartRateLineChart = findViewById(R.id.HeartRatelineChart)
+        setupHeartRateChart(heartRateLineChart)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -65,13 +78,8 @@ class HeartbeatActivity : AppCompatActivity() {
         heartRateLineChart = findViewById(R.id.HeartRatelineChart)
         setupHeartRateChart(heartRateLineChart)
 
-
-       // heartRateBarChart = findViewById<BarChart>(R.id.HeartRateBarChart)
-       // setupCalorieBarChart(heartRateBarChart)
-
         var id = getUserId()
         fetchDataFromApi("http://3.39.236.95:8080/chart/heartRate", id)
-        // fetchDataFromApiCalories("http://3.39.236.95:8080/chart/calories", id)
 
 
 
@@ -137,15 +145,15 @@ class HeartbeatActivity : AppCompatActivity() {
     }
 
     private fun getUserId(): Int {
-        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("userId", 120)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("userId", 0)
     }
     private fun setupHeartRateChart(lineChart: LineChart) {
         // BarChart 설정
         lineChart.setTouchEnabled(true)
         lineChart.setPinchZoom(true)
         lineChart.description = Description().apply { text = "" }
-        lineChart.animateX(1000)
+        lineChart.animateY(1000)
 
         setupXAxisDate(heartRateLineChart)  // X축 날짜 설정
 
@@ -171,6 +179,8 @@ class HeartbeatActivity : AppCompatActivity() {
         chart.xAxis.setDrawAxisLine(true)
         chart.xAxis.setDrawGridLines(false)
         chart.xAxis.granularity = 1f
+        chart.xAxis.spaceMin = 0.2f  // 첫 번째 데이터 포인트의 왼쪽 여백 추가
+        chart.xAxis.spaceMax = 0.2f  // 마지막 데이터 포인트의 오른쪽 여백 추가
 
         chart.invalidate()
 
@@ -192,32 +202,44 @@ class HeartbeatActivity : AppCompatActivity() {
         lineChart.invalidate()
     }
 
+    private fun formatDate(dateString: String): String {
+        // 원래의 날짜 형식인 "yyyy-MM-dd"로부터 Date 객체를 생성
+        val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date: Date = originalFormat.parse(dateString)
 
-    private fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
-        return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
+        // 새로운 형식 "dd/MM/yy"로 포맷 변경
+        val newFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+        return newFormat.format(date)
     }
 
     private fun parseJsonDataForHeartRateCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
-            val entries = mutableListOf<BarEntry>()
+            val entries = mutableListOf<Entry>()
             val dateLabels = mutableListOf<String>()
+            var totalHeartRate = 0f
+            var count = 0
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
-                val steps = item.getInt("HRAverage").toFloat()
-                val birthDate = item.getString("birthDate").substring(0,10)
-                //val formattedDate = formatDate(timestamp)
-                dateLabels.add(birthDate)
-                entries.add(BarEntry(i.toFloat(), steps))
+                val heartRate = item.getInt("HRAverage").toFloat()
+                totalHeartRate += heartRate
+                count++
+
+                val birthDate = item.getString("birthDate").substring(0, 10)
+                val formattedDate = formatDate(birthDate)
+                dateLabels.add(formattedDate)
+                entries.add(Entry(i.toFloat(), heartRate))
             }
 
             if (entries.isNotEmpty()) {
                 heartRateLineChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
-
                 addDataToHeartRateChart(heartRateLineChart, entries)
                 heartRateLineChart.invalidate()
+
+                // 평균 심박수 계산 및 UI 업데이트
+                val averageHeartRate = totalHeartRate / count
+                updateHeartRateUI(averageHeartRate)
             } else {
                 showToast("No data found for chart.")
             }
@@ -298,7 +320,26 @@ class HeartbeatActivity : AppCompatActivity() {
             }
         }
     }*/
+  private fun updateHeartRateUI(averageHeartRate: Float) {
+      // 평균 심박수 표시
+      averageHeartRateText.text = "$averageHeartRate bpm"
 
+      // 평균 심박수에 따라 아이콘 및 문구 변경
+      when {
+          averageHeartRate < 60 -> {
+              heartRateIcon.setImageResource(R.drawable.ic_bad)  // 낮은 심박수 아이콘
+              heartRateMessage.text = "평균 심박수가 낮아요."
+          }
+          averageHeartRate in 60f..100f -> {
+              heartRateIcon.setImageResource(R.drawable.ic_good)  // 정상 심박수 아이콘
+              heartRateMessage.text = "평균 심박수가 적당해요."
+          }
+          else -> {
+              heartRateIcon.setImageResource(R.drawable.ic_bad)  // 높은 심박수 아이콘
+              heartRateMessage.text = "평균 심박수가 높아요."
+          }
+      }
+  }
 
 
 }

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
+import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +41,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -49,11 +52,18 @@ class SleepActivity : AppCompatActivity() {
     private lateinit var lineChart: LineChart
     private lateinit var durationBarChart: BarChart
     private lateinit var remBarChart: BarChart
+    private lateinit var averageSleepDurationText: TextView
+    private lateinit var sleepDurationIcon: ImageView
+    private lateinit var sleepDurationMessage: TextView
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_sleep)
+        // View 초기화
+        averageSleepDurationText = findViewById(R.id.sleep_duration_text)
+        sleepDurationIcon = findViewById(R.id.sleep_duration_icon)
+        sleepDurationMessage = findViewById(R.id.sleep_duration_message)
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -139,7 +149,7 @@ class SleepActivity : AppCompatActivity() {
         barChart.setTouchEnabled(true)
         barChart.setPinchZoom(true)
         barChart.description = Description().apply { text = "" }
-        barChart.animateX(500)
+        barChart.animateY(1000)
 
         setupXAxisDate(barChart)  // X축 날짜 설정
 
@@ -149,7 +159,7 @@ class SleepActivity : AppCompatActivity() {
         barChart.setTouchEnabled(true)
         barChart.setPinchZoom(true)
         barChart.description = Description().apply { text = "" }
-        barChart.animateX(500)
+        barChart.animateY(1000)
 
         setupXAxisDate(barChart)  // X축 날짜 설정
 
@@ -179,12 +189,12 @@ class SleepActivity : AppCompatActivity() {
         val barData = BarData(dataSet)
         barData.setDrawValues(true)
         barData.setValueTextSize(10f)
-
+        barData.barWidth = 0.16f
 
         // BarChart에 데이터 추가
         barChart.data = barData
 //        barChart.setMaxVisibleValueCount(7)
-        barChart.setFitBars(true)
+        barChart.setFitBars(false)
         barChart.invalidate()
     }
     private fun addDataToRemBarChart(barChart: BarChart, entries: List<BarEntry>) {
@@ -198,16 +208,12 @@ class SleepActivity : AppCompatActivity() {
         val barData = BarData(dataSet)
         barData.setDrawValues(true)
         barData.setValueTextSize(10f)
-
+        barData.barWidth = 0.16f
         // BarChart에 데이터 추가
         barChart.data = barData
 //        barChart.setMaxVisibleValueCount(7)
-        barChart.setFitBars(true)
+        barChart.setFitBars(false)
         barChart.invalidate()
-    }
-    private fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("MM-dd", Locale.getDefault())
-        return sdf.format(Date(timestamp * 1000)) // timestamp는 초 단위로 가정
     }
 
     private fun parseJsonDataForDurationCharts(jsonData: String) {
@@ -215,21 +221,31 @@ class SleepActivity : AppCompatActivity() {
             val dataArray = JSONArray(jsonData)
             val entries = mutableListOf<BarEntry>()
             val dateLabels = mutableListOf<String>()
+            var totalSleep = 0f
+            var count = 0
 
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
                 val sleepTotal = item.getInt("duration").toFloat()
-                val birthDate = item.getString("birthDate").substring(0,10)
-                //val formattedDate = formatDate(timestamp)
-                dateLabels.add(birthDate)
+                totalSleep += sleepTotal
+                count++
+
+                val birthDate = item.getString("birthDate").substring(0, 10)
+                val formattedDate = formatDate(birthDate)
+                dateLabels.add(formattedDate)
                 entries.add(BarEntry(i.toFloat(), sleepTotal))
+
             }
 
             if (entries.isNotEmpty()) {
                 durationBarChart.xAxis.valueFormatter = IndexAxisValueFormatter(dateLabels)
-
                 addDataToDurationBarChart(durationBarChart, entries)
                 durationBarChart.invalidate()
+
+                // 평균 수면 시간 계산 및 UI 업데이트
+                val averageSleepDuration = totalSleep / count
+                updateDurationUI(averageSleepDuration)
+
             } else {
                 showToast("No data found for chart.")
             }
@@ -238,6 +254,29 @@ class SleepActivity : AppCompatActivity() {
             showToast("Error parsing data for charts: ${e.localizedMessage}")
         }
     }
+
+
+    private fun updateDurationUI(averageSleepDuration: Float) {
+        // 평균 수면 시간 표시
+        averageSleepDurationText.text = "$averageSleepDuration 시간"
+
+        // 평균 수면 시간에 따라 아이콘 및 문구 변경
+        when {
+            averageSleepDuration < 6 -> {
+                sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 부족한 수면 시간 아이콘
+                sleepDurationMessage.text = "수면시간이 부족합니다.."
+            }
+            averageSleepDuration in 6f..8f -> {
+                sleepDurationIcon.setImageResource(R.drawable.ic_good)  // 정상 수면 시간 아이콘
+                sleepDurationMessage.text = "좋은 수면습관 입니다.."
+            }
+            else -> {
+                sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 과도한 수면 시간 아이콘
+                sleepDurationMessage.text = "수면시간이 많습니다."
+            }
+        }
+    }
+
     private fun parseJsonDataForRemCharts(jsonData: String) {
         try {
             val dataArray = JSONArray(jsonData)
@@ -248,8 +287,8 @@ class SleepActivity : AppCompatActivity() {
                 val item = dataArray.getJSONObject(i)
                 val rem = item.getInt("rem").toFloat()
                 val birthDate = item.getString("birthDate").substring(0,10)
-               // val formattedDate = formatDate(timestamp)
-                dateLabels.add(birthDate)
+                val formattedDate = formatDate(birthDate)
+                dateLabels.add(formattedDate)
                 entries.add(BarEntry(i.toFloat(), rem))
             }
 
@@ -273,8 +312,8 @@ class SleepActivity : AppCompatActivity() {
     }
 
     private fun getUserId(): Int {
-        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("userId", 120)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("userId", 0)
     }
 
     private fun post(apiURL: String, userId: String): String {
@@ -331,6 +370,15 @@ class SleepActivity : AppCompatActivity() {
 
     fun returnToMenu(@Suppress("UNUSED_PARAMETER") view: View) {
         finish()
+    }
+    private fun formatDate(dateString: String): String {
+        // 원래의 날짜 형식인 "yyyy-MM-dd"로부터 Date 객체를 생성
+        val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date: Date = originalFormat.parse(dateString)
+
+        // 새로운 형식 "dd/MM/yy"로 포맷 변경
+        val newFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+        return newFormat.format(date)
     }
 
 }

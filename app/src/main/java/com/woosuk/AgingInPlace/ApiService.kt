@@ -24,6 +24,6 @@ interface ApiService {
     @GET("/api/android/userinfo")
     fun getUserInfo(@Query("userId") userId: Int): Call<JsonObject>
 
-    @POST("http://43.200.2.115:8080/chart/activityUsername")
-    fun postUserData(@Body body: RequestBody?): Call<ResponseBody?>?
+    @POST("http://3.39.236.95:8080/wear/sleep")
+    fun getSleepData(@Body jsonObject: JsonObject): Call<JsonObject>
 }
