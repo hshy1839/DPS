@@ -112,6 +112,11 @@
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.Calorie.CalorieActivity"/>
         <activity android:name="com.woosuk.AgingInPlace.medication.MedicationActivity"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.DementiaRiskActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity1"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity2"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity3"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity4"/>
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
