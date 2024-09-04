@@ -1,5 +1,6 @@
 package com.woosuk.AgingInPlace
 
+import ApiService
 import android.content.Context
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -33,5 +34,17 @@ object RetrofitClient {
                 .build()
         }
         return retrofit!!
+    }
+}
+object RetrofitInstance {
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("http://3.39.236.95:8080/") // 서버의 기본 URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    val api: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
     }
 }

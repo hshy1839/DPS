@@ -1,6 +1,7 @@
 package com.woosuk.AgingInPlace
 
 import android.content.Context
+import android.util.Log
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
@@ -21,7 +22,10 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import androidx.health.connect.client.units.Energy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.Instant
+import java.time.LocalDateTime
 
 class HealthConnectManager(private val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
@@ -49,15 +53,23 @@ class HealthConnectManager(private val context: Context) {
     val requestPermissionActivityContract by lazy { PermissionController.createRequestPermissionResultContract() }
 
 
-    suspend fun readCalActive(start: Instant, end: Instant): String {
-        val response = healthConnectClient.aggregate(
-            AggregateRequest(
-                metrics = setOf(ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL),
-                timeRangeFilter = TimeRangeFilter.between(start, end)
-            )
+    suspend fun readCalActive(startTime: Instant, endTime: Instant): Double {
+        val timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
+
+        val request = ReadRecordsRequest(
+            recordType = ActiveCaloriesBurnedRecord::class,
+            timeRangeFilter = timeRangeFilter
         )
-        return response[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL].toString()
+
+        // Query the records using HealthConnectClient
+        val response = healthConnectClient.readRecords(request)
+
+        // Sum the energy (calories) from all the records retrieved
+        val totalActiveCalories = response.records.sumOf { it.energy.inKilocalories }
+
+        return totalActiveCalories
     }
+
 
     suspend fun readDistance(start: Instant, end: Instant): List<DistanceRecord> {
         val response =

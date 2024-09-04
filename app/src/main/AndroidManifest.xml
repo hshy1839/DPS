@@ -71,7 +71,13 @@
                 <action android:name="com.woosuk.AgingInPlace.ACTION_SEND_ALARM" />
             </intent-filter>
         </receiver>
-
+        <receiver android:name=".receiver.MedicationAlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.woosuk.AgingInPlace.MEDICATION_ALARM" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
@@ -104,7 +110,7 @@
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.Workout.WorkoutActivity"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.Sleep.SleepActivity"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.Calorie.CalorieActivity"/>
-        <activity android:name="com.woosuk.AgingInPlace.mainActivity.MedicationActivity"/>
+        <activity android:name="com.woosuk.AgingInPlace.medication.MedicationActivity"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.DementiaRiskActivity"/>
         <activity-alias
             android:name="ViewPermissionUsageActivity"

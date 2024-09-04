@@ -17,6 +17,8 @@ import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class UserInfoActivity : AppCompatActivity() {
     private lateinit var apiService: ApiService
@@ -30,7 +32,6 @@ class UserInfoActivity : AppCompatActivity() {
     private lateinit var roleText: TextView
     private lateinit var emailText: TextView
     private lateinit var medicationText: TextView
-    private lateinit var medicationTimeText: TextView
     private lateinit var diagnosisText: TextView
     private lateinit var LoginButton : ImageView
     private lateinit var menuButton: ImageView
@@ -46,7 +47,6 @@ class UserInfoActivity : AppCompatActivity() {
         roleText = findViewById(R.id.roleText)
         emailText = findViewById(R.id.emailText)
         medicationText = findViewById(R.id.medicationText)
-        medicationTimeText = findViewById(R.id.medicationTimeText)
         diagnosisText = findViewById(R.id.diagnosisText)
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -88,10 +88,15 @@ class UserInfoActivity : AppCompatActivity() {
                         val role = jsonObject.get("role").asString
 //                        val medication = jsonObject.get("medication").asString
 //                        val medicationTime = jsonObject.get("medicationTime").asString
+                        // birthdate를 yy-MM-dd 형식으로 포맷
+
+                        val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val date = originalFormat.parse(birthdate) // String을 Date로 변환
+                        val formattedBirthdate = originalFormat.format(date) // 원하는 형식으로 변환
 
                         emailText.text = email
                         nameText.text = name
-                        birthdayText.text = birthdate
+                        birthdayText.text = formattedBirthdate
                         genderText.text = gender
                         phoneNumberText.text = phoneNumber
                         roleText.text = role

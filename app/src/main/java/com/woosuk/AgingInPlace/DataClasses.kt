@@ -33,3 +33,14 @@ data class LoginData(
     val password: String
 )
 
+data class MedicationResponse(
+    val medications: List<Medication>
+)
+
+data class Medication(
+    val medications: String,
+    val disease: String
+)
+
+
+

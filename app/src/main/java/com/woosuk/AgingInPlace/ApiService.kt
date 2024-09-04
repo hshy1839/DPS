@@ -2,6 +2,7 @@ import com.woosuk.AgingInPlace.LoginData
 import com.woosuk.AgingInPlace.SignupData
 import com.woosuk.AgingInPlace.UserData
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.MedicationResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -26,4 +27,7 @@ interface ApiService {
 
     @POST("http://3.39.236.95:8080/wear/sleep")
     fun getSleepData(@Body jsonObject: JsonObject): Call<JsonObject>
+
+    @POST("http://3.39.236.95:8080/medications")
+    fun getMedications(): Call<MedicationResponse>
 }

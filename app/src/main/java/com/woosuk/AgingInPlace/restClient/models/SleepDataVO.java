@@ -1,9 +1,6 @@
 package com.woosuk.AgingInPlace.restClient.models;
 
-
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 public class SleepDataVO {
     private int member_id;

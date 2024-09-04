@@ -47,7 +47,7 @@ import java.util.Locale
 
 
 class CalorieActivity : AppCompatActivity() {
-
+    private lateinit var navView: NavigationView
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var stepBarChart: BarChart
     private lateinit var calorieBarChart: BarChart
@@ -55,7 +55,6 @@ class CalorieActivity : AppCompatActivity() {
     private lateinit var calorie_icon: ImageView
     private lateinit var calorie_message: TextView
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var navView: NavigationView
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
