@@ -4,6 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="permission_granted">All permissions were granted.</string>
-    <string name="permissions_not_granted">Permissions are not granted. Please grant data permissions through Health Connect permission settings.</string>
+    <string name="permission_granted">모든 권한이 허용되었습니다.</string>
+    <string name="permissions_not_granted">권한이 부여되지 않습니다. 헬스 커넥트 권한 설정을 통해 데이터 권한을 부여해 주세요.</string>
 </resources>
