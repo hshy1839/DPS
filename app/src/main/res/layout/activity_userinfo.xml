@@ -23,6 +23,13 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="#ffffff">
+                <ImageView
+                    android:id="@+id/back_arrow"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="left|center"
+                    android:scaleType="center"
+                    android:src="@drawable/baseline_arrow_back_24" />
 
                 <TextView
                     android:layout_marginLeft="10dp"
@@ -53,10 +60,20 @@
                     android:src="@drawable/menu"/>
             </LinearLayout>
 
+            <TextView
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="내 정보"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
+
             <!-- Content Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="600dp"
                 android:layout_gravity="top|center"
                 android:layout_margin="16dp"
                 app:cardBackgroundColor="#ffffff"
@@ -66,27 +83,17 @@
                 <LinearLayout
                     android:background="#f5f5f5"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:padding="16dp"
                     >
-
-                    <TextView
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="내 정보"
-                        android:textColor="@android:color/black"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textAlignment="center"/>
 
                     <!-- 성별 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center"
                         android:textAlignment="center">
 
@@ -116,7 +123,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center">
 
                         <TextView
@@ -145,7 +152,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center">
 
                         <TextView
@@ -173,7 +180,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center"
                        >
 
@@ -202,7 +209,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center">
 
                         <TextView
@@ -231,7 +238,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="40dp"
                         android:gravity="center">
 
                         <TextView
@@ -256,73 +263,64 @@
                     </LinearLayout>
 
                     <!-- 복용약물 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center">
+                    <!--   <LinearLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:orientation="horizontal"
+                           android:layout_marginTop="16dp"
+                           android:gravity="center">
 
-                        <TextView
-                            android:layout_width="110dp"
-                            android:layout_height="wrap_content"
-                            android:text="복용약물 : "
-                            android:textSize="18sp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center"/>
+                           <TextView
+                               android:layout_width="110dp"
+                               android:layout_height="wrap_content"
+                               android:text="복용약물 : "
+                               android:textSize="18sp"
+                               android:textColor="@android:color/black"
+                               android:gravity="center"/>
 
-                        <TextView
-                            android:id="@+id/medicationText"
-                            android:layout_width="200dp"
-                            android:layout_height="45dp"
-                            android:background="@drawable/login_edittext_background"
-                            android:paddingLeft="10dp"
-                            android:textSize="18sp"
-                            android:textColor="@android:color/black"
-                            android:textColorHint="#cccccc"
-                            android:gravity="center"
-                            android:textAlignment="center"/>
-                    </LinearLayout>
+                           <TextView
+                               android:id="@+id/medicationText"
+                               android:layout_width="200dp"
+                               android:layout_height="45dp"
+                               android:background="@drawable/login_edittext_background"
+                               android:paddingLeft="10dp"
+                               android:textSize="18sp"
+                               android:textColor="@android:color/black"
+                               android:textColorHint="#cccccc"
+                               android:gravity="center"
+                               android:textAlignment="center"/>
+                       </LinearLayout> -->
 
-                    <!-- 진단명 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center">
+                       <!-- 진단명 -->
+                    <!-- <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:orientation="horizontal"
+                         android:layout_marginTop="16dp"
+                         android:gravity="center">
 
-                        <TextView
-                            android:layout_width="110dp"
-                            android:layout_height="wrap_content"
-                            android:text="진단명 : "
-                            android:textSize="18sp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center"/>
+                         <TextView
+                             android:layout_width="110dp"
+                             android:layout_height="wrap_content"
+                             android:text="진단명 : "
+                             android:textSize="18sp"
+                             android:textColor="@android:color/black"
+                             android:gravity="center"/>
 
-                        <TextView
-                            android:id="@+id/diagnosisText"
-                            android:layout_width="200dp"
-                            android:layout_height="45dp"
-                            android:background="@drawable/login_edittext_background"
-                            android:paddingLeft="10dp"
-                            android:textSize="18sp"
-                            android:textColor="@android:color/black"
-                            android:textColorHint="#cccccc"
-                            android:gravity="center"
-                            android:textAlignment="center"/>
-                    </LinearLayout>
+                         <TextView
+                             android:id="@+id/diagnosisText"
+                             android:layout_width="200dp"
+                             android:layout_height="45dp"
+                             android:background="@drawable/login_edittext_background"
+                             android:paddingLeft="10dp"
+                             android:textSize="18sp"
+                             android:textColor="@android:color/black"
+                             android:textColorHint="#cccccc"
+                             android:gravity="center"
+                             android:textAlignment="center"/>
+                    </LinearLayout>-->
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-            <!-- 수정 버튼 -->
-            <Button
-                android:id="@+id/myinfo_modifyBtn"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center"
-                android:background="@drawable/login_btn_background"
-                android:text="수정" />
         </LinearLayout>
     </ScrollView>
 

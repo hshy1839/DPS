@@ -253,6 +253,9 @@ class SleepActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onBackPressed() {
         // 뒤로가기 버튼을 누를 때
@@ -263,10 +266,6 @@ class SleepActivity : AppCompatActivity() {
             // 그렇지 않으면 기본 동작 수행
             super.onBackPressed()
         }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setupDurationBarChart(barChart: BarChart) {

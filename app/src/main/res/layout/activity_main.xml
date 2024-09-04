@@ -96,17 +96,17 @@
                 android:layout_marginTop="230dp"/>
 
         </RelativeLayout>
-        <Button
+       <!-- <Button
             android:layout_width="300px"
             android:layout_height="100px"
             android:text="activity_data"
-            android:onClick="sendTrain" />
+            android:onClick="sendTrain" />-->
 
 
         <!-- 아이콘 및 텍스트 버튼들 -->
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="22dp"
             android:layout_marginEnd="15dp"
             android:layout_height="180dp"
             android:orientation="horizontal"
@@ -129,7 +129,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/ic_heartrate"
+                    android:src="@drawable/ic_heart"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -138,7 +138,7 @@
                     android:layout_gravity="top|center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="HeartRate"
+                    android:text="심박수"
                     android:fontFamily="@font/linebd"
                     android:textColor="@android:color/black"
                     android:textSize="25sp"/>
@@ -161,7 +161,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/ic_sleep"
+                    android:src="@drawable/ic_sleep_new"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -170,7 +170,7 @@
                     android:layout_gravity="top|center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sleep"
+                    android:text="수면"
                     android:fontFamily="@font/linebd"
                     android:textColor="@android:color/black"
                     android:textSize="25sp"/>
@@ -184,7 +184,7 @@
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="22dp"
             android:layout_marginEnd="15dp">
 
             <!-- Workout 버튼 -->
@@ -204,7 +204,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/ic_running"
+                    android:src="@drawable/ic_medication"
                     android:layout_gravity="top|center"
                     android:scaleType="centerCrop"/>
 
@@ -214,7 +214,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/linebd"
-                    android:text="Workout"
+                    android:text="약물 복용"
                     android:textColor="@android:color/black"
                     android:textSize="25sp"/>
             </androidx.cardview.widget.CardView>
@@ -238,7 +238,7 @@
                     android:layout_gravity="top|center"
                     android:layout_marginTop="20dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_calories" />
+                    android:src="@drawable/ic_running" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -246,7 +246,7 @@
                     android:layout_gravity="top|center"
                     android:layout_marginTop="100dp"
                     android:fontFamily="@font/linebd"
-                    android:text="Calorie"
+                    android:text="활동량"
                     android:textColor="@android:color/black"
                     android:textSize="25sp" />
             </androidx.cardview.widget.CardView>

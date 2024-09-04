@@ -1,19 +1,28 @@
 package com.woosuk.AgingInPlace.mainActivity
 
 import ApiService
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.loginActivity.LoginActivity
+import com.woosuk.AgingInPlace.medication.MedicationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,14 +40,24 @@ class UserInfoActivity : AppCompatActivity() {
     private lateinit var phoneNumberText: TextView
     private lateinit var roleText: TextView
     private lateinit var emailText: TextView
-    private lateinit var medicationText: TextView
-    private lateinit var diagnosisText: TextView
     private lateinit var LoginButton : ImageView
     private lateinit var menuButton: ImageView
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView  // navView 선언
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_userinfo)
+
+        // 초기화
+        navView = findViewById(R.id.nav_view)  // navView 초기화
+        drawerLayout = findViewById(R.id.drawer_layout)
+
+        val backArrow = findViewById<ImageView>(R.id.back_arrow)
+        backArrow.setOnClickListener {
+            onBackPressed()
+        }
 
         nameText = findViewById(R.id.nameText)
         birthdayText = findViewById(R.id.birthdayText)
@@ -46,39 +65,95 @@ class UserInfoActivity : AppCompatActivity() {
         phoneNumberText = findViewById(R.id.numberText)
         roleText = findViewById(R.id.roleText)
         emailText = findViewById(R.id.emailText)
-        medicationText = findViewById(R.id.medicationText)
-        diagnosisText = findViewById(R.id.diagnosisText)
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getInt("userId", 0)
-        drawerLayout = findViewById(R.id.drawer_layout)
+
         fetchUserInfo(userId)
 
         LoginButton = findViewById(R.id.LoginButton)
-        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-
+        // 로그인 상태에 따라 로그인 버튼 가시성 조정
         if (isLoggedIn) {
             LoginButton.visibility = View.GONE
         } else {
             LoginButton.visibility = View.VISIBLE
         }
+        LoginButton.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 헤더 뷰 접근
+        val headerView = navView.getHeaderView(0)
+        // 로그인 상태에 따라 헤더의 버튼 가시성 조정
+        val menuLoginBtn: Button = headerView.findViewById(R.id.menu_loginBtn)
+        menuLoginBtn.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
+
+        menuLoginBtn.setOnClickListener {
+            if (!isLoggedIn) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        // 네비게이션 메뉴 아이템 클릭 리스너 설정
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_item1 -> {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    startActivity(intent)
+                }
+                R.id.nav_item2 -> {
+                    val intent = Intent(this, UserInfoActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_item3 -> {
+                    val intent = Intent(this, MedicationActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_item4 -> {
+                    if (isLoggedIn) {
+                        logout()
+                    } else {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
         menuButton = findViewById(R.id.menuButton)
         menuButton.setOnClickListener {
-            // 메뉴 버튼을 클릭하면 Navigation Drawer를 열도록 함
             drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        updateWelcomeMessage()  // navView가 초기화된 이후에 호출
+    }
+
+    private fun updateWelcomeMessage() {
+        // NavigationView의 헤더 가져오기
+        val headerView = navView.getHeaderView(0)
+        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
+
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val username = sharedPreferences.getInt("userId", 0)
+
+        if (isLoggedIn) {
+            welcomeTextView.text = "안녕하세요 $username"
+        } else {
+            welcomeTextView.text = "로그인 후 사용해주세요"
         }
     }
 
-
     private fun fetchUserInfo(userId: Int) {
         val call = apiService.getUserInfo(userId)
-
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if (response.isSuccessful) {
                     val jsonObject = response.body()
-
                     if (jsonObject != null) {
                         val email = jsonObject.get("email").asString
                         val name = jsonObject.get("name").asString
@@ -86,13 +161,10 @@ class UserInfoActivity : AppCompatActivity() {
                         val gender = jsonObject.get("gender").asString
                         val phoneNumber = jsonObject.get("phoneNumber").asString
                         val role = jsonObject.get("role").asString
-//                        val medication = jsonObject.get("medication").asString
-//                        val medicationTime = jsonObject.get("medicationTime").asString
-                        // birthdate를 yy-MM-dd 형식으로 포맷
 
                         val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        val date = originalFormat.parse(birthdate) // String을 Date로 변환
-                        val formattedBirthdate = originalFormat.format(date) // 원하는 형식으로 변환
+                        val date = originalFormat.parse(birthdate)
+                        val formattedBirthdate = originalFormat.format(date)
 
                         emailText.text = email
                         nameText.text = name
@@ -100,8 +172,6 @@ class UserInfoActivity : AppCompatActivity() {
                         genderText.text = gender
                         phoneNumberText.text = phoneNumber
                         roleText.text = role
-//                        medicationText.text = medication
-//                        medicationTimeText.text = medicationTime
                     } else {
                         Log.e("EmptyData", "JsonObject is null")
                     }
@@ -115,5 +185,28 @@ class UserInfoActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.commit()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
 }
+
 
