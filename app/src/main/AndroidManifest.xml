@@ -109,6 +109,8 @@
         <activity android:name=".mainActivity.Calorie.CalorieActivity"/>
         <activity android:name=".mainActivity.MedicationActivity"/>
         <activity android:name=".mainActivity.DementiaRiskActivity"/>
+        <activity android:name=".Cist.CistActivity"/>
+        <activity android:name=".Cist.Cist1Activity"/>
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"

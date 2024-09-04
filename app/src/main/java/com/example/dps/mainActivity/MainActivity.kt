@@ -98,10 +98,10 @@ class MainActivity : AppCompatActivity() {
         val intent = intent
         handleIntentWithBluetooth(intent)
 
-        if (intent.getBooleanExtra("trigger_functions", false)) {
-            Log.d("MainActivity", "Triggering functions from intent")
-            sendSleepAndThenTrain()
-        }
+//        if (intent.getBooleanExtra("trigger_functions", false)) {
+//            Log.d("MainActivity", "Triggering functions from intent")
+//            sendSleepAndThenTrain()
+//        }
 
         navView = findViewById(R.id.nav_view)
 
@@ -276,7 +276,7 @@ class MainActivity : AppCompatActivity() {
                             Log.d("MainActivity", "Turning on Bluetooth")
 
                             // Bluetooth가 켜진 후 5초 뒤에 sendSleepAndThenTrain() 함수 실행
-                            Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
+//                            Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
                         }, 2000) // 2초 대기
                     } else {
                         if (ActivityCompat.checkSelfPermission(
@@ -296,23 +296,23 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MainActivity", "Turning on Bluetooth directly")
 
                         // Bluetooth가 켜진 후 5초 뒤에 sendSleepAndThenTrain() 함수 실행
-                        Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
+//                        Handler().postDelayed({ sendSleepAndThenTrain() }, 5000) // 5초 대기
                     }
                 } else {
                     Log.d("MainActivity", "Bluetooth not supported on this device")
                     // Bluetooth를 사용할 수 없는 경우 바로 sendSleepAndThenTrain() 실행
-                    sendSleepAndThenTrain()
+//                    sendSleepAndThenTrain()
                 }
             }
         }
     }
 
-    private fun sendSleepAndThenTrain() {
-        Log.d("MainActivity", "sendSleepAndThenTrain called")
-        sendSleep {
-            sendTrain()
-        }
-    }
+//    private fun sendSleepAndThenTrain() {
+//        Log.d("MainActivity", "sendSleepAndThenTrain called")
+//        sendSleep {
+//            sendTrain()
+//        }
+//    }
     private fun checkAvailabilityAndPermissions() {
         if (!checkAvailability()) {
             return
@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun sendTrain() {
+    fun sendTrain(view:View) {
         CoroutineScope(Dispatchers.IO).launch  {
 
             if (!healthConnectManager.hasAllPermissions()) {
@@ -473,9 +473,9 @@ class MainActivity : AppCompatActivity() {
 //                0, 0, 100, 100, steps!!.toInt(), exerciseTime!!.toInt(), false
 //            )
             val data = ActivityDataVO(
-                "Test10", "운동_이석영", Instant.now(),activeCalrorie,
-                calTotalInt, 1000, dayEnd, dayStart, 0, 0, 0, 10,
-                0, 0, 100, 100, 1000, 1000, false
+                "Test14", "운동_이석영", Instant.now(),150,
+                0, 0, dayEnd, dayStart, 0, 0, 0, 10,
+                0, 0, 0, 0, 0, 0, false
             )
 //            데이터 전송
             post(data, "http://3.34.218.215:8082/topics/activity_data/")
@@ -499,7 +499,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
- fun sendSleep(onComplete: () -> Unit) {
+ fun sendSleep(view: View) {
         Log.d("MainActivity", "sendSleep called")
         lifecycleScope.launch {
             try {
@@ -570,19 +570,19 @@ class MainActivity : AppCompatActivity() {
 //                    )
                 }
                 val data = SleepDataVO(
-                    "Test10", "이석영", Instant.now(),
-                    1000,
-                    Instant.now(),  Instant.now(), 100.0, 1000, 1000, 60.0, 60.0, 1000,
-                    1000, 10000, true
+                    "Test14", "수면_이석영", Instant.now(),
+                    6300,
+                    Instant.now(),  Instant.now(), 0.0, 0, 35600, 0.0, 0.0, 0,
+                    0, 0, true
                 )
                 Log.i("MainActivity", "Sending sleep data: $data")
 
                 // 데이터 전송
                 post(data, "http://3.34.218.215:8082/topics/sleep_data/")
-                onComplete()
+//                onComplete()
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error in sendSleep", e)
-                onComplete() // 예외 발생 시에도 onComplete를 호출하여 sendTrain이 실행되도록 합니다.
+//                onComplete() // 예외 발생 시에도 onComplete를 호출하여 sendTrain이 실행되도록 합니다.
             }
         }
     }
