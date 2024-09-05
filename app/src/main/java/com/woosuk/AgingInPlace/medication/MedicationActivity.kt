@@ -27,6 +27,7 @@ import com.woosuk.AgingInPlace.Medication
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
+import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
 import com.woosuk.AgingInPlace.medication.MedicationAdapter
 import com.woosuk.AgingInPlace.receiver.MedicationAlarmReceiver
 import okhttp3.*
@@ -112,10 +113,12 @@ class MedicationActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {
-                    showToast("고객센터 이동 버튼")
+                    val intent = Intent(this, UserInfoActivity::class.java)
+                    startActivity(intent)
                 }
-                R.id.nav_item3 -> {
-                    showToast("설정 버튼")
+                R.id.nav_item5 -> {
+                    val intent = Intent(this, MedicationActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_item4 -> {
                     if (isLoggedIn) {
@@ -129,6 +132,8 @@ class MedicationActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+        val nav_item4 = navView.menu.findItem(R.id.nav_item4)
+        nav_item4.title = if (isLoggedIn) "로그아웃" else "로그인"
 
         // 메뉴 버튼 클릭 리스너 설정
         val menuButton = findViewById<ImageView>(R.id.menuButton)

@@ -18,6 +18,8 @@ import com.google.android.material.navigation.NavigationView
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
+import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
+import com.woosuk.AgingInPlace.medication.MedicationActivity
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -99,18 +101,17 @@ class CistActivity3 : AppCompatActivity() {
         // 네비게이션 메뉴 아이템 클릭 리스너 설정
         navView.setNavigationItemSelectedListener{menuItem->
             when(menuItem.itemId){
-                R.id.nav_item1->{
-                    // Menu 1 선택 시의 동작
-                    val intent=Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
+                R.id.nav_item1 -> {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
-                R.id.nav_item2->{
-                    // Menu 2 선택 시의 동작
-                    showToast("고객센터 이동 버튼")
+                R.id.nav_item2 -> {
+                    val intent = Intent(this, UserInfoActivity::class.java)
+                    startActivity(intent)
                 }
-                R.id.nav_item3->{
-                    // Menu 3 선택 시의 동작
-                    showToast("설정 버튼")
+                R.id.nav_item5 -> {
+                    val intent = Intent(this, MedicationActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_item4->{
                     val isLoggedIn=sharedPreferences.getBoolean("isLoggedIn",false)
@@ -126,6 +127,9 @@ class CistActivity3 : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
+        val nav_item4 = navView.menu.findItem(R.id.nav_item4)
+        nav_item4.title = if (isLoggedIn) "로그아웃" else "로그인"
 
         val menuButton=findViewById<ImageView>(R.id.menuButton_heartbeat)
         menuButton.setOnClickListener{

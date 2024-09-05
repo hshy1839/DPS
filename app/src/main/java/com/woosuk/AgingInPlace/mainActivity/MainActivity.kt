@@ -222,11 +222,12 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {
-                    val intent = Intent(this@MainActivity, UserInfoActivity::class.java)
+                    val intent = Intent(this, UserInfoActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.nav_item3 -> {
-                    menushowToast("설정 버튼")
+                R.id.nav_item5 -> {
+                    val intent = Intent(this, MedicationActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_item4 -> {
                     val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)

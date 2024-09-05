@@ -139,6 +139,8 @@ class DementiaRiskActivity :AppCompatActivity(){
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+        val nav_item4 = navView.menu.findItem(R.id.nav_item4)
+        nav_item4.title = if (isLoggedIn) "로그아웃" else "로그인"
 
         val menuButton=findViewById<ImageView>(R.id.menuButton_heartbeat)
         menuButton.setOnClickListener{

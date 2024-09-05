@@ -108,7 +108,7 @@ class UserInfoActivity : AppCompatActivity() {
                     val intent = Intent(this, UserInfoActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.nav_item3 -> {
+                R.id.nav_item5 -> {
                     val intent = Intent(this, MedicationActivity::class.java)
                     startActivity(intent)
                 }
@@ -124,6 +124,8 @@ class UserInfoActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+        val nav_item4 = navView.menu.findItem(R.id.nav_item4)
+        nav_item4.title = if (isLoggedIn) "로그아웃" else "로그인"
 
         menuButton = findViewById(R.id.menuButton)
         menuButton.setOnClickListener {
