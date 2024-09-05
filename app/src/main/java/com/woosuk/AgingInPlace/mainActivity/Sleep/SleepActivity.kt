@@ -143,17 +143,21 @@ class SleepActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
                     // Menu 1 선택 시의 동작
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    val intent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
+
                 R.id.nav_item2 -> {
                     // Menu 2 선택 시의 동작
                     showToast("고객센터 이동 버튼")
                 }
+
                 R.id.nav_item3 -> {
                     // Menu 3 선택 시의 동작
                     showToast("설정 버튼")
                 }
+
                 R.id.nav_item4 -> {
                     val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
                     if (isLoggedIn) {
@@ -214,8 +218,10 @@ class SleepActivity : AppCompatActivity() {
                     val clock1TextView: TextView = findViewById(R.id.clock1_text)
                     val clock2TextView: TextView = findViewById(R.id.clock2_text)
 
-                    clock1TextView.text = bedTimeStart.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
-                    clock2TextView.text = bedTimeEnd.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
+                    clock1TextView.text =
+                        bedTimeStart.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
+                    clock2TextView.text =
+                        bedTimeEnd.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
                 } else {
                     val clock1TextView: TextView = findViewById(R.id.clock1_text)
                     val clock2TextView: TextView = findViewById(R.id.clock2_text)
@@ -253,6 +259,7 @@ class SleepActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
@@ -278,6 +285,7 @@ class SleepActivity : AppCompatActivity() {
         setupXAxisDate(barChart)  // X축 날짜 설정
 
     }
+
     private fun setupRemBarChart(barChart: BarChart) {
         // BarChart 설정
         barChart.setTouchEnabled(true)
@@ -302,11 +310,12 @@ class SleepActivity : AppCompatActivity() {
         chart.invalidate()
 
     }
+
     private fun addDataToDurationBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
         val dataSet = BarDataSet(entries, "수면 시간")
         dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
-        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
         dataSet.barBorderColor = Color.parseColor("#5271FE")
 
         // BarData 생성 및 설정
@@ -321,11 +330,12 @@ class SleepActivity : AppCompatActivity() {
         barChart.setFitBars(false)
         barChart.invalidate()
     }
+
     private fun addDataToRemBarChart(barChart: BarChart, entries: List<BarEntry>) {
         // BarDataSet 생성
         val dataSet = BarDataSet(entries, "수면 시간")
         dataSet.color = Color.parseColor("#5271FE")  // 색상 설정 예제
-        dataSet.valueTextColor = ContextCompat.getColor(this,R.color.black)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
         dataSet.barBorderColor = Color.parseColor("#5271FE")
 
         // BarData 생성 및 설정
@@ -381,19 +391,25 @@ class SleepActivity : AppCompatActivity() {
 
 
     private fun updateDurationUI(averageSleepDuration: Float) {
+        val hour : Int
+        val minute : Int
+        hour = (averageSleepDuration/60).toInt()
+        minute = (averageSleepDuration%60).toInt()
         // 평균 수면 시간 표시
-        averageSleepDurationText.text =  "${String.format("%.1f", averageSleepDuration)} 시간"
+        averageSleepDurationText.text = "${hour}시간 ${minute}분"
 
         // 평균 수면 시간에 따라 아이콘 및 문구 변경
         when {
-            averageSleepDuration < 6 -> {
+            hour < 6 -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 부족한 수면 시간 아이콘
                 sleepDurationMessage.text = "수면시간이 부족합니다.."
             }
-            averageSleepDuration in 6f..8f -> {
+
+            hour in 6..8 -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_good)  // 정상 수면 시간 아이콘
                 sleepDurationMessage.text = "좋은 수면습관 입니다.."
             }
+
             else -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 과도한 수면 시간 아이콘
                 sleepDurationMessage.text = "수면시간이 많습니다."
@@ -410,7 +426,7 @@ class SleepActivity : AppCompatActivity() {
             for (i in 0 until dataArray.length()) {
                 val item = dataArray.getJSONObject(i)
                 val rem = item.getInt("rem").toFloat()
-                val birthDate = item.getString("birthDate").substring(0,10)
+                val birthDate = item.getString("birthDate").substring(0, 10)
                 val formattedDate = formatDate(birthDate)
                 dateLabels.add(formattedDate)
                 entries.add(BarEntry(i.toFloat(), rem))
@@ -470,6 +486,7 @@ class SleepActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun fetchDataFromRemApi(apiURL: String, userId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -483,18 +500,6 @@ class SleepActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialogInfo(resId: Int) {
-        runOnUiThread {
-            AlertDialog.Builder(this)
-                .setMessage(resId)
-                .setPositiveButton("Ok", null)
-                .show()
-        }
-    }
-
-    fun returnToMenu(@Suppress("UNUSED_PARAMETER") view: View) {
-        finish()
-    }
     private fun formatDate(dateString: String): String {
         // 원래의 날짜 형식인 "yyyy-MM-dd"로부터 Date 객체를 생성
         val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -506,57 +511,5 @@ class SleepActivity : AppCompatActivity() {
     }
 
 
-}
-
-class CustomClockView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-
-    private var hour = 0
-    private var minute = 0
-    private val paint = Paint()
-
-    // 시간을 설정하는 메서드
-    fun setTime(hour: Int, minute: Int) {
-        this.hour = hour
-        this.minute = minute
-        invalidate() // View를 다시 그려줍니다.
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        drawClockFace(canvas)
-        drawHands(canvas)
-    }
-
-    private fun drawClockFace(canvas: Canvas) {
-        paint.style = Paint.Style.STROKE
-        paint.color = Color.BLACK
-        paint.strokeWidth = 8f
-
-        // 시계판을 그립니다.
-        val radius = Math.min(width, height) / 2 - 16
-        canvas.drawCircle(width / 2f, height / 2f, radius.toFloat(), paint)
-    }
-
-    private fun drawHands(canvas: Canvas) {
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 8f
-
-        val centerX = width / 2f
-        val centerY = height / 2f
-        val radius = Math.min(width, height) / 2 - 16
-
-        // 시침을 그립니다.
-        val hourAngle = Math.toRadians((hour * 30 + minute * 0.5).toDouble()).toFloat()
-        val hourX = (centerX + radius * 0.5 * Math.cos(hourAngle.toDouble())).toFloat()
-        val hourY = (centerY + radius * 0.5 * Math.sin(hourAngle.toDouble())).toFloat()
-        canvas.drawLine(centerX, centerY, hourX, hourY, paint)
-
-        // 분침을 그립니다.
-        paint.strokeWidth = 6f
-        val minuteAngle = Math.toRadians((minute * 6).toDouble()).toFloat()
-        val minuteX = (centerX + radius * 0.75 * Math.cos(minuteAngle.toDouble())).toFloat()
-        val minuteY = (centerY + radius * 0.75 * Math.sin(minuteAngle.toDouble())).toFloat()
-        canvas.drawLine(centerX, centerY, minuteX, minuteY, paint)
-    }
 }
 

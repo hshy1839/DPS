@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.dps.R;
+import com.woosuk.AgingInPlace.R;
 
 public class CistActivity2 extends AppCompatActivity {
 

@@ -425,8 +425,8 @@ class MainActivity : AppCompatActivity() {
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 17)
-            set(Calendar.MINUTE,58)
+            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.MINUTE,18)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 

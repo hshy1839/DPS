@@ -1,11 +1,10 @@
 package com.woosuk.AgingInPlace.mainActivity.CIST;
 
-import android.content.Intent;
+
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.dps.R;
+
+import com.woosuk.AgingInPlace.R;
 
 public class CistActivity1 extends AppCompatActivity {
 
