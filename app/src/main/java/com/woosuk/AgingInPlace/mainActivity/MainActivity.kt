@@ -38,7 +38,6 @@ import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.Calorie.CalorieActivity
 import com.woosuk.AgingInPlace.mainActivity.Heartrate.HeartbeatActivity
 import com.woosuk.AgingInPlace.mainActivity.Sleep.SleepActivity
-import com.woosuk.AgingInPlace.mainActivity.Workout.WorkoutActivity
 import com.woosuk.AgingInPlace.restClient.models.ActivityDataVO
 import com.woosuk.AgingInPlace.restClient.models.SleepDataVO
 import com.google.android.material.navigation.NavigationView
@@ -49,7 +48,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import com.woosuk.AgingInPlace.Medication
+import com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity
+import com.woosuk.AgingInPlace.mainActivity.Workout.DementiaRiskActivity
 import com.woosuk.AgingInPlace.medication.MedicationActivity
 import com.woosuk.AgingInPlace.receiver.AlarmReceiver
 import com.woosuk.AgingInPlace.receiver.MedicationAlarmReceiver
@@ -185,6 +185,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, DementiaRiskActivity::class.java)
             startActivity(intent)
         }
+        val cist_btn = findViewById<CardView>(R.id.cist_btn)
+        cist_btn.setOnClickListener {
+            val intent = Intent(this@MainActivity, CistActivity::class.java)
+            startActivity(intent)
+        }
 
         firstTextView = findViewById(R.id.firstTextView)
         secondTextView = findViewById(R.id.secondTextView)
@@ -213,7 +218,7 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {
@@ -421,7 +426,7 @@ class MainActivity : AppCompatActivity() {
     fun setDailyAlarm() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmReceiver::class.java).apply { action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM" }
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE  or PendingIntent.FLAG_IMMUTABLE)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()

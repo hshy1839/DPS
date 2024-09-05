@@ -96,10 +96,9 @@ class HeartbeatActivity : AppCompatActivity() {
         val headerView = navView.getHeaderView(0)
 
         // 로그인 상태에 따라 헤더의 버튼 가시성 조정
-        val menuLoginBtn: Button = headerView.findViewById(R.id.menu_loginBtn)
-        menuLoginBtn.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
+        loginButton.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
 
-        menuLoginBtn.setOnClickListener {
+        loginButton.setOnClickListener {
             if (!isLoggedIn) {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
@@ -120,7 +119,7 @@ class HeartbeatActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
                     // Menu 1 선택 시의 동작
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {

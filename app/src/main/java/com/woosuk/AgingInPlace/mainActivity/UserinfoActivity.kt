@@ -101,7 +101,7 @@ class UserInfoActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {
@@ -168,7 +168,7 @@ class UserInfoActivity : AppCompatActivity() {
 
                         emailText.text = email
                         nameText.text = name
-                        birthdayText.text = formattedBirthdate
+                        birthdayText.text = birthdate.substring(0, 10)
                         genderText.text = gender
                         phoneNumberText.text = phoneNumber
                         roleText.text = role

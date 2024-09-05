@@ -11,7 +11,6 @@ import com.woosuk.AgingInPlace.R
 
 class SignupActivity1 : AppCompatActivity() {
     private lateinit var idEdit: EditText
-    private lateinit var username: String
     private lateinit var pwEdit: EditText
     private lateinit var pwcheckEdit: EditText
 

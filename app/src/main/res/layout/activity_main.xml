@@ -407,6 +407,29 @@
                 android:textSize="25sp"/>
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cist_btn"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#ffffff"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="5dp"
+            app:strokeColor="#ffffff"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:padding="20dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CIST 검사하기"
+                android:fontFamily="@font/linebd"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"/>
+        </androidx.cardview.widget.CardView>
+
 
 
         <!-- footer -->
@@ -424,6 +447,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"/>
             <TextView
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/linebd"
@@ -433,6 +458,7 @@
                 android:textStyle="bold"/>
 
             <TextView
+                android:layout_marginStart="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/linerg"

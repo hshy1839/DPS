@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     private const val BASE_URL = "http://15.164.57.70"
     private var retrofit: Retrofit? = null
-
     fun getInstance(context: Context): Retrofit {
         if (retrofit == null) {
             val client = OkHttpClient.Builder()
@@ -36,15 +35,15 @@ object RetrofitClient {
         return retrofit!!
     }
 }
-object RetrofitInstance {
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://3.39.236.95:8080/") // 서버의 기본 URL
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    val api: ApiService by lazy {
-        retrofit.create(ApiService::class.java)
-    }
-}
+//object RetrofitInstance {
+//    private val retrofit by lazy {
+//        Retrofit.Builder()
+//            .baseUrl("http://3.39.236.95:8080/") // 서버의 기본 URL
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//    }
+//
+//    val api: ApiService by lazy {
+//        retrofit.create(ApiService::class.java)
+//    }
+//}

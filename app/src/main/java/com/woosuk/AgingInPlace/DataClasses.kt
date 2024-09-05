@@ -3,7 +3,7 @@ package com.woosuk.AgingInPlace
 import java.util.Date
 
 data class UserData(
-    val userId: String,
+    val userId: Int,
     val email: String,
     val name: Date,
     val birthdate: String,

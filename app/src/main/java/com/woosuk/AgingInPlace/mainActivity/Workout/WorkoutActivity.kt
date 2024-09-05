@@ -86,7 +86,7 @@ class WorkoutActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_item1 -> {
                     // Menu 1 선택 시의 동작
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.aginginplaces.net/"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aginginplaces.net/"))
                     startActivity(intent)
                 }
                 R.id.nav_item2 -> {
