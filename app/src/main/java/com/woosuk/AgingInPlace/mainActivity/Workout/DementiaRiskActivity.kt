@@ -34,6 +34,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
 import com.woosuk.AgingInPlace.R
+import com.woosuk.AgingInPlace.mainActivity.MainActivity
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -161,16 +162,21 @@ class DementiaRiskActivity :AppCompatActivity(){
         }
     }
 
-    private fun logout(){
-        val editor=sharedPreferences.edit()
-        editor.putBoolean("isLoggedIn",false)
-        editor.commit()
+    private fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
 
-        // 로그인 화면으로 이동합니다.
-        val intent=Intent(this,LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        // 로그아웃 완료 메시지 표시
+        Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+
+        // MainActivity로 이동하고 현재 액티비티 스택을 모두 지웁니다.
+        val mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(mainIntent)
+        finish()  // 현재 액티비티 종료
     }
+
 
     override fun onBackPressed(){
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){

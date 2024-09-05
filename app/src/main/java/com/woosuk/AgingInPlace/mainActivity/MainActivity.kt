@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
 
         menuLoginBtn.setOnClickListener {
             if (!isLoggedIn) {
-                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -299,13 +299,18 @@ class MainActivity : AppCompatActivity() {
     private fun logout() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
-        editor.commit()
+        editor.apply()
 
-        // 로그인 화면으로 이동합니다.
-        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        // 로그아웃 완료 메시지 표시
+        Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+
+        // MainActivity로 이동하고 현재 액티비티 스택을 모두 지웁니다.
+        val mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(mainIntent)
+        finish()  // 현재 액티비티 종료
     }
+
 
     override fun onBackPressed() {
         // 뒤로가기 버튼을 누를 때

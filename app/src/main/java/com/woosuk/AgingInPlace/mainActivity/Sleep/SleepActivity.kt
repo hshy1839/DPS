@@ -251,13 +251,18 @@ class SleepActivity : AppCompatActivity() {
     private fun logout() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
-        editor.commit()
+        editor.apply()
 
-        // 로그인 화면으로 이동합니다.
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        // 로그아웃 완료 메시지 표시
+        Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+
+        // MainActivity로 이동하고 현재 액티비티 스택을 모두 지웁니다.
+        val mainIntent = Intent(this, MainActivity::class.java)
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(mainIntent)
+        finish()  // 현재 액티비티 종료
     }
+
 
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()

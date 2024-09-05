@@ -42,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="검사 페이지"
+                    android:text=""
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:textSize="30sp"
@@ -165,22 +165,26 @@
                                 android:src="@drawable/cist_test_picture_circle"
                                 />
 
-                            <!-- CheckBox for Option 3 -->
-                            <CheckBox
-                                android:id="@+id/checkbox_option3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3"
-                                android:textSize="16sp"
-                                android:textColor="@color/black" />
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:src="@drawable/cist_test_picture_triangle"
-                                />
-                        </LinearLayout>
 
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                        <CheckBox
+                            android:id="@+id/checkbox_option3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3"
+                            android:textSize="16sp"
+                            android:textColor="@color/black" />
+                        <ImageView
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/cist_test_picture_triangle"
+                            />
+                        </LinearLayout>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -190,7 +194,6 @@
                             android:textStyle="bold"
                             android:layout_marginTop="50dp"
                             android:textColor="@color/black" />
-
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -301,7 +304,7 @@
                             android:src="@drawable/cist_test_picture_4" />
                         <EditText
                             android:id="@+id/answer_weekday"
-                            android:layout_width="300dp"
+                            android:layout_width="200dp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/orientation_test_answer"
                             android:padding="5dp"
