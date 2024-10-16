@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
+import com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity1
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
 import com.woosuk.AgingInPlace.medication.MedicationActivity

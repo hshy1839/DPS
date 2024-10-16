@@ -50,7 +50,7 @@
 
                 <!-- Login and Menu Icons -->
                 <ImageView
-                    android:id="@+id/loginButton"
+                    android:id="@+id/LoginButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right|center"
@@ -106,7 +106,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="지남력"
+                            android:text=""
+                            android:id="@+id/cist_type"
                             android:textColor="@color/black"
                             android:textSize="24sp"
                             android:textStyle="bold"
@@ -116,7 +117,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1. 오늘 날짜를 말씀해주세요."
+                            android:id="@+id/cist_orientation_title"
+                            android:text=""
                             android:layout_gravity="left"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -127,96 +129,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="(1) 올해는 몇 년도입니까?"
+                            android:id="@+id/cist_orientation_question"
+                            android:text=""
                             android:textSize="16sp"
                             android:layout_marginTop="30dp"
                             android:textColor="@color/black" />
                         <EditText
-                            android:id="@+id/answer_year"
+                            android:id="@+id/cist_orientation_answer"
                             android:layout_width="170dp"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
                             android:padding="5dp"
                             android:layout_marginTop="20dp"
                             android:hint="예) 2024"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(2) 지금은 몇 월입니까?"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_month"
-                            android:layout_width="170dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:hint="예) 9"
-                            android:layout_marginTop="20dp"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(3) 오늘은 며칠입니까?"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_day"
-                            android:layout_width="170dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 4"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(4) 오늘은 무슨 요일입니까?"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_weekday"
-                            android:layout_width="170dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 월요일"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2. 지금 계신 여기는 어디인가요?"
-                            android:layout_gravity="left"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_location"
-                            android:layout_width="170dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 서울"
                             android:gravity="left"
                             android:textColorHint="@android:color/darker_gray"
                             android:textColor="@color/black" />

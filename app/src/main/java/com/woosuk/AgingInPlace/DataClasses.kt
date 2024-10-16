@@ -42,5 +42,12 @@ data class Medication(
     val disease: String
 )
 
-
+data class CistQuestionResponse(
+    val questionText: String,
+    val answerOptions: String,
+    val correctAnswer: String,
+    val userAnswer: String,
+    val title: String,
+    val type:String
+)
 

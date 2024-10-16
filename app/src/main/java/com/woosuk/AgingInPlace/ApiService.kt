@@ -2,6 +2,7 @@ import com.woosuk.AgingInPlace.LoginData
 import com.woosuk.AgingInPlace.SignupData
 import com.woosuk.AgingInPlace.UserData
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.woosuk.AgingInPlace.MedicationResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -30,4 +31,7 @@ interface ApiService {
 
     @POST("http://3.39.236.95:8080/medications")
     fun getMedications(): Call<MedicationResponse>
+
+    @GET("/api/android/cist_questions")
+    fun getCistQuestions(@Body data: CistQuestionResponse): Call<JsonObject>
 }
