@@ -50,7 +50,7 @@
 
                 <!-- Login and Menu Icons -->
                 <ImageView
-                    android:id="@+id/loginButton"
+                    android:id="@+id/LoginButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right|center"
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:text="CIST 검사"
+                    android:text="CIST 검사 페이지"
                     android:textColor="@color/black"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -104,217 +104,26 @@
 
                         <!-- Card Title -->
                         <TextView
+                            android:id="@+id/cist_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="집행기능"
-                            android:textColor="@color/black"
                             android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="20dp" />
+                            android:textColor="@android:color/black"/>
 
-                        <!-- Examination Questions -->
                         <TextView
+                            android:id="@+id/cist_orientation_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1. 여기 모양들이 정해진 순서로 나옵니다. 모양들을 보면서 어떤 순서로 나오는지 생각해 보세요"
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@android:color/black"/>
+
+                        <LinearLayout
+                            android:id="@+id/cist_orientation_question"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
-                            android:textColor="@color/black" />
+                            android:orientation="vertical"/>
 
-                        <!-- Input Fields for Questions -->
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:src="@drawable/cist_test_picture2" />
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginLeft="-10dp"
-                            android:layout_marginTop="20dp">
-
-                            <!-- CheckBox for Option 1 -->
-                            <CheckBox
-                                android:id="@+id/checkbox_option1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1"
-                                android:textSize="16sp"
-                                android:textColor="@color/black" />
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:src="@drawable/cist_test_picture_square"
-                                />
-                            <!-- CheckBox for Option 2 -->
-                            <CheckBox
-                                android:id="@+id/checkbox_option2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="2"
-                                android:textSize="16sp"
-                                android:textColor="@color/black" />
-                            <ImageView
-                                android:layout_marginLeft="10dp"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:src="@drawable/cist_test_picture_circle"
-                                />
-
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                        <CheckBox
-                            android:id="@+id/checkbox_option3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3"
-                            android:textSize="16sp"
-                            android:textColor="@color/black" />
-                        <ImageView
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/cist_test_picture_triangle"
-                            />
-                        </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2. 여기 네 칸 중의 한 칸에 별이 하나 있습니다. 별이 이렇게 다른 위치로 이동합니다. 어떤 식으로 이동하는지 잘 생각해 보십시오."
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="50dp"
-                            android:textColor="@color/black" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:src="@drawable/cist_test_picture3" />
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_gravity="center">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="20dp">
-
-                            <CheckBox
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:textColor="@color/black" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1"
-                                android:textColor="@color/black"/>
-                            <ImageView
-                                android:layout_marginLeft="5dp"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:src="@drawable/cist_test_picture3_1"
-                                />
-                            <CheckBox
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:textColor="@color/black" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="2"
-                                android:textColor="@color/black"/>
-                            <ImageView
-                                android:layout_marginLeft="5dp"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:src="@drawable/cist_test_picture3_2"
-                                />
-                        </LinearLayout>
-                        </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="20dp">
-                            <CheckBox
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:textColor="@color/black" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3"
-                                android:textColor="@color/black"/>
-                            <ImageView
-                                android:layout_marginLeft="5dp"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:src="@drawable/cist_test_picture3_3"
-                                />
-
-                            <CheckBox
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:textColor="@color/black" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4"
-                                android:textColor="@color/black"/>
-                            <ImageView
-                                android:layout_marginLeft="5dp"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:src="@drawable/cist_test_picture3_4"
-                                />
-                    </LinearLayout>
-                    </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3.카드에 숫자와 계절이 하나씩 적혀 있습니다. ‘1-봄-2-여름~’ 이렇게 연결
-되어 나갑니다. 빈칸에는 무엇이 들어갈 차례일까요?"
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="50dp"
-                            android:textColor="@color/black" />
-
-                        <!-- Input Fields for Questions -->
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:src="@drawable/cist_test_picture_4" />
-                        <EditText
-                            android:id="@+id/answer_weekday"
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 봄, 여름"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-
-                        <!-- Next Button -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

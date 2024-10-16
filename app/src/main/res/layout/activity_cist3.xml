@@ -50,7 +50,7 @@
 
                 <!-- Login and Menu Icons -->
                 <ImageView
-                    android:id="@+id/loginButton"
+                    android:id="@+id/LoginButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right|center"
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:text="CIST 검사"
+                    android:text="CIST 검사 페이지"
                     android:textColor="@color/black"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -104,74 +104,26 @@
 
                         <!-- Card Title -->
                         <TextView
+                            android:id="@+id/cist_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="주의력"
-                            android:textColor="@color/black"
                             android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="20dp" />
-
-                        <!-- Examination Questions -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1. 제가 불러드리는 숫자를 그대로 따라 해 주세요."
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="20dp"
-                            android:textColor="@color/black" />
-
-                        <!-- Input Fields for Questions -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="6–9–7–3"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_weekday"
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 6–9–7–3"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
+                            android:textColor="@android:color/black"/>
 
                         <TextView
+                            android:id="@+id/cist_orientation_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2. 제가 불러드리는 말을 끝에서부터 거꾸로 따라 해 주세요."
-                            android:layout_gravity="left"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="20dp"
-                            android:textColor="@color/black" />
+                            android:textSize="20sp"
+                            android:textColor="@android:color/black"/>
 
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:id="@+id/cist_orientation_question"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="금수강산"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
                             android:layout_marginTop="20dp"
-                            android:hint="예) 산강수금"
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
-                        <!-- Next Button -->
+                            android:orientation="vertical"/>
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
