@@ -50,7 +50,7 @@
 
                 <!-- Login and Menu Icons -->
                 <ImageView
-                    android:id="@+id/loginButton"
+                    android:id="@+id/LoginButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="right|center"
@@ -104,72 +104,49 @@
 
                         <!-- Card Title -->
                         <TextView
+                            android:id="@+id/cist_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="기억력"
-                            android:textColor="@color/black"
                             android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="20dp" />
-
-                        <!-- Examination Questions -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="※ 지금부터 외우셔야 하는\n문장 하나를 불러드리겠습니다.\n끝까지 잘 듣고 따라 해 보세요."
-                            android:layout_gravity="center"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="20dp"
-                            android:textColor="@color/black" />
-
-                        <!-- Input Fields for Questions -->
-
-
-
+                            android:textColor="@android:color/black"/>
 
                         <TextView
+                            android:id="@+id/cist_orientation_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="민수는 / 자전거를 타고 / 공원에 가서 / 11시부터 / 야구를 했다"
-                            android:textSize="16sp"
-                            android:layout_marginTop="30dp"
-                            android:textColor="@color/black" />
-                        <EditText
-                            android:id="@+id/answer_weekday"
-                            android:layout_width="250dp"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/orientation_test_answer"
-                            android:padding="5dp"
-                            android:layout_marginTop="20dp"
-                            android:hint="예) 민수는 자전거를 타고 공원에 가서 11시부터 야구를 했다."
-                            android:gravity="left"
-                            android:textColorHint="@android:color/darker_gray"
-                            android:textColor="@color/black" />
+                            android:textSize="20sp"
+                            android:textColor="@android:color/black"/>
 
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-                        <Button
-                            android:id="@+id/prevButton"
+                        <LinearLayout
+                            android:id="@+id/cist_orientation_question"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical"/>
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="#5271FE"
-                            android:text="이전"
-                            android:textColor="@android:color/white"
-                            android:layout_marginTop="30dp" />
-                        <!-- Next Button -->
-                        <Button
-                            android:id="@+id/nextButton"
-                            android:layout_marginLeft="20dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="#5271FE"
-                            android:text="다음"
-                            android:textColor="@android:color/white"
-                            android:layout_marginTop="30dp" />
-</LinearLayout>
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/prevButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#5271FE"
+                                android:text="이전"
+                                android:textColor="@android:color/white"
+                                android:layout_marginTop="30dp" />
+                            <!-- Next Button -->
+                            <Button
+                                android:id="@+id/nextButton"
+                                android:layout_marginLeft="20dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="#5271FE"
+                                android:text="다음"
+                                android:textColor="@android:color/white"
+                                android:layout_marginTop="30dp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
