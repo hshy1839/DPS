@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -80,8 +81,9 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if (response.isSuccessful) {
                     val jsonResponse = response.body()
-                if (jsonResponse != null && jsonResponse.has("userId")) { // 서버에서 userId를 반환하도록 변경
-                    val userId = jsonResponse.get("userId").asInt
+                    Log.d("LoginResponse", jsonResponse.toString())
+                    if (jsonResponse != null && jsonResponse.has("id")) { // 서버에서 userId를 반환하도록 변경
+                    val userId = jsonResponse.get("id").asInt
                     saveUserId(userId) // userId를 저장
 
                     // 로그인 성공

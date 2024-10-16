@@ -382,18 +382,39 @@ class CalorieActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchDataFromApi(apiURL: String, userId: Int) {
+    private fun fetchDataFromApi(url: String, userId: Int) {
+        val client = OkHttpClient()
+        val formBody = FormBody.Builder().add("userId", userId.toString()).build()
+
+        val request = Request.Builder()
+            .url(url)
+            .post(formBody)
+            .build()
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val jsonResponse = post(apiURL, userId)
-                withContext(Dispatchers.Main) {
-                    parseJsonDataForStepCharts(jsonResponse)
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { jsonData ->
+                        withContext(Dispatchers.Main) {
+                            parseJsonDataForStepCharts(jsonData)
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("Failed to fetch data: ${response.message}")
+                    }
                 }
-            } catch (e: Exception) {
-                Log.e("Activity", "Error fetching data", e)
+            } catch (e: IOException) {
+                Log.e("CalorieActivity", "Network error: ${e.localizedMessage}")
+                withContext(Dispatchers.Main) {
+                    showToast("Network error: ${e.localizedMessage}")
+                }
             }
         }
     }
+
+
     private fun fetchDataFromApiCalories(apiURL: String, userId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             try {

@@ -698,6 +698,7 @@ class MainActivity : AppCompatActivity() {
 
         val request = Request.Builder()
             .url(url)
+            .addHeader("Content-Type", "application/json")
             .post(requestBody)
             .build()
 

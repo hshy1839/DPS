@@ -8,7 +8,7 @@ object Server {
     @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        val url = URL("http://192.168.35.101:8864/api/data")
+        val url = URL("http://3.39.236.95:8080/api/data")
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         val reader = BufferedReader(InputStreamReader(conn.inputStream))
