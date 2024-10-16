@@ -104,10 +104,9 @@
 
                         <!-- Card Title -->
                         <TextView
+                            android:id="@+id/cist_type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=""
-                            android:id="@+id/cist_type"
                             android:textColor="@color/black"
                             android:textSize="24sp"
                             android:textStyle="bold"
@@ -115,10 +114,9 @@
 
                         <!-- Examination Questions -->
                         <TextView
+                            android:id="@+id/cist_orientation_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/cist_orientation_title"
-                            android:text=""
                             android:layout_gravity="left"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -127,10 +125,9 @@
 
                         <!-- Input Fields for Questions -->
                         <TextView
+                            android:id="@+id/cist_orientation_question"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/cist_orientation_question"
-                            android:text=""
                             android:textSize="16sp"
                             android:layout_marginTop="30dp"
                             android:textColor="@color/black" />

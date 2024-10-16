@@ -1,5 +1,6 @@
 package com.woosuk.AgingInPlace
 
+import org.json.JSONArray
 import java.util.Date
 
 data class UserData(
@@ -43,10 +44,9 @@ data class Medication(
 )
 
 data class CistQuestionResponse(
-    val questionText: String,
-    val answerOptions: String,
-    val correctAnswer: String,
-    val userAnswer: String,
+    val question_text: String,
+    val answer_options: List<String>,
+    val correct_answer: String,
     val title: String,
     val type:String
 )

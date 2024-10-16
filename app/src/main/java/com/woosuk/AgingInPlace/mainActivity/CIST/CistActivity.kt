@@ -76,7 +76,7 @@ class CistActivity : AppCompatActivity() {
         nextButton.setOnClickListener {
             val intent = Intent(
                 this@CistActivity,
-                CistActivity2::class.java
+                CistActivity1::class.java
             )
             startActivity(intent)
         }

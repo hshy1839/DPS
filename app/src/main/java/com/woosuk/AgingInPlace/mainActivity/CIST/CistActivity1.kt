@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,22 +12,20 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.JsonElement
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
-import com.woosuk.AgingInPlace.medication.MedicationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class CistActivity1 : AppCompatActivity() {
     private lateinit var apiService: ApiService
@@ -55,11 +52,21 @@ class CistActivity1 : AppCompatActivity() {
         navView = findViewById(R.id.nav_view)  // navView 초기화
         drawerLayout = findViewById(R.id.drawer_layout)
 
+        val nextButton = findViewById<Button>(R.id.nextButton)
+        // 버튼 클릭 리스너 추가
+        nextButton.setOnClickListener {
+            val intent = Intent(
+                this@CistActivity1,
+                CistActivity2::class.java
+            )
+            startActivity(intent)
+        }
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {
             onBackPressed()
         }
 
+        typeText = findViewById(R.id.cist_type)
         titleText = findViewById(R.id.cist_orientation_title)
         questionText = findViewById(R.id.cist_orientation_question)
         answerText = findViewById(R.id.cist_orientation_answer)
@@ -68,7 +75,7 @@ class CistActivity1 : AppCompatActivity() {
         userId = sharedPreferences.getInt("userId", 0)
 
 
-        fetchCistQuestion(userId)
+        fetchCistQuestions()
 
         LoginButton = findViewById(R.id.LoginButton)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
@@ -98,36 +105,46 @@ class CistActivity1 : AppCompatActivity() {
 
     }
 
-    fun fetchCistQuestion(userId: Int) {
-        val call = apiService.getUserInfo(userId)
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.isSuccessful) {
-                    val jsonObject = response.body()
-                    if (jsonObject != null) {
-                        val typeTextValue = jsonObject.get("type").asString
-                        val titleTextValue = jsonObject.get("title").asString
-                        val questionTextValue = jsonObject.get("question_text").asJsonArray
-                        val correctAnswerTextValue = jsonObject.get("correct_answer").asString
 
-                        // TextView에 올바르게 값 설정
-                        typeText.text = typeTextValue
-                        titleText.text = titleTextValue
-                        answerText.text = correctAnswerTextValue // 변수 이름이 `answerText`인 것으로 가정
-                        questionText.text = questionTextValue.toString() // JsonArray를 문자열로 변환
+    fun fetchCistQuestions() {
+        val call = apiService.getCistQuestions()
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                if (response.isSuccessful) {
+                    val jsonResponse = response.body()
+                    if (jsonResponse != null && jsonResponse.isJsonArray) {
+                        val questions = jsonResponse.asJsonArray
+                        for (jsonElement in questions) {
+                            val question = jsonElement.asJsonObject
+                            // 질문 데이터 추출
+                            val typeTextValue = question.get("type").asString
+                            val titleTextValue = question.get("title").asString
+                            val questionTextValue = question.get("question_text").asString
+                            val correctAnswerTextValue = question.get("correct_answer").asString
+
+                            // UI 업데이트
+                            typeText.text = typeTextValue
+                            titleText.text = titleTextValue
+                            questionText.text = questionTextValue
+
+                            Log.d("API Response", "Type: $typeTextValue, Title: $titleTextValue, Question: $questionTextValue, Correct Answer: $correctAnswerTextValue")
+                        }
                     } else {
-                        Log.e("EmptyData", "JsonObject is null")
+                        Log.e("EmptyData", "Response is null or not an array")
                     }
                 } else {
-                    Log.e("API", "Request failed: ${response.code()}")
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    Log.e("API", "Request failed: ${response.code()}, Error: $errorBody")
                 }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
                 Log.e("API", "Network error: ${t.message}")
             }
         })
     }
+
+
 
 
     override fun onBackPressed() {
