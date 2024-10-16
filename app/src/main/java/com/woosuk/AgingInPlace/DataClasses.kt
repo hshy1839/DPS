@@ -45,9 +45,6 @@ data class Medication(
 
 data class CistQuestionResponse(
     val question_text: String,
-    val answer_options: List<String>,
-    val correct_answer: String,
     val title: String,
-    val type:String
+    val type: String
 )
-

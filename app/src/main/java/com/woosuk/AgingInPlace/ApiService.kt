@@ -32,5 +32,5 @@ interface ApiService {
     fun getMedications(): Call<MedicationResponse>
 
     @GET("/api/android/cist_questions")
-    fun getCistQuestions(): Call<JsonElement>
+    fun getCistQuestions(): Call<List<CistQuestionResponse>>
 }
