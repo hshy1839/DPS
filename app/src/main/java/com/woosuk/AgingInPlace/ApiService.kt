@@ -1,4 +1,3 @@
-import com.google.gson.JsonElement
 import com.woosuk.AgingInPlace.LoginData
 import com.woosuk.AgingInPlace.SignupData
 import com.woosuk.AgingInPlace.UserData
@@ -26,15 +25,15 @@ interface ApiService {
     @GET("/api/android/userinfo")
     fun getUserInfo(@Query("userId") userId: Int): Call<JsonObject>
 
-    @POST("http://localhost:8080/wear/sleep")
+    @POST("http://15.164.57.70:5000/wear/sleep")
     fun getSleepData(@Body jsonObject: JsonObject): Call<JsonObject>
 
-    @POST("http://localhost:8080/medications")
+    @POST("http://15.164.57.70:5000/medications")
     fun getMedications(): Call<MedicationResponse>
 
     @GET("/api/android/cist_questions")
     fun getCistQuestions(): Call<List<CistQuestionResponse>>
 
-    @POST("/api/android/cist_questions")
+    @POST("/api/android/cist_responses")
     fun postCistResponse(@Body data: CistResponseData): Call<JsonObject>
 }

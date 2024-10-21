@@ -38,7 +38,7 @@ object RetrofitClient {
 object RetrofitInstance {
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("http://localhost:8080/") // 서버의 기본 URL
+            .baseUrl("http://15.164.57.70:5000/") // 서버의 기본 URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

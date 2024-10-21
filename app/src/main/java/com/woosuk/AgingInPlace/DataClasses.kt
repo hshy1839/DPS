@@ -46,11 +46,12 @@ data class Medication(
 data class CistQuestionResponse(
     val question_text: String,
     val title: String,
-    val type: String
+    val type: String,
+    val id: Int,
 )
 
 data class CistResponseData(
     val userId: Int,
     val questionId: Int,
-    val userAnswer: String
+    val responses: String
 )

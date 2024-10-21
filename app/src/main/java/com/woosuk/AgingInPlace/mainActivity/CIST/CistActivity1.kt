@@ -1,7 +1,6 @@
 package com.woosuk.AgingInPlace.mainActivity.CIST
 
 import ApiService
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -13,23 +12,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.JsonElement
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
 import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.CistQuestionResponse
-import com.woosuk.AgingInPlace.R.id
+import com.woosuk.AgingInPlace.CistResponseData
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
@@ -37,7 +33,6 @@ import com.woosuk.AgingInPlace.medication.MedicationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.compose.ui.graphics.Color.Companion.Black as Black
 
 class CistActivity1 : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -45,7 +40,7 @@ class CistActivity1 : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var sharedPreferences: SharedPreferences
     private var userId: Int = 0
-
+    private var currentQuestionId: Int? = null
     private lateinit var typeText: TextView
     private lateinit var titleText: TextView
     private lateinit var answerGroup: RadioGroup
@@ -77,6 +72,7 @@ class CistActivity1 : AppCompatActivity() {
         nextButton.setOnClickListener {
             val intent = Intent(this@CistActivity1, CistActivity2::class.java)
             startActivity(intent)
+            sendCistResponse()
         }
 
         backArrow.setOnClickListener {
@@ -137,6 +133,7 @@ class CistActivity1 : AppCompatActivity() {
     }
 
 
+
     private fun fetchCistQuestions() {
         val call = apiService.getCistQuestions()
         call.enqueue(object : Callback<List<CistQuestionResponse>> {
@@ -148,6 +145,11 @@ class CistActivity1 : AppCompatActivity() {
                         val filteredQuestions = questions.filter { it.type == "지남력" }
                         if (filteredQuestions.isNotEmpty()) {
                             // 첫 번째 질문의 타입 설정
+                            val allQuestionIds = filteredQuestions.map { it.id }
+
+                            Log.d("Question IDs", allQuestionIds.toString())
+
+
                             typeText.text = filteredQuestions.first().type
 
                             val displayedTitles = mutableSetOf<String>()
@@ -211,6 +213,44 @@ class CistActivity1 : AppCompatActivity() {
 
             override fun onFailure(call: Call<List<CistQuestionResponse>>, t: Throwable) {
                 Log.e("API", "Network error: ${t.message}")
+            }
+        })
+    }
+    private fun sendCistResponse() {
+        // 사용자가 입력한 답변과 질문 ID를 가져옵니다.
+        val answer = "사용자가 입력한 답변" // 실제로는 사용자가 입력한 답을 가져와야 합니다.
+        val questionId = currentQuestionId ?: return // 질문 ID를 적절히 설정해야 합니다. 실제로는 질문에 대한 ID를 동적으로 받아옵니다.
+
+        // SharedPreferences에서 userId를 가져옵니다.
+        val userId = sharedPreferences.getInt("userId", 0)
+        if (userId == 0) {
+            Toast.makeText(this@CistActivity1, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // CistResponseData 객체를 생성합니다.
+        val responseBody = CistResponseData(
+            userId = userId,
+            responses = answer,
+            questionId = questionId
+        )
+
+        // 서버에 POST 요청을 보냅니다.
+        val call = apiService.postCistResponse(responseBody)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CistActivity1, "응답이 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("API", "응답 코드: ${response.code()}") // 상태 코드 로그
+                    Log.e("API", "응답 메시지: ${response.errorBody()?.string()}") // 에러 메시지 로그
+                    Toast.makeText(this@CistActivity1, "응답 저장에 실패했습니다. 상태 코드: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.e("API", "응답 저장 중 오류 발생: ${t.message}")
+                Toast.makeText(this@CistActivity1, "응답 저장 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
             }
         })
     }
