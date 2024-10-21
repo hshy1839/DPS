@@ -48,3 +48,9 @@ data class CistQuestionResponse(
     val title: String,
     val type: String
 )
+
+data class CistResponseData(
+    val userId: Int,
+    val questionId: Int,
+    val userAnswer: String
+)

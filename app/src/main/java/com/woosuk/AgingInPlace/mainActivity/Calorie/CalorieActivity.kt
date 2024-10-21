@@ -89,8 +89,8 @@ class CalorieActivity : AppCompatActivity() {
         setupCalorieBarChart(calorieBarChart)
 
         var id = getUserId()
-        fetchDataFromApi("http://3.39.236.95:8080/chart/steps", id)
-        fetchDataFromApiCalories("http://3.39.236.95:8080/chart/calories", id)
+        fetchDataFromApi("http://localhost:8080/chart/steps", id)
+        fetchDataFromApiCalories("http://localhost:8080/chart/calories", id)
 
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)

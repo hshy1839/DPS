@@ -89,7 +89,8 @@ class CistActivity5 : AppCompatActivity() {
         }
 
         backArrow.setOnClickListener {
-            onBackPressed()
+            val intent = Intent(this@CistActivity5, MainActivity::class.java)
+            startActivity(intent)
         }
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)

@@ -125,6 +125,8 @@
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity4"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity5"/>
         <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity6"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity7"/>
+        <activity android:name="com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity8"/>
         <activity-alias
             android:name="ViewPermissionUsageActivity"
             android:exported="true"
@@ -137,7 +139,6 @@
         </activity-alias>
 
     </application>
-
 
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

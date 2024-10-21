@@ -39,7 +39,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import androidx.compose.ui.graphics.Color.Companion.Black as Black
 
-class CistActivity4 : AppCompatActivity() {
+class CistActivity7 : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView:NavigationView
     private lateinit var apiService: ApiService
@@ -77,19 +77,19 @@ class CistActivity4 : AppCompatActivity() {
 
         // 버튼 클릭 리스너 추가
         nextButton.setOnClickListener {
-            val intent = Intent(this@CistActivity4, CistActivity5::class.java)
+            val intent = Intent(this@CistActivity7, CistActivity8::class.java)
             startActivity(intent)
         }
         prevButton.setOnClickListener {
             val intent = Intent(
-                this@CistActivity4,
-                CistActivity3::class.java
+                this@CistActivity7,
+                CistActivity6::class.java
             )
             startActivity(intent)
         }
 
         backArrow.setOnClickListener {
-            val intent = Intent(this@CistActivity4, MainActivity::class.java)
+            val intent = Intent(this@CistActivity7, MainActivity::class.java)
             startActivity(intent)
         }
 
@@ -156,7 +156,7 @@ class CistActivity4 : AppCompatActivity() {
                     val questions = response.body()
                     if (questions != null && questions.isNotEmpty()) {
                         // "지남력" 타입의 질문만 필터링
-                        val filteredQuestions = questions.filter { it.type == "시공간 기능" }
+                        val filteredQuestions = questions.filter { it.type == "언어 기능" }
                         if (filteredQuestions.isNotEmpty()) {
                             // 첫 번째 질문의 타입 설정
                             typeText.text = filteredQuestions.first().type
@@ -169,7 +169,7 @@ class CistActivity4 : AppCompatActivity() {
                                 if (!displayedTitles.contains(question.title)) {
                                     displayedTitles.add(question.title)
 
-                                    val questionTitle = TextView(this@CistActivity4).apply {
+                                    val questionTitle = TextView(this@CistActivity7).apply {
                                         text = question.title
                                         textSize = 18f
                                         setTextColor(android.graphics.Color.BLACK)
@@ -179,7 +179,7 @@ class CistActivity4 : AppCompatActivity() {
                                 }
 
                                 // 질문 텍스트 추가
-                                val questionText = TextView(this@CistActivity4).apply {
+                                val questionText = TextView(this@CistActivity7).apply {
                                     text = question.question_text
                                     textSize = 16f
                                     setTextColor(android.graphics.Color.BLACK)
@@ -195,11 +195,11 @@ class CistActivity4 : AppCompatActivity() {
                                 }
 
                                 // EditText 추가
-                                val editText = EditText(this@CistActivity4).apply {
+                                val editText = EditText(this@CistActivity7).apply {
                                     hint = "여기에 입력하세요"
                                     setTextColor(android.graphics.Color.BLACK)
                                     setHintTextColor(android.graphics.Color.GRAY)
-                                    background = ContextCompat.getDrawable(this@CistActivity4, R.drawable.edittext_border)
+                                    background = ContextCompat.getDrawable(this@CistActivity7, R.drawable.edittext_border)
 
                                     // Margin 설정
                                     val params = LinearLayout.LayoutParams(

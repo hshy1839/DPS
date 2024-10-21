@@ -4,6 +4,7 @@ import com.woosuk.AgingInPlace.SignupData
 import com.woosuk.AgingInPlace.UserData
 import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.CistResponseData
 import com.woosuk.AgingInPlace.MedicationResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -25,12 +26,15 @@ interface ApiService {
     @GET("/api/android/userinfo")
     fun getUserInfo(@Query("userId") userId: Int): Call<JsonObject>
 
-    @POST("http://3.39.236.95:8080/wear/sleep")
+    @POST("http://localhost:8080/wear/sleep")
     fun getSleepData(@Body jsonObject: JsonObject): Call<JsonObject>
 
-    @POST("http://3.39.236.95:8080/medications")
+    @POST("http://localhost:8080/medications")
     fun getMedications(): Call<MedicationResponse>
 
     @GET("/api/android/cist_questions")
     fun getCistQuestions(): Call<List<CistQuestionResponse>>
+
+    @POST("/api/android/cist_questions")
+    fun postCistResponse(@Body data: CistResponseData): Call<JsonObject>
 }
