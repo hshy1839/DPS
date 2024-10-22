@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.woosuk.AgingInPlace.R
+import com.woosuk.AgingInPlace.mainActivity.MainActivity
 
 class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +18,10 @@ class SignupActivity : AppCompatActivity() {
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
-            onBackPressed()
+            val intent = Intent(this@SignupActivity, MainActivity::class.java)
+            startActivity(intent)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         }
         val signupNextBtn = findViewById<Button>(R.id.signup_nextbtn)
         signupNextBtn.setOnClickListener{

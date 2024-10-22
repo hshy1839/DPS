@@ -24,7 +24,8 @@ class SignupActivity1 : AppCompatActivity() {
 
         val loginBackArrowImageView = findViewById<ImageView>(R.id.back_arrow)
         loginBackArrowImageView.setOnClickListener {
-            onBackPressed()
+            val intent = Intent(this@SignupActivity1, SignupActivity::class.java)
+            startActivity(intent)
         }
 
         val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)

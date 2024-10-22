@@ -46,13 +46,6 @@
                         android:textSize="30sp"
                         android:gravity="left|center" />
 
-                    <ImageView
-                        android:id="@+id/menu_loginBtn"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="right|center"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/baseline_account_circle_24" />
 
                     <ImageView
                         android:id="@+id/menuButton_heartbeat"

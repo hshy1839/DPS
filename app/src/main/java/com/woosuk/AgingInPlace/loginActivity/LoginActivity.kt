@@ -20,6 +20,8 @@ import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class LoginActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.getInstance(this)
@@ -44,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
         val loginBtn = findViewById<Button>(R.id.login_btn) // Button으로 변경
 
         val signupButton = findViewById<Button>(R.id.signup_btn)
-
         loginBtn.setOnClickListener {
             val username = idEdit.text.toString()
             val password = pwEdit.text.toString()
@@ -69,6 +70,8 @@ class LoginActivity : AppCompatActivity() {
             // 이미 로그인되어 있다면 MainActivity로 이동
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
             finish() // 로그인 화면 종료
         }
     }
@@ -85,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                     if (jsonResponse != null && jsonResponse.has("id")) { // 서버에서 userId를 반환하도록 변경
                     val userId = jsonResponse.get("id").asInt
                     saveUserId(userId) // userId를 저장
-
+                        fetchUserInfo(userId)
                     // 로그인 성공
                     Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
                     // SharedPreferences에 로그인 상태 저장
@@ -111,6 +114,30 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+    private fun fetchUserInfo(userId: Int) {
+        val call = apiService.getUserInfo(userId)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val jsonObject = response.body()
+                    if (jsonObject != null) {
+                        val name = jsonObject.get("name").asString
+                        val editor = sharedPreferences.edit()
+                        editor.putString("name", name)
+                        editor.apply()
+                    } else {
+                        Log.e("EmptyData", "JsonObject is null")
+                    }
+                } else {
+                    Log.e("API", "Request failed: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.e("API", "Network error: ${t.message}")
+            }
+        })
+    }
     override fun onBackPressed() {
             super.onBackPressed()
     }
@@ -126,5 +153,7 @@ class LoginActivity : AppCompatActivity() {
         editor.putBoolean("isLoggedIn", isLoggedIn)
         editor.apply() // commit() 대신 apply()를 사용하여 비동기로 저장
     }
+
+
 
 }

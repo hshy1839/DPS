@@ -17,7 +17,7 @@ interface ApiService {
     @POST("/api/android/login")
     fun login(@Body data: LoginData): Call<JsonObject>
     @POST("/api/android/signup")
-    fun signup(@Body data: SignupData): Call<JsonObject>
+    fun signup(@Body signdata: SignupData): Call<JsonObject>
 
     @POST("/api/android/updateUserInfo")
     fun updateUserInfo(@Body data: UserData): Call<JsonObject>

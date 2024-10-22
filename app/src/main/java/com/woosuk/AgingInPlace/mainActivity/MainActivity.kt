@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         // 서버에서 알람 시간 가져오기
         fetchMedicationTime(userId)
 
+
         if (userId != 0) {
             sendIdToWear(userId)
         } else {
@@ -147,15 +148,7 @@ class MainActivity : AppCompatActivity() {
         val headerView = navView.getHeaderView(0)
 
         // 로그인 상태에 따라 헤더의 버튼 가시성 조정
-        val menuLoginBtn: Button = headerView.findViewById(R.id.menu_loginBtn)
-        menuLoginBtn.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
 
-        menuLoginBtn.setOnClickListener {
-            if (!isLoggedIn) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            }
-        }
 
         val heartrateBtn = findViewById<CardView>(R.id.heartrate_btn)
         heartrateBtn.setOnClickListener {
@@ -259,16 +252,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     private fun updateWelcomeMessage() {
         // NavigationView의 헤더 가져오기
         val headerView = navView.getHeaderView(0)
         val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val username = sharedPreferences.getInt("userId", 0)
+        val name = sharedPreferences.getString("name", "")
 
         if (isLoggedIn) {
-            welcomeTextView.text = "안녕하세요 $username"
+            welcomeTextView.text = "안녕하세요 $name"
         } else {
             welcomeTextView.text = "로그인 후 사용해주세요"
         }
@@ -554,7 +548,7 @@ class MainActivity : AppCompatActivity() {
                   0, 0, 0, 0, totalSteps, exerciseTimeTotal?:0, false
               )
 //            데이터 전송
-            postActivity(data, "http://15.164.57.70:5000/send/activity_data")
+            postActivity(data, "http://172.16.2.158:5000/send/activity_data")
 
             Log.i("ddd", "사용자 ID : ${userId}")
 
@@ -675,7 +669,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("ddd", "total : ${durationMinutes + stageDuration}")
 
                 // 데이터 전송
-                postSleep(data, "http://15.164.57.70:5000/send/sleep_data")
+                postSleep(data, "http://172.16.2.158:5000/send/sleep_data")
                 onComplete()
             } catch (e: Exception) {
 
@@ -778,7 +772,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("http://15.164.57.70:5000/medication-time")
+            .url("http://172.16.2.158:5000/medication-time")
             .post(requestBody)
             .build()
 

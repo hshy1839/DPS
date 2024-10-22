@@ -164,10 +164,10 @@ class WorkoutActivity : AppCompatActivity() {
         val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val username = sharedPreferences.getInt("userId", 0)
+        val name = sharedPreferences.getString("name", "")
 
         if (isLoggedIn) {
-            welcomeTextView.text = "안녕하세요 $username"
+            welcomeTextView.text = "안녕하세요 $name"
         } else {
             welcomeTextView.text = "로그인 후 사용해주세요"
         }

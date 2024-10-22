@@ -129,18 +129,18 @@ class CistActivity : AppCompatActivity() {
         }
         updateWelcomeMessage()
     }
-    private fun updateWelcomeMessage(){
+     private fun updateWelcomeMessage() {
         // NavigationView의 헤더 가져오기
-        val headerView=navView.getHeaderView(0)
-        val welcomeTextView: TextView =headerView.findViewById(R.id.welcome_textView)
+        val headerView = navView.getHeaderView(0)
+        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
-        val isLoggedIn=sharedPreferences.getBoolean("isLoggedIn",false)
-        val username=sharedPreferences.getInt("userId",0)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val name = sharedPreferences.getString("name", "")
 
-        if(isLoggedIn){
-            welcomeTextView.text="안녕하세요 $username"
-        }else{
-            welcomeTextView.text="로그인 후 사용해주세요"
+        if (isLoggedIn) {
+            welcomeTextView.text = "안녕하세요 $name"
+        } else {
+            welcomeTextView.text = "로그인 후 사용해주세요"
         }
     }
 

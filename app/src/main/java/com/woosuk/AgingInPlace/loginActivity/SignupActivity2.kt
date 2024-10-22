@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -15,6 +17,7 @@ import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
 import com.woosuk.AgingInPlace.SignupData
 import com.google.gson.JsonObject
+import com.woosuk.AgingInPlace.mainActivity.CIST.CistActivity1
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,6 +32,7 @@ class SignupActivity2 : AppCompatActivity() {
     private lateinit var birthdayEdit: EditText
     private lateinit var roleRadio: RadioGroup
     private lateinit var genderRadio: RadioGroup
+    private lateinit var backArrow: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,7 @@ class SignupActivity2 : AppCompatActivity() {
         nameEdit = findViewById(R.id.nameEdit)
         emailEdit = findViewById(R.id.emailEdit)
         phoneNumberEdit = findViewById(R.id.phoneNumberEdit)
+        backArrow = findViewById(R.id.back_arrow)
         birthdayEdit = findViewById(R.id.birthdayEdit)
         roleRadio = findViewById(R.id.roleRadio)
         genderRadio = findViewById(R.id.genderRadio)
@@ -63,6 +68,14 @@ class SignupActivity2 : AppCompatActivity() {
                 }
             }
         })
+
+        backArrow.setOnClickListener {
+            val intent = Intent(
+                this@SignupActivity2,
+                SignupActivity1::class.java
+            )
+            startActivity(intent)
+        }
 
         val signUpNextBtn = findViewById<Button>(R.id.signup_nextbtn)
         signUpNextBtn.setOnClickListener {
@@ -118,12 +131,14 @@ class SignupActivity2 : AppCompatActivity() {
                         val intent = Intent(this@SignupActivity2, SignupActivity3::class.java)
                         startActivity(intent)
                     } else {
+                        Log.e("API Error", "Code: ${response.code()}, Message: ${response.message()}")
                         Toast.makeText(applicationContext, "데이터 전송에 실패했습니다. 응답 코드: ${response.code()}, 메시지: ${response.message()}", Toast.LENGTH_LONG).show()
                     }
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Toast.makeText(applicationContext, "네트워크 오류: " + t.message, Toast.LENGTH_SHORT).show()
+                    Log.e("API Error", "통신 실패: ${t.message}", t)
+                    Toast.makeText(applicationContext, "다시 작성해주세요: " + t.message, Toast.LENGTH_SHORT).show()
                 }
             })
         }

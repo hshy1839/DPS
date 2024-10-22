@@ -68,6 +68,7 @@ class UserInfoActivity : AppCompatActivity() {
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getInt("userId", 0)
+        val name = sharedPreferences.getString("name", "")
 
         fetchUserInfo(userId)
 
@@ -87,15 +88,7 @@ class UserInfoActivity : AppCompatActivity() {
         // 헤더 뷰 접근
         val headerView = navView.getHeaderView(0)
         // 로그인 상태에 따라 헤더의 버튼 가시성 조정
-        val menuLoginBtn: Button = headerView.findViewById(R.id.menu_loginBtn)
-        menuLoginBtn.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
 
-        menuLoginBtn.setOnClickListener {
-            if (!isLoggedIn) {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-            }
-        }
 
         // 네비게이션 메뉴 아이템 클릭 리스너 설정
         navView.setNavigationItemSelectedListener { menuItem ->
@@ -135,20 +128,8 @@ class UserInfoActivity : AppCompatActivity() {
         updateWelcomeMessage()  // navView가 초기화된 이후에 호출
     }
 
-    private fun updateWelcomeMessage() {
-        // NavigationView의 헤더 가져오기
-        val headerView = navView.getHeaderView(0)
-        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val username = sharedPreferences.getInt("userId", 0)
 
-        if (isLoggedIn) {
-            welcomeTextView.text = "안녕하세요 $username"
-        } else {
-            welcomeTextView.text = "로그인 후 사용해주세요"
-        }
-    }
 
     private fun fetchUserInfo(userId: Int) {
         val call = apiService.getUserInfo(userId)
@@ -186,6 +167,21 @@ class UserInfoActivity : AppCompatActivity() {
                 Log.e("API", "Network error: ${t.message}")
             }
         })
+    }
+
+    private fun updateWelcomeMessage() {
+        // NavigationView의 헤더 가져오기
+        val headerView = navView.getHeaderView(0)
+        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
+
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val name = sharedPreferences.getString("name", "")
+
+        if (isLoggedIn) {
+            welcomeTextView.text = "안녕하세요 $name"
+        } else {
+            welcomeTextView.text = "로그인 후 사용해주세요"
+        }
     }
 
     override fun onBackPressed() {

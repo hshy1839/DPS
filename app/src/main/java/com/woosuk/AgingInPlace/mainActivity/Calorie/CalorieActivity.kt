@@ -70,7 +70,7 @@ class CalorieActivity : AppCompatActivity() {
         calorie_message = findViewById(R.id.calorie_message)
         navView = findViewById(R.id.nav_view)
 
-        val loginButton = findViewById<ImageView>(R.id.menu_loginBtn)
+        val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
             val intent = Intent(this@CalorieActivity, LoginActivity::class.java)
             startActivity(intent)
@@ -89,8 +89,8 @@ class CalorieActivity : AppCompatActivity() {
         setupCalorieBarChart(calorieBarChart)
 
         var id = getUserId()
-        fetchDataFromApi("http://15.164.57.70:5000/chart/steps", id)
-        fetchDataFromApiCalories("http://15.164.57.70:5000/chart/calories", id)
+        fetchDataFromApi("http://172.16.2.158:5000/chart/steps", id)
+        fetchDataFromApiCalories("http://172.16.2.158:5000/chart/calories", id)
 
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
@@ -166,10 +166,10 @@ class CalorieActivity : AppCompatActivity() {
         val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val username = sharedPreferences.getInt("userId", 0)
+        val name = sharedPreferences.getString("name", "")
 
         if (isLoggedIn) {
-            welcomeTextView.text = "안녕하세요 $username"
+            welcomeTextView.text = "안녕하세요 $name"
         } else {
             welcomeTextView.text = "로그인 후 사용해주세요"
         }

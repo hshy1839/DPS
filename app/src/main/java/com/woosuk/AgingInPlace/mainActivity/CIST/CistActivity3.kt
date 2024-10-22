@@ -106,6 +106,8 @@ class CistActivity3 : AppCompatActivity() {
         backArrow.setOnClickListener {
             val intent = Intent(this@CistActivity3, MainActivity::class.java)
             startActivity(intent)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         }
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
@@ -292,18 +294,18 @@ class CistActivity3 : AppCompatActivity() {
         finish()
     }
 
-    private fun updateWelcomeMessage(){
+     private fun updateWelcomeMessage() {
         // NavigationView의 헤더 가져오기
-        val headerView=navView.getHeaderView(0)
-        val welcomeTextView: TextView =headerView.findViewById(R.id.welcome_textView)
+        val headerView = navView.getHeaderView(0)
+        val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
 
-        val isLoggedIn=sharedPreferences.getBoolean("isLoggedIn",false)
-        val username=sharedPreferences.getInt("userId",0)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val name = sharedPreferences.getString("name", "")
 
-        if(isLoggedIn){
-            welcomeTextView.text="안녕하세요 $username"
-        }else{
-            welcomeTextView.text="로그인 후 사용해주세요"
+        if (isLoggedIn) {
+            welcomeTextView.text = "안녕하세요 $name"
+        } else {
+            welcomeTextView.text = "로그인 후 사용해주세요"
         }
     }
     // ProgressBar를 보여줄 때
