@@ -174,6 +174,13 @@ class CistActivity1 : AppCompatActivity() {
                                         text = question.title
                                         textSize = 18f
                                         setTextColor(android.graphics.Color.BLACK)
+                                        val params = LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                        ).apply {
+                                            topMargin = 30 // marginTop을 설정
+                                        }
+                                        layoutParams = params
                                     }
                                     contentLayout.addView(questionTitle)
                                 }
@@ -182,6 +189,13 @@ class CistActivity1 : AppCompatActivity() {
                                     text = question.question_text
                                     textSize = 16f
                                     setTextColor(android.graphics.Color.BLACK)
+                                    val params = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    ).apply {
+                                        topMargin = 30 // marginTop을 설정
+                                    }
+                                    layoutParams = params
                                 }
                                 contentLayout.addView(questionText)
 
@@ -191,6 +205,13 @@ class CistActivity1 : AppCompatActivity() {
                                     setTextColor(android.graphics.Color.BLACK)
                                     setHintTextColor(android.graphics.Color.GRAY)
                                     background = ContextCompat.getDrawable(this@CistActivity1, R.drawable.edittext_border)
+                                    val params = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    ).apply {
+                                        topMargin = 20 // marginTop을 설정
+                                    }
+                                    layoutParams = params
                                 }
                                 contentLayout.addView(editText)
 
