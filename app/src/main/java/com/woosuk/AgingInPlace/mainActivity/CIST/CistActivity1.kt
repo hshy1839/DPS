@@ -12,20 +12,22 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
-import com.woosuk.AgingInPlace.R
-import com.woosuk.AgingInPlace.RetrofitClient
 import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.woosuk.AgingInPlace.CistResponseData
+import com.woosuk.AgingInPlace.R
+import com.woosuk.AgingInPlace.RetrofitClient
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
@@ -34,13 +36,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class CistActivity1 : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView:NavigationView
     private lateinit var apiService: ApiService
     private lateinit var sharedPreferences: SharedPreferences
     private var userId: Int = 0
-    private var currentQuestionId: Int? = null
+
     private lateinit var typeText: TextView
     private lateinit var titleText: TextView
     private lateinit var answerGroup: RadioGroup
@@ -49,10 +52,13 @@ class CistActivity1 : AppCompatActivity() {
     private lateinit var nextButton: Button
     private lateinit var backArrow: ImageView
     private lateinit var contentLayout: LinearLayout
+    private val editTextList = mutableListOf<Pair<Int, EditText>>()
+    private var progressBar: ProgressBar? = null
+    private var cardView: CardView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cist1)
+        setContentView(R.layout.activity_cist2)
         drawerLayout=findViewById(R.id.drawer_layout)
         // 초기화
         typeText = findViewById(R.id.cist_type)
@@ -65,15 +71,27 @@ class CistActivity1 : AppCompatActivity() {
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getInt("userId", 0)
-
+        progressBar = findViewById(R.id.progress_bar)
+        cardView = findViewById(R.id.card_view)
         fetchCistQuestions()
 
         // 버튼 클릭 리스너 추가
         nextButton.setOnClickListener {
+            val emptyFields = editTextList.filter { pair -> pair.second.text.isEmpty() }
+//            if (emptyFields.isNotEmpty()) {
+//                // 빈 필드가 있으면 알림 표시
+//                Toast.makeText(this@CistActivity1, "빈 칸을 채워주세요", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener // 함수를 종료하여 다음 단계로 진행하지 않음
+//            }
+            showProgressBar()
+            hideProgressBar()
+            postCistResponses()
             val intent = Intent(this@CistActivity1, CistActivity2::class.java)
             startActivity(intent)
 
+
         }
+
 
         backArrow.setOnClickListener {
             val intent = Intent(this@CistActivity1, MainActivity::class.java)
@@ -119,6 +137,7 @@ class CistActivity1 : AppCompatActivity() {
             // 메뉴를 선택한 후에는 Drawer를 닫아줌
             drawerLayout.closeDrawer(GravityCompat.START)
             true
+
         }
 
         val nav_item4 = navView.menu.findItem(R.id.nav_item4)
@@ -130,8 +149,8 @@ class CistActivity1 : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.START)
         }
         updateWelcomeMessage()
-    }
 
+    }
 
 
     private fun fetchCistQuestions() {
@@ -141,22 +160,13 @@ class CistActivity1 : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val questions = response.body()
                     if (questions != null && questions.isNotEmpty()) {
-                        // "지남력" 타입의 질문만 필터링
                         val filteredQuestions = questions.filter { it.type == "지남력" }
                         if (filteredQuestions.isNotEmpty()) {
-                            // 첫 번째 질문의 타입 설정
-                            val allQuestionIds = filteredQuestions.map { it.id }
-
-                            Log.d("Question IDs", allQuestionIds.toString())
-
-
                             typeText.text = filteredQuestions.first().type
-
                             val displayedTitles = mutableSetOf<String>()
 
                             // UI 업데이트
                             for (question in filteredQuestions) {
-                                // 제목 추가 (중복 방지)
                                 if (!displayedTitles.contains(question.title)) {
                                     displayedTitles.add(question.title)
 
@@ -165,25 +175,15 @@ class CistActivity1 : AppCompatActivity() {
                                         textSize = 18f
                                         setTextColor(android.graphics.Color.BLACK)
                                     }
-
-                                    contentLayout.addView(questionTitle) // 제목 추가
+                                    contentLayout.addView(questionTitle)
                                 }
 
-                                // 질문 텍스트 추가
                                 val questionText = TextView(this@CistActivity1).apply {
                                     text = question.question_text
                                     textSize = 16f
                                     setTextColor(android.graphics.Color.BLACK)
-
-                                    // Margin 설정
-                                    val params = LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                    ).apply {
-                                        setMargins(0, 60, 0, 0) // top margin 20dp
-                                    }
-                                    layoutParams = params // LayoutParams 적용
                                 }
+                                contentLayout.addView(questionText)
 
                                 // EditText 추가
                                 val editText = EditText(this@CistActivity1).apply {
@@ -191,20 +191,11 @@ class CistActivity1 : AppCompatActivity() {
                                     setTextColor(android.graphics.Color.BLACK)
                                     setHintTextColor(android.graphics.Color.GRAY)
                                     background = ContextCompat.getDrawable(this@CistActivity1, R.drawable.edittext_border)
-
-                                    // Margin 설정
-                                    val params = LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                    ).apply {
-                                        setMargins(0, 40, 0, 0) // top margin 20dp
-                                    }
-                                    layoutParams = params // LayoutParams 적용
                                 }
-
-                                // UI에 질문 텍스트와 EditText 추가
-                                contentLayout.addView(questionText)
                                 contentLayout.addView(editText)
+
+                                // 질문 ID와 EditText를 리스트에 저장
+                                editTextList.add(Pair(question.id, editText))
                             }
                         }
                     }
@@ -217,6 +208,41 @@ class CistActivity1 : AppCompatActivity() {
         })
     }
 
+    private fun postCistResponses() {
+        for (pair in editTextList) {
+            val questionId = pair.first
+            val responseText = pair.second.text.toString()
+
+            if (questionId != null && responseText.isNotEmpty()) {
+                val cistResponseData = CistResponseData(
+                    userId = userId,
+                    questionId = questionId,
+                    responses = responseText,
+                )
+
+                // API로 응답 전송
+                val call = apiService.postCistResponse(cistResponseData)
+                call.enqueue(object : Callback<JsonObject> {
+                    override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                        if (response.isSuccessful) {
+                            Log.d("API", "Response saved for question $questionId")
+                        } else {
+                            // 에러 상태 코드와 에러 메시지 출력
+                            val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                            Log.e("API", "Failed to save response for question $userId $questionId $responseText. Error: $errorMessage")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                        Log.e("API", "Error saving response: ${t.message}")
+                    }
+                })
+            }
+            else {
+                Log.e("API", "Invalid questionId or empty responseText")
+            }
+        }
+    }
 
 
 
@@ -248,6 +274,17 @@ class CistActivity1 : AppCompatActivity() {
         }else{
             welcomeTextView.text="로그인 후 사용해주세요"
         }
+    }
+    // ProgressBar를 보여줄 때
+    fun showProgressBar() {
+        progressBar?.visibility = View.VISIBLE
+        cardView?.visibility = View.GONE // CardView 숨기기
+    }
+
+    // ProgressBar를 숨길 때
+    fun hideProgressBar() {
+        progressBar?.visibility = View.GONE
+        cardView?.visibility = View.VISIBLE // CardView 보이기
     }
 }
 

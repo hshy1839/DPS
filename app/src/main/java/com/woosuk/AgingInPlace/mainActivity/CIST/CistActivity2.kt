@@ -12,20 +12,22 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.JsonObject
-import com.woosuk.AgingInPlace.R
-import com.woosuk.AgingInPlace.RetrofitClient
 import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.woosuk.AgingInPlace.CistResponseData
+import com.woosuk.AgingInPlace.R
+import com.woosuk.AgingInPlace.RetrofitClient
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
@@ -33,6 +35,7 @@ import com.woosuk.AgingInPlace.medication.MedicationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class CistActivity2 : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -45,12 +48,14 @@ class CistActivity2 : AppCompatActivity() {
     private lateinit var titleText: TextView
     private lateinit var answerGroup: RadioGroup
 
+    private lateinit var prevButton: Button
     private lateinit var LoginButton: ImageView
     private lateinit var nextButton: Button
-    private lateinit var prevButton: Button
     private lateinit var backArrow: ImageView
     private lateinit var contentLayout: LinearLayout
     private val editTextList = mutableListOf<Pair<Int, EditText>>()
+    private var progressBar: ProgressBar? = null
+    private var cardView: CardView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,22 +66,34 @@ class CistActivity2 : AppCompatActivity() {
         titleText = findViewById(R.id.cist_orientation_title)
         contentLayout = findViewById(R.id.cist_orientation_question)
         nextButton = findViewById(R.id.nextButton)
-        prevButton = findViewById(R.id.prevButton)
         backArrow = findViewById(R.id.back_arrow)
         LoginButton = findViewById(R.id.LoginButton)
+        prevButton = findViewById(R.id.prevButton)
         navView=findViewById(R.id.nav_view)
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getInt("userId", 0)
-
+        progressBar = findViewById(R.id.progress_bar)
+        cardView = findViewById(R.id.card_view)
         fetchCistQuestions()
 
         // 버튼 클릭 리스너 추가
         nextButton.setOnClickListener {
+            val emptyFields = editTextList.filter { pair -> pair.second.text.isEmpty() }
+            if (emptyFields.isNotEmpty()) {
+                // 빈 필드가 있으면 알림 표시
+                Toast.makeText(this@CistActivity2, "빈 칸을 채워주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener // 함수를 종료하여 다음 단계로 진행하지 않음
+            }
+            showProgressBar()
+            hideProgressBar()
             postCistResponses()
             val intent = Intent(this@CistActivity2, CistActivity3::class.java)
             startActivity(intent)
+
+
         }
+
         prevButton.setOnClickListener {
             val intent = Intent(
                 this@CistActivity2,
@@ -84,6 +101,7 @@ class CistActivity2 : AppCompatActivity() {
             )
             startActivity(intent)
         }
+
 
         backArrow.setOnClickListener {
             val intent = Intent(this@CistActivity2, MainActivity::class.java)
@@ -266,6 +284,17 @@ class CistActivity2 : AppCompatActivity() {
         }else{
             welcomeTextView.text="로그인 후 사용해주세요"
         }
+    }
+    // ProgressBar를 보여줄 때
+    fun showProgressBar() {
+        progressBar?.visibility = View.VISIBLE
+        cardView?.visibility = View.GONE // CardView 숨기기
+    }
+
+    // ProgressBar를 숨길 때
+    fun hideProgressBar() {
+        progressBar?.visibility = View.GONE
+        cardView?.visibility = View.VISIBLE // CardView 보이기
     }
 }
 

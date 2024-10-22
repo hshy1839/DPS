@@ -85,8 +85,17 @@
                     android:textSize="30sp"
                     android:textStyle="bold" />
 
+                <!-- Loading ProgressBar -->
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" /> <!-- Initially hidden -->
+
                 <!-- Examination Card Section -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/card_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
