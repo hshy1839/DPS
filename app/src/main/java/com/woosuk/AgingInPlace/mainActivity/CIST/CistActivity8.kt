@@ -88,7 +88,7 @@ class CistActivity8 : AppCompatActivity() {
             showProgressBar()
             hideProgressBar()
             postCistResponses()
-            val intent = Intent(this@CistActivity8, CistActivity8::class.java)
+            val intent = Intent(this@CistActivity8, CistActivity9::class.java)
             startActivity(intent)
 
 
