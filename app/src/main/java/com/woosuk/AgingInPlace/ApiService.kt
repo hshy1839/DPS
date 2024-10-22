@@ -25,10 +25,10 @@ interface ApiService {
     @GET("/api/android/userinfo")
     fun getUserInfo(@Query("userId") userId: Int): Call<JsonObject>
 
-    @POST("http://172.16.2.158:5000/wear/sleep")
+    @POST("http://3.39.236.95:8080/wear/sleep")
     fun getSleepData(@Body jsonObject: JsonObject): Call<JsonObject>
 
-    @POST("http://172.16.2.158:5000/medications")
+    @POST("http://3.39.236.95:8080/medications")
     fun getMedications(): Call<MedicationResponse>
 
     @GET("/api/android/cist_questions")

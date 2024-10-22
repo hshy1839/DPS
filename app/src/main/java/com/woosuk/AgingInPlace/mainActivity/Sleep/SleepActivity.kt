@@ -100,8 +100,8 @@ class SleepActivity : AppCompatActivity() {
         setupRemBarChart(remBarChart)
 
         var id = getUserId()
-        fetchDataFromDurationApi("http://172.16.2.158:5000/chart/duration", id)
-        fetchDataFromRemApi("http://172.16.2.158:5000/chart/rem", id)
+        fetchDataFromDurationApi("http://3.39.236.95:8080/chart/duration", id)
+        fetchDataFromRemApi("http://3.39.236.95:8080/chart/rem", id)
 
         val backArrow = findViewById<ImageView>(R.id.back_arrow)
         backArrow.setOnClickListener {

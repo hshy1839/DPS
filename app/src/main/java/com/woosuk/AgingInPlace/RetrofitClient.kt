@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://172.16.2.158:5000"
+    private const val BASE_URL = "http://15.164.57.70:5000"
     private var retrofit: Retrofit? = null
     fun getInstance(context: Context): Retrofit {
         if (retrofit == null) {
@@ -38,7 +38,7 @@ object RetrofitClient {
 object RetrofitInstance {
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("http://172.16.2.158:5000/") // 서버의 기본 URL
+            .baseUrl("http://15.164.57.70:5000/") // 서버의 기본 URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

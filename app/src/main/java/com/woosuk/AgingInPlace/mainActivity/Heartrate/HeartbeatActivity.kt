@@ -88,7 +88,7 @@ class HeartbeatActivity : AppCompatActivity() {
         setupHeartRateChart(heartRateLineChart)
 
         var id = getUserId()
-        fetchDataFromApi("http://172.16.2.158:5000/chart/heartRate", id)
+        fetchDataFromApi("http://3.39.236.95:8080/chart/heartRate", id)
 
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
