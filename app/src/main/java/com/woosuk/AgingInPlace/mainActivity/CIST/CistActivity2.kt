@@ -1,7 +1,6 @@
 package com.woosuk.AgingInPlace.mainActivity.CIST
 
 import ApiService
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -13,23 +12,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.R
 import com.woosuk.AgingInPlace.RetrofitClient
-import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.CistQuestionResponse
-import com.woosuk.AgingInPlace.R.id
+import com.woosuk.AgingInPlace.CistResponseData
 import com.woosuk.AgingInPlace.loginActivity.LoginActivity
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 import com.woosuk.AgingInPlace.mainActivity.UserInfoActivity
@@ -37,7 +33,6 @@ import com.woosuk.AgingInPlace.medication.MedicationActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.compose.ui.graphics.Color.Companion.Black as Black
 
 class CistActivity2 : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -55,6 +50,7 @@ class CistActivity2 : AppCompatActivity() {
     private lateinit var prevButton: Button
     private lateinit var backArrow: ImageView
     private lateinit var contentLayout: LinearLayout
+    private val editTextList = mutableListOf<Pair<Int, EditText>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +73,7 @@ class CistActivity2 : AppCompatActivity() {
 
         // 버튼 클릭 리스너 추가
         nextButton.setOnClickListener {
+            postCistResponses()
             val intent = Intent(this@CistActivity2, CistActivity3::class.java)
             startActivity(intent)
         }
@@ -155,17 +152,13 @@ class CistActivity2 : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val questions = response.body()
                     if (questions != null && questions.isNotEmpty()) {
-                        // "지남력" 타입의 질문만 필터링
                         val filteredQuestions = questions.filter { it.type == "기억력" }
                         if (filteredQuestions.isNotEmpty()) {
-                            // 첫 번째 질문의 타입 설정
                             typeText.text = filteredQuestions.first().type
-
                             val displayedTitles = mutableSetOf<String>()
 
                             // UI 업데이트
                             for (question in filteredQuestions) {
-                                // 제목 추가 (중복 방지)
                                 if (!displayedTitles.contains(question.title)) {
                                     displayedTitles.add(question.title)
 
@@ -174,25 +167,15 @@ class CistActivity2 : AppCompatActivity() {
                                         textSize = 18f
                                         setTextColor(android.graphics.Color.BLACK)
                                     }
-
-                                    contentLayout.addView(questionTitle) // 제목 추가
+                                    contentLayout.addView(questionTitle)
                                 }
 
-                                // 질문 텍스트 추가
                                 val questionText = TextView(this@CistActivity2).apply {
                                     text = question.question_text
                                     textSize = 16f
                                     setTextColor(android.graphics.Color.BLACK)
-
-                                    // Margin 설정
-                                    val params = LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                    ).apply {
-                                        setMargins(0, 60, 0, 0) // top margin 20dp
-                                    }
-                                    layoutParams = params // LayoutParams 적용
                                 }
+                                contentLayout.addView(questionText)
 
                                 // EditText 추가
                                 val editText = EditText(this@CistActivity2).apply {
@@ -200,20 +183,11 @@ class CistActivity2 : AppCompatActivity() {
                                     setTextColor(android.graphics.Color.BLACK)
                                     setHintTextColor(android.graphics.Color.GRAY)
                                     background = ContextCompat.getDrawable(this@CistActivity2, R.drawable.edittext_border)
-
-                                    // Margin 설정
-                                    val params = LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                    ).apply {
-                                        setMargins(0, 40, 0, 0) // top margin 20dp
-                                    }
-                                    layoutParams = params // LayoutParams 적용
                                 }
-
-                                // UI에 질문 텍스트와 EditText 추가
-                                contentLayout.addView(questionText)
                                 contentLayout.addView(editText)
+
+                                // 질문 ID와 EditText를 리스트에 저장
+                                editTextList.add(Pair(question.id, editText))
                             }
                         }
                     }
@@ -225,6 +199,43 @@ class CistActivity2 : AppCompatActivity() {
             }
         })
     }
+
+    private fun postCistResponses() {
+        for (pair in editTextList) {
+            val questionId = pair.first
+            val responseText = pair.second.text.toString()
+
+            if (questionId != null && responseText.isNotEmpty()) {
+                val cistResponseData = CistResponseData(
+                    userId = userId,
+                    questionId = questionId,
+                    responses = responseText,
+                )
+
+                // API로 응답 전송
+                val call = apiService.postCistResponse(cistResponseData)
+                call.enqueue(object : Callback<JsonObject> {
+                    override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                        if (response.isSuccessful) {
+                            Log.d("API", "Response saved for question $questionId")
+                        } else {
+                            // 에러 상태 코드와 에러 메시지 출력
+                            val errorMessage = response.errorBody()?.string() ?: "Unknown error"
+                            Log.e("API", "Failed to save response for question $userId $questionId $responseText. Error: $errorMessage")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                        Log.e("API", "Error saving response: ${t.message}")
+                    }
+                })
+            }
+            else {
+                Log.e("API", "Invalid questionId or empty responseText")
+            }
+        }
+    }
+
 
 
     override fun onBackPressed() {

@@ -72,7 +72,7 @@ class CistActivity1 : AppCompatActivity() {
         nextButton.setOnClickListener {
             val intent = Intent(this@CistActivity1, CistActivity2::class.java)
             startActivity(intent)
-            sendCistResponse()
+
         }
 
         backArrow.setOnClickListener {
@@ -216,44 +216,8 @@ class CistActivity1 : AppCompatActivity() {
             }
         })
     }
-    private fun sendCistResponse() {
-        // 사용자가 입력한 답변과 질문 ID를 가져옵니다.
-        val answer = "사용자가 입력한 답변" // 실제로는 사용자가 입력한 답을 가져와야 합니다.
-        val questionId = currentQuestionId ?: return // 질문 ID를 적절히 설정해야 합니다. 실제로는 질문에 대한 ID를 동적으로 받아옵니다.
 
-        // SharedPreferences에서 userId를 가져옵니다.
-        val userId = sharedPreferences.getInt("userId", 0)
-        if (userId == 0) {
-            Toast.makeText(this@CistActivity1, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
 
-        // CistResponseData 객체를 생성합니다.
-        val responseBody = CistResponseData(
-            userId = userId,
-            responses = answer,
-            questionId = questionId
-        )
-
-        // 서버에 POST 요청을 보냅니다.
-        val call = apiService.postCistResponse(responseBody)
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@CistActivity1, "응답이 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.e("API", "응답 코드: ${response.code()}") // 상태 코드 로그
-                    Log.e("API", "응답 메시지: ${response.errorBody()?.string()}") // 에러 메시지 로그
-                    Toast.makeText(this@CistActivity1, "응답 저장에 실패했습니다. 상태 코드: ${response.code()}", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.e("API", "응답 저장 중 오류 발생: ${t.message}")
-                Toast.makeText(this@CistActivity1, "응답 저장 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
 
 
     override fun onBackPressed() {
