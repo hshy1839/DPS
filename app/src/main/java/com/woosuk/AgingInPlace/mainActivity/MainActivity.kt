@@ -548,7 +548,7 @@ class MainActivity : AppCompatActivity() {
                   0, 0, 0, 0, totalSteps, exerciseTimeTotal?:0, false
               )
 //            데이터 전송
-            postActivity(data, "http://15.164.57.70:5000/send/activity_data")
+            postActivity(data, "http://3.39.236.95:8080/send/activity_data")
 
             Log.i("ddd", "사용자 ID : ${userId}")
 
@@ -669,7 +669,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("ddd", "total : ${durationMinutes + stageDuration}")
 
                 // 데이터 전송
-                postSleep(data, "http://15.164.57.70:5000/send/sleep_data")
+                postSleep(data, "http://3.39.236.95:8080/send/sleep_data")
                 onComplete()
             } catch (e: Exception) {
 
@@ -772,7 +772,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("http://15.164.57.70:5000/medication-time")
+            .url("http://3.39.236.95:8080/medication-time")
             .post(requestBody)
             .build()
 
