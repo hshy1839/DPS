@@ -67,4 +67,6 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.8")
     //DrawerLayout
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation ("com.github.bumptech.glide:glide:4.11.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
 }
