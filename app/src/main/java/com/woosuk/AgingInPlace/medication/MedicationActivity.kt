@@ -246,7 +246,7 @@ class MedicationActivity : AppCompatActivity() {
             .build()
 
         val request = Request.Builder()
-            .url("http://15.164.57.70:5000/medications")
+            .url("http://3.39.236.95:8080/medications")
             .post(requestBody)
             .build()
 
@@ -310,7 +310,7 @@ class MedicationActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("http://15.164.57.70:5000/medications/updateAlarmTime")
+            .url("http://3.39.236.95:8080/medications/updateAlarmTime")
             .post(requestBody)
             .build()
 

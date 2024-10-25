@@ -34,7 +34,7 @@ class AlarmReceiver : BroadcastReceiver() {
             action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM"
         }
         val pendingIntent = PendingIntent.getBroadcast(
-            context, 1, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, 1, newIntent, PendingIntent.FLAG_IMMUTABLE
         )
 
         val calendar = Calendar.getInstance().apply {
@@ -76,7 +76,7 @@ class AlarmReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("trigger_functions", true)
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context, "DAILY_ALARM_CHANNEL")
             .setSmallIcon(R.drawable.dps_logo) // 알림 아이콘 설정
