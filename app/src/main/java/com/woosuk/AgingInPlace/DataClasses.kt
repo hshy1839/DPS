@@ -1,5 +1,6 @@
 package com.woosuk.AgingInPlace
 
+import android.media.Image
 import org.json.JSONArray
 import java.util.Date
 
@@ -48,6 +49,7 @@ data class CistQuestionResponse(
     val title: String,
     val type: String,
     val id: Int,
+    val image_url: String
 )
 
 data class CistResponseData(

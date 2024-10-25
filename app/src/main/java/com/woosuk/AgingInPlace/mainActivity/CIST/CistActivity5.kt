@@ -22,6 +22,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.CistQuestionResponse
@@ -101,6 +102,7 @@ class CistActivity5 : AppCompatActivity() {
             )
             startActivity(intent)
         }
+
 
 
         backArrow.setOnClickListener {
@@ -211,6 +213,26 @@ class CistActivity5 : AppCompatActivity() {
                                 }
                                 contentLayout.addView(questionText)
 
+                                val questionImageView = ImageView(this@CistActivity5).apply {
+                                    // 이미지 URL로부터 이미지를 로드합니다
+                                    val imageUrl = question.image_url // 질문에서 이미지 URL을 가져옵니다
+                                    if (imageUrl != null) {
+                                        Glide.with(this@CistActivity5) // Glide 라이브러리를 사용하여 이미지 로드
+                                            .load(imageUrl)
+                                            .into(this)
+                                        visibility = View.VISIBLE // 이미지가 로드되면 보이게 설정
+                                    } else {
+                                        visibility = View.GONE // URL이 없으면 숨김
+                                    }
+                                    val params = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    ).apply {
+                                        topMargin = 20 // marginTop을 설정
+                                    }
+                                    layoutParams = params
+                                }
+                                contentLayout.addView(questionImageView)
                                 // EditText 추가
                                 val editText = EditText(this@CistActivity5).apply {
                                     hint = "여기에 입력하세요"
@@ -294,7 +316,7 @@ class CistActivity5 : AppCompatActivity() {
         finish()
     }
 
-     private fun updateWelcomeMessage() {
+    private fun updateWelcomeMessage() {
         // NavigationView의 헤더 가져오기
         val headerView = navView.getHeaderView(0)
         val welcomeTextView: TextView = headerView.findViewById(R.id.welcome_textView)
