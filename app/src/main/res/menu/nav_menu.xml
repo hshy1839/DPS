@@ -14,9 +14,6 @@
         <item
             android:id="@+id/nav_item5"
             android:title="약물 복용 페이지"/>
-        <item
-            android:id="@+id/nav_item3"
-            android:title="설정"/>
 
         <item
             android:id="@+id/nav_item4"

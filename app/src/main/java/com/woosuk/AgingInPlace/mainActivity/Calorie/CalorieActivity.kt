@@ -69,6 +69,8 @@ class CalorieActivity : AppCompatActivity() {
         calorie_icon = findViewById(R.id.calorie_icon)
         calorie_message = findViewById(R.id.calorie_message)
         navView = findViewById(R.id.nav_view)
+        drawerLayout = findViewById(R.id.drawer_layout)
+
 
         val loginButton = findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener {
@@ -94,7 +96,6 @@ class CalorieActivity : AppCompatActivity() {
 
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         // 헤더 뷰 접근
         val headerView = navView.getHeaderView(0)

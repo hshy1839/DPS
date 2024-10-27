@@ -99,10 +99,6 @@ class WorkoutActivity : AppCompatActivity() {
                     val intent = Intent(this, UserInfoActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.nav_item3 -> {
-                    val intent = Intent(this, MedicationActivity::class.java)
-                    startActivity(intent)
-                }
                 R.id.nav_item4->{
                     val isLoggedIn=sharedPreferences.getBoolean("isLoggedIn",false)
                     if(isLoggedIn){

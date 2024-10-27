@@ -121,10 +121,6 @@ class DementiaRiskActivity :AppCompatActivity(){
                     // Menu 2 선택 시의 동작
                     showToast("고객센터 이동 버튼")
                 }
-                R.id.nav_item3->{
-                    // Menu 3 선택 시의 동작
-                    showToast("설정 버튼")
-                }
                 R.id.nav_item4->{
                     val isLoggedIn=sharedPreferences.getBoolean("isLoggedIn",false)
                     if(isLoggedIn){

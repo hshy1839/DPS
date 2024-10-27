@@ -215,19 +215,19 @@ class SleepActivity : AppCompatActivity() {
                     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
                     // TextView에 시간 표시
-                    val clock1TextView: TextView = findViewById(R.id.clock1_text)
+                   /* val clock1TextView: TextView = findViewById(R.id.clock1_text)
                     val clock2TextView: TextView = findViewById(R.id.clock2_text)
 
                     clock1TextView.text =
                         bedTimeStart.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
                     clock2TextView.text =
-                        bedTimeEnd.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)
+                        bedTimeEnd.atZone(ZoneOffset.ofHours(9)).format(timeFormatter)*/
                 } else {
-                    val clock1TextView: TextView = findViewById(R.id.clock1_text)
+                    /*val clock1TextView: TextView = findViewById(R.id.clock1_text)
                     val clock2TextView: TextView = findViewById(R.id.clock2_text)
 
                     clock1TextView.text = "N/A"
-                    clock2TextView.text = "N/A"
+                    clock2TextView.text = "N/A"*/
                 }
             }
         }
