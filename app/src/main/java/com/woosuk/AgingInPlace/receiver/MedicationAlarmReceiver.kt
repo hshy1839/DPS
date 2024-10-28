@@ -39,7 +39,7 @@ class MedicationAlarmReceiver : BroadcastReceiver() {
                 action = "com.woosuk.AgingInPlace.MEDICATION_ALARM"
             }
             val pendingIntent = PendingIntent.getBroadcast(
-                context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                context, 1, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
             val calendar = Calendar.getInstance().apply {

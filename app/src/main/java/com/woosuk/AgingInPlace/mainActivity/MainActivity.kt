@@ -430,8 +430,8 @@ class MainActivity : AppCompatActivity() {
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 17)
-            set(Calendar.MINUTE,23)
+            set(Calendar.HOUR_OF_DAY, 11)
+            set(Calendar.MINUTE,20)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
@@ -441,7 +441,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 매일 자정에 반복
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -741,7 +740,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, MedicationAlarmReceiver::class.java).apply {
             action = "com.woosuk.AgingInPlace.MEDICATION_ALARM"
         }
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val timeParts = alarmTime.split(":")
         val hour = timeParts[0].toInt()

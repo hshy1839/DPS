@@ -34,7 +34,7 @@ class AlarmReceiver : BroadcastReceiver() {
             action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM"
         }
         val pendingIntent = PendingIntent.getBroadcast(
-            context, 1, newIntent, PendingIntent.FLAG_IMMUTABLE
+            context, 0, newIntent, PendingIntent.FLAG_IMMUTABLE
         )
 
         val calendar = Calendar.getInstance().apply {
