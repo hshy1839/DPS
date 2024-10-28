@@ -84,6 +84,11 @@
                 <action android:name="com.woosuk.AgingInPlace.MEDICATION_ALARM" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".receiver.BootReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />

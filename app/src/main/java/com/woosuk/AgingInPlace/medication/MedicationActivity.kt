@@ -49,6 +49,7 @@ class MedicationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_medication)
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
         // RecyclerView 초기화
         recyclerView = findViewById(R.id.medicationRecyclerView)
@@ -73,16 +74,10 @@ class MedicationActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        // SharedPreferences에서 userId 가져오기
-        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val userId = sharedPreferences.getInt("userId", 0)
-        Log.i("userId: ","${userId}")
-        // userId가 null이 아닌 경우 서버에 요청
-        if (userId != null) {
-            fetchMedications(userId)
-        } else {
-            Log.e("MedicationActivity", "User ID is null")
-        }
+        var id = getUserId()
+        Log.i("userId: ","${id}")
+
+        fetchMedications(id)
 
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -340,6 +335,10 @@ class MedicationActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+    private fun getUserId(): Int {
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("userId", 0)
     }
 
     private fun navigateToMainActivity() {

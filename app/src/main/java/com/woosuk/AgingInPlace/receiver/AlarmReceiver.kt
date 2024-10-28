@@ -34,8 +34,10 @@ class AlarmReceiver : BroadcastReceiver() {
             action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM"
         }
         val pendingIntent = PendingIntent.getBroadcast(
-            context, 0, newIntent, PendingIntent.FLAG_IMMUTABLE
+            context, 0, newIntent, PendingIntent.FLAG_IMMUTABLE  or PendingIntent.FLAG_UPDATE_CURRENT
         )
+
+        alarmManager.cancel(pendingIntent)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
@@ -44,7 +46,6 @@ class AlarmReceiver : BroadcastReceiver() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
-            // 다음 날 같은 시간으로 설정
             add(Calendar.DAY_OF_MONTH, 1)
         }
 

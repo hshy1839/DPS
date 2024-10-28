@@ -425,17 +425,22 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ScheduleExactAlarm")
     fun setDailyAlarm() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java).apply { action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM" }
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE  or PendingIntent.FLAG_IMMUTABLE)
+        val intent = Intent(this, AlarmReceiver::class.java).apply {
+            action = "com.woosuk.AgingInPlace.ACTION_SEND_ALARM"
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        alarmManager.cancel(pendingIntent)
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 11)
-            set(Calendar.MINUTE,20)
+            set(Calendar.HOUR_OF_DAY, 17)
+            set(Calendar.MINUTE, 30)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
-            // 현재 시간이 자정 이후라면 다음 날 자정으로 설정
             if (before(Calendar.getInstance())) {
                 add(Calendar.DAY_OF_MONTH, 1)
             }
@@ -446,7 +451,7 @@ class MainActivity : AppCompatActivity() {
             calendar.timeInMillis,
             pendingIntent
         )
-        Log.i("Set Alram", "Daily Alarm Set : ${calendar.time}")
+        Log.i("Set Alarm", "Daily Alarm Set : ${calendar.time}")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
