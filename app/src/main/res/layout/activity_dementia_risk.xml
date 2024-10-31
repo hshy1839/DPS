@@ -99,6 +99,30 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:padding="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/linebd"
+                android:text="심박수"
+                android:textColor="@android:color/black"
+                android:textSize="25sp" />
+            <ImageView
+                android:id="@+id/heartbeat_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_bad"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -170,7 +194,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"/>
         </LinearLayout>-->
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -192,7 +216,7 @@
                 android:src="@drawable/ic_bad"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"/>
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -205,7 +229,7 @@
                     </androidx.cardview.widget.CardView>
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="310dp"
+                        android:layout_height="350dp"
                         android:padding="30dp"
                         app:cardBackgroundColor="#ffffff"
                         app:cardCornerRadius="15dp"
@@ -216,10 +240,30 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="20dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/linebd"
+                                    android:text="심박 수"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="30sp"/>
+                                <TextView
+                                    android:id="@+id/heartbeat_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=""
+                                    android:textColor="@android:color/black"
+                                    android:textSize="25sp"/>
+                            </LinearLayout>
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="20dp">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

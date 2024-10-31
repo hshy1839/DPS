@@ -384,20 +384,33 @@ class HeartbeatActivity : AppCompatActivity() {
   private fun updateHeartRateUI(averageHeartRate: Float) {
       // 평균 심박수 표시
       averageHeartRateText.text = "${String.format("%.1f", averageHeartRate)} bpm"
-
+      val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+      val editor = sharedPreferences.edit()
       // 평균 심박수에 따라 아이콘 및 문구 변경
       when {
           averageHeartRate < 60 -> {
               heartRateIcon.setImageResource(R.drawable.ic_bad)  // 낮은 심박수 아이콘
               heartRateMessage.text = "평균 심박수가 낮아요."
+              editor.putString("heartbeatIcon", "ic_bad")
+              editor.apply()
+              editor.putString("heartbeatMessage", "평균 심박수가 낮아요.")
+              editor.apply()
           }
           averageHeartRate in 60f..100f -> {
               heartRateIcon.setImageResource(R.drawable.ic_good)  // 정상 심박수 아이콘
               heartRateMessage.text = "평균 심박수가 적당해요."
+              editor.putString("heartbeatIcon", "ic_good")
+              editor.apply()
+              editor.putString("heartbeatMessage", "평균 심박수가 적당해요.")
+              editor.apply()
           }
           else -> {
               heartRateIcon.setImageResource(R.drawable.ic_bad)  // 높은 심박수 아이콘
-              heartRateMessage.text = "평균 심박수가 높아요."
+              heartRateMessage.text = "평균 심박 수가 높아요."
+              editor.putString("heartbeatIcon", "ic_bad")
+              editor.apply()
+              editor.putString("heartbeatMessage", "평균 심박 수가 높아요.")
+              editor.apply()
           }
       }
   }

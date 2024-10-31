@@ -65,9 +65,11 @@ class DementiaRiskActivity :AppCompatActivity(){
     private lateinit var navView:NavigationView
     private lateinit var sleepIcon: ImageView
     private lateinit var calorieIcon: ImageView
+    private lateinit var heartbeatIcon: ImageView
     private lateinit var sleepText: TextView
     private lateinit var calorieText: TextView
     private lateinit var cistScoreText: TextView
+    private lateinit var heartbeatText: TextView
     private lateinit var apiService: ApiService
     private var userId: Int = 0
 
@@ -80,6 +82,8 @@ class DementiaRiskActivity :AppCompatActivity(){
 
         navView=findViewById(R.id.nav_view)
         sleepIcon = findViewById(R.id.sleep_duration_icon)
+        heartbeatText = findViewById(R.id.heartbeat_text)
+        heartbeatIcon = findViewById(R.id.heartbeat_icon)
         calorieIcon = findViewById(R.id.calorie_icon)
         sleepText = findViewById(R.id.sleep_duration_text)
         calorieText = findViewById(R.id.calorie_text)
@@ -88,8 +92,10 @@ class DementiaRiskActivity :AppCompatActivity(){
         userId = sharedPreferences.getInt("userId", 0)
         val sleepIconName = sharedPreferences.getString("sleepDurationIcon", "ic_good")
         val calorieIconName = sharedPreferences.getString("calorieIcon", "ic_good")
+        val heartbeatIconName = sharedPreferences.getString("heartbeatIcon", "ic_good")
         val sleepTextName = sharedPreferences.getString("sleepDurationMessage", "상태가 없습니다.")
         val calorieTextName = sharedPreferences.getString("calorieMessage", "상태가 없습니다.")
+        val heartbeatTextName = sharedPreferences.getString("heartbeatMessage", "상태가 없습니다.")
 
         fetchCistScore(userId)
 
@@ -108,6 +114,13 @@ class DementiaRiskActivity :AppCompatActivity(){
         } else {
             calorieIcon.setImageResource(R.drawable.ic_good)
             calorieText.text = calorieTextName
+        }
+        if (heartbeatIconName == "ic_bad") {
+            heartbeatIcon.setImageResource(R.drawable.ic_bad)
+            heartbeatText.text = heartbeatTextName
+        } else {
+            heartbeatIcon.setImageResource(R.drawable.ic_good)
+            heartbeatText.text = heartbeatTextName
         }
         // 기존 코드
 
