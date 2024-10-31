@@ -432,19 +432,35 @@ class CalorieActivity : AppCompatActivity() {
         // 평균 칼로리 표시
         calorie_text.text = "${String.format("%.1f", averageCalories)}kcal"
 
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
         // 평균 칼로리에 따라 아이콘 및 문구 변경
         when {
             averageCalories < 153.3f -> {
                 calorie_icon.setImageResource(R.drawable.ic_bad)  // 낮은 칼로리 아이콘
                 calorie_message.text = "칼로리 소모가 낮아요."
+                editor.putString("calorieIcon", "ic_bad")
+                editor.apply()
+                editor.putString("calorieMessage", "칼로리 소모가 낮습니다.")
+                editor.apply()
             }
             averageCalories in 153.4f..200f -> {
                 calorie_icon.setImageResource(R.drawable.ic_good)  // 정상 칼로리 아이콘
                 calorie_message.text = "칼로리 소모가 적당해요."
+                editor.putString("calorieIcon", "ic_good")
+                editor.apply()
+                editor.putString("calorieMessage", "칼로리 소모가 적당합니다.")
+                editor.apply()
+
             }
             else -> {
                 calorie_icon.setImageResource(R.drawable.ic_good)  // 높은 칼로리 아이콘
                 calorie_message.text = "칼로리 소모가 많아요."
+                editor.putString("calorieIcon", "ic_good")
+                editor.apply()
+                editor.putString("calorieMessage", "칼로리 소모가 많습니다.")
+                editor.apply()
+
             }
         }
     }

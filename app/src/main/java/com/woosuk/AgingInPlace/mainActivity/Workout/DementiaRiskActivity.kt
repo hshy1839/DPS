@@ -57,6 +57,11 @@ class DementiaRiskActivity :AppCompatActivity(){
     private lateinit var drawerLayout:DrawerLayout
     private lateinit var sharedPreferences:SharedPreferences
     private lateinit var navView:NavigationView
+    private lateinit var sleepIcon: ImageView
+    private lateinit var calorieIcon: ImageView
+    private lateinit var sleepText: TextView
+    private lateinit var calorieText: TextView
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState:Bundle?){
@@ -66,7 +71,32 @@ class DementiaRiskActivity :AppCompatActivity(){
         // View 초기화
 
         navView=findViewById(R.id.nav_view)
+        sleepIcon = findViewById(R.id.sleep_duration_icon)
+        calorieIcon = findViewById(R.id.calorie_icon)
+        sleepText = findViewById(R.id.sleep_duration_text)
+        calorieText = findViewById(R.id.calorie_text)
+        val sleepIconName = sharedPreferences.getString("sleepDurationIcon", "ic_good")
+        val calorieIconName = sharedPreferences.getString("calorieIcon", "ic_good")
+        val sleepTextName = sharedPreferences.getString("sleepDurationMessage", "상태가 없습니다.")
+        val calorieTextName = sharedPreferences.getString("calorieMessage", "상태가 없습니다.")
 
+
+        if (sleepIconName == "ic_bad") {
+            sleepIcon.setImageResource(R.drawable.ic_bad)
+
+            sleepText.text = sleepTextName
+        } else {
+            sleepIcon.setImageResource(R.drawable.ic_good)
+
+            sleepText.text = sleepTextName
+        }
+        if (calorieIconName == "ic_bad") {
+            calorieIcon.setImageResource(R.drawable.ic_bad)
+            calorieText.text = calorieTextName
+        } else {
+            calorieIcon.setImageResource(R.drawable.ic_good)
+            calorieText.text = calorieTextName
+        }
         // 기존 코드
 
 

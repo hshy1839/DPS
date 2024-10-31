@@ -396,31 +396,53 @@ class SleepActivity : AppCompatActivity() {
 
 
     private fun updateDurationUI(averageSleepDuration: Float) {
-        val hour : Int
-        val minute : Int
-        hour = (averageSleepDuration/60).toInt()
-        minute = (averageSleepDuration%60).toInt()
+        val hour: Int = (averageSleepDuration / 60).toInt()
+        val minute: Int = (averageSleepDuration % 60).toInt()
+
         // 평균 수면 시간 표시
         averageSleepDurationText.text = "${hour}시간 ${minute}분"
+
+        // SharedPreferences 초기화
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
 
         // 평균 수면 시간에 따라 아이콘 및 문구 변경
         when {
             hour < 6 -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 부족한 수면 시간 아이콘
-                sleepDurationMessage.text = "수면시간이 부족합니다.."
+                sleepDurationMessage.text = "수면시간이 부족합니다."
+
+                // 아이콘 상태 저장
+                editor.putString("sleepDurationIcon", "ic_bad")
+                editor.putString("sleepDurationMessage", "수면시간이 부족합니다.")
+                editor.apply()
             }
 
             hour in 6..8 -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_good)  // 정상 수면 시간 아이콘
-                sleepDurationMessage.text = "좋은 수면습관 입니다.."
+                sleepDurationMessage.text = "좋은 수면습관 입니다."
+
+                // 아이콘 상태 저장
+                editor.putString("sleepDurationIcon", "ic_good")
+                editor.putString("sleepDurationMessage", "좋은 수면습관 입니다.")
+                editor.apply()
             }
 
             else -> {
                 sleepDurationIcon.setImageResource(R.drawable.ic_bad)  // 과도한 수면 시간 아이콘
                 sleepDurationMessage.text = "수면시간이 많습니다."
+
+                // 아이콘 상태 저장
+                editor.putString("sleepDurationIcon", "ic_bad")
+                editor.putString("sleepDurationMessage", "수면시간이 많습니다.")
+                editor.apply()
             }
         }
+
+        // 변경 사항 적용
+        editor.apply()
     }
+
 
     private fun parseJsonDataForRemCharts(jsonData: String) {
         try {
