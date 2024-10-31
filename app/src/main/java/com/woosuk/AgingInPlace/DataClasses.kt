@@ -57,3 +57,8 @@ data class CistResponseData(
     val questionId: Int,
     val responses: String
 )
+
+data class CistScore(
+    val userId: Int,
+    val mmse : Int,
+)

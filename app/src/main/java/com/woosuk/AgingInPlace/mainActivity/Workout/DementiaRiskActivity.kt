@@ -1,5 +1,6 @@
 package com.woosuk.AgingInPlace.mainActivity.Workout
 
+import ApiService
 import android.annotation.SuppressLint
 import android.content.Context
 
@@ -33,7 +34,9 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.R
+import com.woosuk.AgingInPlace.RetrofitClient
 import com.woosuk.AgingInPlace.mainActivity.MainActivity
 
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +49,9 @@ import okhttp3.Request
 
 import org.json.JSONArray
 import org.json.JSONException
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -61,7 +67,9 @@ class DementiaRiskActivity :AppCompatActivity(){
     private lateinit var calorieIcon: ImageView
     private lateinit var sleepText: TextView
     private lateinit var calorieText: TextView
-
+    private lateinit var cistScoreText: TextView
+    private lateinit var apiService: ApiService
+    private var userId: Int = 0
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState:Bundle?){
@@ -75,11 +83,15 @@ class DementiaRiskActivity :AppCompatActivity(){
         calorieIcon = findViewById(R.id.calorie_icon)
         sleepText = findViewById(R.id.sleep_duration_text)
         calorieText = findViewById(R.id.calorie_text)
+        apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
+        cistScoreText = findViewById(R.id.cist_score_text)
+        userId = sharedPreferences.getInt("userId", 0)
         val sleepIconName = sharedPreferences.getString("sleepDurationIcon", "ic_good")
         val calorieIconName = sharedPreferences.getString("calorieIcon", "ic_good")
         val sleepTextName = sharedPreferences.getString("sleepDurationMessage", "상태가 없습니다.")
         val calorieTextName = sharedPreferences.getString("calorieMessage", "상태가 없습니다.")
 
+        fetchCistScore(userId)
 
         if (sleepIconName == "ic_bad") {
             sleepIcon.setImageResource(R.drawable.ic_bad)
@@ -175,6 +187,46 @@ class DementiaRiskActivity :AppCompatActivity(){
         }
         updateWelcomeMessage()
     }
+
+    private fun fetchCistScore(userId: Int) {
+        val call = apiService.getCistScore(userId)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.isSuccessful) {
+                    val jsonObject = response.body()
+                    if (jsonObject != null) {
+                        // mmse 값을 안전하게 가져오기
+                        val mmseElement = jsonObject.get("mmse")
+
+                        if (mmseElement != null && !mmseElement.isJsonNull) {
+                            // mmse를 정수로 가져오기
+                            val mmse = if (mmseElement.isJsonPrimitive && mmseElement.asJsonPrimitive.isNumber) {
+                                mmseElement.asInt // 정수로 가져오기
+                            } else {
+                                Log.e("InvalidData", "mmse is not a valid number")
+                                return
+                            }
+
+                            // cistScoreText에 정수형 mmse 값을 문자열로 설정
+                            cistScoreText.text = mmse.toString()
+                        } else {
+                            Log.e("EmptyData", "mmse is null or not found")
+                        }
+                    } else {
+                        Log.e("EmptyData", "JsonObject is null")
+                    }
+                } else {
+                    Log.e("API", "Request failed: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.e("API", "Network error: ${t.message}")
+            }
+        })
+    }
+
+
     private fun updateWelcomeMessage() {
         // NavigationView의 헤더 가져오기
         val headerView = navView.getHeaderView(0)

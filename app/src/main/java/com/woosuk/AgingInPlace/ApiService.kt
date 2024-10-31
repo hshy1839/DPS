@@ -4,6 +4,7 @@ import com.woosuk.AgingInPlace.UserData
 import com.woosuk.AgingInPlace.CistQuestionResponse
 import com.google.gson.JsonObject
 import com.woosuk.AgingInPlace.CistResponseData
+import com.woosuk.AgingInPlace.CistScore
 import com.woosuk.AgingInPlace.MedicationResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -36,4 +37,8 @@ interface ApiService {
 
     @POST("/api/android/cist_responses")
     fun postCistResponse(@Body data: CistResponseData): Call<JsonObject>
+
+    @GET("/api/android/cist_score")
+    fun getCistScore(@Query("userId") userId: Int): Call<JsonObject>
+
 }
