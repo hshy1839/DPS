@@ -11,6 +11,8 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -44,8 +46,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 import org.json.JSONArray
 import org.json.JSONException
@@ -65,12 +69,15 @@ class DementiaRiskActivity :AppCompatActivity(){
     private lateinit var navView:NavigationView
     private lateinit var sleepIcon: ImageView
     private lateinit var calorieIcon: ImageView
-    private lateinit var heartbeatIcon: ImageView
+    private lateinit var stepIcon: ImageView
     private lateinit var sleepText: TextView
     private lateinit var calorieText: TextView
     private lateinit var cistScoreText: TextView
-    private lateinit var heartbeatText: TextView
+    private lateinit var stepTextView: TextView
     private lateinit var apiService: ApiService
+    private lateinit var activity_link: TextView
+    private lateinit var sleep_duration_link: TextView
+    private lateinit var dementia_prob_text: TextView
     private var userId: Int = 0
 
     @SuppressLint("MissingInflatedId")
@@ -82,26 +89,31 @@ class DementiaRiskActivity :AppCompatActivity(){
 
         navView=findViewById(R.id.nav_view)
         sleepIcon = findViewById(R.id.sleep_duration_icon)
-        heartbeatText = findViewById(R.id.heartbeat_text)
-        heartbeatIcon = findViewById(R.id.heartbeat_icon)
+        stepIcon = findViewById(R.id.step_icon)
         calorieIcon = findViewById(R.id.calorie_icon)
         sleepText = findViewById(R.id.sleep_duration_text)
         calorieText = findViewById(R.id.calorie_text)
+        stepTextView = findViewById(R.id.step_text)
+        activity_link = findViewById(R.id.activity_link)
+        sleep_duration_link = findViewById(R.id.sleep_duration_link)
         apiService = RetrofitClient.getInstance(this).create(ApiService::class.java)
+        dementia_prob_text = findViewById(R.id.dementia_prob_text)
         cistScoreText = findViewById(R.id.cist_score_text)
         userId = sharedPreferences.getInt("userId", 0)
         val sleepIconName = sharedPreferences.getString("sleepDurationIcon", "ic_good")
         val calorieIconName = sharedPreferences.getString("calorieIcon", "ic_good")
-        val heartbeatIconName = sharedPreferences.getString("heartbeatIcon", "ic_good")
         val sleepTextName = sharedPreferences.getString("sleepDurationMessage", "상태가 없습니다.")
         val calorieTextName = sharedPreferences.getString("calorieMessage", "상태가 없습니다.")
-        val heartbeatTextName = sharedPreferences.getString("heartbeatMessage", "상태가 없습니다.")
 
-        fetchCistScore(userId)
+        //fetchCistScore(userId)
+        fetchDataFromApi("http://3.39.236.95:8080/chart/steps", userId)
+        fetchDataFromApiCalories("http://3.39.236.95:8080/chart/calories", userId)
+        fetchDataFromDurationApi("http://3.39.236.95:8080/chart/duration", userId)
+        fetchDataFromProbApi("http://3.39.236.95:8080/wear/prob", userId)
 
+/*
         if (sleepIconName == "ic_bad") {
             sleepIcon.setImageResource(R.drawable.ic_bad)
-
             sleepText.text = sleepTextName
         } else {
             sleepIcon.setImageResource(R.drawable.ic_good)
@@ -114,16 +126,7 @@ class DementiaRiskActivity :AppCompatActivity(){
         } else {
             calorieIcon.setImageResource(R.drawable.ic_good)
             calorieText.text = calorieTextName
-        }
-        if (heartbeatIconName == "ic_bad") {
-            heartbeatIcon.setImageResource(R.drawable.ic_bad)
-            heartbeatText.text = heartbeatTextName
-        } else {
-            heartbeatIcon.setImageResource(R.drawable.ic_good)
-            heartbeatText.text = heartbeatTextName
-        }
-        // 기존 코드
-
+        }*/
 
         val loginButton=findViewById<ImageView>(R.id.loginButton)
         loginButton.setOnClickListener{
@@ -203,6 +206,7 @@ class DementiaRiskActivity :AppCompatActivity(){
 
     private fun fetchCistScore(userId: Int) {
         val call = apiService.getCistScore(userId)
+        val empty = "상태가 없습니다.";
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 if (response.isSuccessful) {
@@ -224,6 +228,7 @@ class DementiaRiskActivity :AppCompatActivity(){
                             cistScoreText.text = mmse.toString()
                         } else {
                             Log.e("EmptyData", "mmse is null or not found")
+                            cistScoreText.text = empty
                         }
                     } else {
                         Log.e("EmptyData", "JsonObject is null")
@@ -311,6 +316,224 @@ class DementiaRiskActivity :AppCompatActivity(){
             if(!response.isSuccessful)throw IOException("Unexpected code $response")
             return response.body?.string()?:""
         }
+    }
+
+    private fun fetchDataFromApi(url: String, userId: Int) {
+        val client = OkHttpClient()
+        val formBody = FormBody.Builder().add("userId", userId.toString()).build()
+
+        val request = Request.Builder()
+            .url(url)
+            .post(formBody)
+            .build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = client.newCall(request).execute()
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { jsonData ->
+                        withContext(Dispatchers.Main) {
+                            parseJsonDataForStepCharts(jsonData)
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("Failed to fetch data: ${response.message}")
+                    }
+                }
+            } catch (e: IOException) {
+                Log.e("CalorieActivity", "Network error: ${e.localizedMessage}")
+                withContext(Dispatchers.Main) {
+                    showToast("Network error: ${e.localizedMessage}")
+                }
+            }
+        }
+    }
+
+    private fun fetchDataFromApiCalories(apiURL: String, userId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForCalorieCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("Activity", "Error fetching data", e)
+            }
+        }
+    }
+
+    private fun fetchDataFromDurationApi(apiURL: String, userId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val jsonResponse = post(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForDurationCharts(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("SleepActivity", "Error fetching data", e)
+            }
+        }
+    }
+    private fun fetchDataFromProbApi(apiURL: String, userId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Log.d("FetchData", "Sending request to $apiURL with user_id $userId")
+                val jsonResponse = probPost(apiURL, userId)
+                withContext(Dispatchers.Main) {
+                    parseJsonDataForProb(jsonResponse)
+                }
+            } catch (e: Exception) {
+                Log.e("FetchData", "Error fetching data: ${e.localizedMessage}", e)
+            }
+        }
+    }
+
+    private suspend fun probPost(apiURL: String, userId: Int): String {
+        val client = OkHttpClient()
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val jsonBody = """{"user_id": $userId}"""
+        val requestBody = jsonBody.toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(apiURL)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val responseBody = response.body?.string()
+            Log.d("FetchData", "Response code: ${response.code}, body: $responseBody")
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            return responseBody ?: throw IOException("Empty response body")
+        }
+    }
+
+
+    private fun parseJsonDataForProb(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val username = item.getString("username")
+                val dementiaProb = item.getInt("dementia_prob")
+
+                updateDementiaProbUI(username, dementiaProb)
+            }
+        } catch (e: JSONException) {
+            Log.e("ProbActivity", "Error parsing JSON data", e)
+        }
+    }
+
+    private fun parseJsonDataForStepCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            var totalSteps = 0f
+            var count = 0
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val steps = item.getInt("steps").toFloat()
+                totalSteps += steps
+                count++
+            }
+
+            if (count > 0) {
+                val averageSteps = totalSteps / count
+                updateStepAverageUI(averageSteps)
+            } else {
+            }
+        } catch (e: JSONException) {
+            Log.e("StepActivity", "Error parsing JSON data", e)
+            showToast("Error parsing data: ${e.localizedMessage}")
+        }
+    }
+
+    private fun parseJsonDataForCalorieCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            var totalCalories = 0f
+            var count = 0
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val calTotal = item.getInt("calTotal").toFloat()
+                totalCalories += calTotal
+                count++
+            }
+
+            if (count > 0) {
+                val averageCalories = totalCalories / count
+                updateCalorieAverageUI(averageCalories)
+            } else {
+            }
+        } catch (e: JSONException) {
+            Log.e("CalorieActivity", "Error parsing JSON data", e)
+        }
+    }
+
+    private fun parseJsonDataForDurationCharts(jsonData: String) {
+        try {
+            val dataArray = JSONArray(jsonData)
+            var totalSleep = 0f
+            var count = 0
+
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val sleepTotal = item.getInt("duration").toFloat()
+                totalSleep += sleepTotal
+                count++
+            }
+
+            if (count > 0) {
+                val averageSleepDuration = totalSleep / count
+                updateDurationAverageUI(averageSleepDuration)
+            } else {
+            }
+        } catch (e: JSONException) {
+            Log.e("SleepActivity", "Error parsing JSON data", e)
+        }
+    }
+    private fun updateDementiaProbUI(username: String, dementiaProb: Int) {
+        dementia_prob_text.text = "${username}님의 치매 위험도는 $dementiaProb%입니다."
+        Log.d("ProbActivity", "Username: $username, Dementia Probability: $dementiaProb")
+    }
+
+    private fun updateStepAverageUI(averageSteps: Float) {
+        stepTextView.text = averageSteps.toString()
+        if(averageSteps.toInt()>2500){
+            stepIcon.setImageResource(R.drawable.ic_good)
+        }else{
+            stepIcon.setImageResource(R.drawable.ic_bad)
+            activity_link.visibility = View.VISIBLE
+            activity_link.text =  Html.fromHtml("<a href='http://www.aginginplaces.net/contents'>여기를 클릭하여 동영상을 시청해주세요.</a>")
+            activity_link.movementMethod = LinkMovementMethod.getInstance()
+        }
+        Log.d("StepActivity", "Average Steps: $averageSteps")
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateCalorieAverageUI(averageCalories: Float) {
+        calorieText.text = averageCalories.toInt().toString() + "Kcal"
+        if(averageCalories.toInt()>155){
+            calorieIcon.setImageResource(R.drawable.ic_good)
+        }else{
+            calorieIcon.setImageResource(R.drawable.ic_bad)
+            activity_link.text = "http://www.aginginplaces.net/contents"
+            activity_link.visibility = View.VISIBLE
+
+        }
+        Log.d("CalorieActivity", "Average Calories: $averageCalories")
+    }
+    private fun updateDurationAverageUI(averageSleepDuration: Float) {
+        sleepText.text = (averageSleepDuration.toInt() / 60).toString() + "시간"
+        if((averageSleepDuration * 60).toInt() < 35449){
+            sleepIcon.setImageResource(R.drawable.ic_good)
+        }else{
+            sleep_duration_link.text = "http://www.aginginplaces.net/contents"
+            sleepIcon.setImageResource(R.drawable.ic_bad)
+            sleep_duration_link.visibility = View.VISIBLE
+        }
+        Log.d("SleepActivity", "Average Sleep Duration: $averageSleepDuration")
     }
 }
 

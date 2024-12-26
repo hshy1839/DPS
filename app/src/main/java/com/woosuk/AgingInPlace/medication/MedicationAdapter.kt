@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.woosuk.AgingInPlace.Medication
 import com.woosuk.AgingInPlace.R
+import kotlinx.coroutines.coroutineScope
 
 
 class MedicationAdapter(

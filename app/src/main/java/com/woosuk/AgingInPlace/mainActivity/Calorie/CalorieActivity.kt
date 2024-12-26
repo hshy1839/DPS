@@ -428,6 +428,7 @@ class CalorieActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun updateCalorieUI(averageCalories: Float) {
         // 평균 칼로리 표시
         calorie_text.text = "${String.format("%.1f", averageCalories)}kcal"
